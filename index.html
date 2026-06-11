@@ -38,6 +38,10 @@
   .setmodal textarea{min-height:78px;resize:vertical}
   .setmodal .sdone{margin-top:18px;background:var(--accent);color:#04121f;border:none;border-radius:10px;padding:11px 20px;font-weight:800;cursor:pointer}
   .setmodal .snote{font-size:11px;color:#94a3b8;margin-top:4px}
+  .agent-photo-row{display:flex;gap:14px;align-items:center;margin-top:6px}
+  .agent-photo-prev{width:60px;height:60px;flex:none;border-radius:50%;display:grid;place-items:center;font-size:26px;background:linear-gradient(135deg,var(--accent),var(--accent2));background-size:cover;background-position:center;color:#04121f}
+  .btn-mini{background:var(--accent);color:#04121f;border:none;border-radius:8px;padding:7px 12px;font-size:12.5px;font-weight:800;cursor:pointer}
+  .btn-mini.ghost{background:#eef2f7;color:#334155}
 
   /* ===== CANVA-STYLE PHOTOS RAIL ===== */
   .photos-rail{position:fixed;left:0;top:0;bottom:0;width:var(--rail);background:#0c1422;color:#dbe4f0;z-index:90;overflow-y:auto;border-right:1px solid #1f2b3d;padding:14px 14px 40px;padding-top:96px}
@@ -145,6 +149,12 @@
   .contactform .cf{border:1px solid var(--line);border-radius:11px;padding:12px 14px;font-size:15px;font-family:inherit;outline:none;background:var(--bg)}
   .contactform .cf:focus{border-color:var(--accent);background:#fff}
   .contactform .cf-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none;border-radius:12px;padding:14px;font-weight:800;font-size:15px;cursor:pointer}
+  .contactinfo{display:grid;grid-template-columns:1fr 1fr;gap:16px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;box-shadow:var(--shadow)}
+  @media(max-width:600px){.contactinfo{grid-template-columns:1fr}}
+  .ci-item{display:flex;gap:13px;align-items:flex-start}
+  .ci-ic{width:44px;height:44px;flex:none;border-radius:13px;display:grid;place-items:center;font-size:20px;background:color-mix(in srgb,var(--accent) 13%,transparent)}
+  .ci-lbl{font-size:11.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+  .ci-val{font-size:15px;color:var(--ink);line-height:1.45}
   .pmodal-ov{position:fixed;inset:0;background:rgba(8,16,28,.5);z-index:80;display:none}
   .pmodal-ov.show{display:block}
   .pmodal{position:fixed;z-index:81;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,92vw);max-height:80vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 30px 80px rgba(10,30,60,.3);padding:28px;display:none}
@@ -155,7 +165,8 @@
   footer.site a{text-decoration:underline}
   footer.site{border-top:1px solid var(--line);padding:30px 0;color:var(--muted);font-size:13.5px;text-align:center}
 
-  .agent-fab{position:fixed;right:20px;bottom:20px;z-index:60;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none;border-radius:999px;padding:13px 18px;font-weight:800;cursor:pointer;box-shadow:0 12px 36px color-mix(in srgb,var(--accent) 45%,transparent);display:flex;gap:8px}
+  .agent-fab{position:fixed;right:20px;bottom:20px;z-index:60;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none;border-radius:999px;padding:13px 18px;font-weight:800;cursor:pointer;box-shadow:0 12px 36px color-mix(in srgb,var(--accent) 45%,transparent);display:flex;align-items:center;gap:8px}
+  .fab-av{width:24px;height:24px;border-radius:50%;display:inline-grid;place-items:center;background:rgba(255,255,255,.45);font-size:15px;background-size:cover;background-position:center}
   .agent-panel{position:fixed;right:20px;bottom:80px;z-index:60;width:340px;max-width:calc(100vw - 40px);height:460px;max-height:70vh;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 24px 70px rgba(10,30,60,.25);display:none;flex-direction:column;overflow:hidden}
   .agent-panel.show{display:flex}
   .agent-head{padding:13px 15px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
@@ -206,6 +217,7 @@
       <button onclick="addBlock('unique')">⭐ Unique feature</button>
       <button onclick="addBlock('how')">🔢 Three columns</button>
       <button onclick="addBlock('testimonials')">💬 Testimonials</button>
+      <button onclick="addBlock('contactinfo')">📍 Contact info</button>
       <button onclick="addBlock('contact')">✉️ Contact form</button>
       <button onclick="addBlock('cta')">📣 Call to action</button>
     </div>
@@ -263,9 +275,33 @@
   <label>Social share image URL</label>
   <input id="setOg" placeholder="https://yoursite.com/share.jpg">
   <div class="snote">Shown when your link is shared (texts, social). Use a full https URL to a ~1200×630 image. Optional.</div>
-  <label>Agent instructions for Claude</label>
-  <textarea id="setSys" placeholder="e.g. You are SkyReserve's booking assistant. Help visitors with charter-flight questions; be concise, warm, and accurate."></textarea>
-  <div class="snote">Tells Claude how to behave on this site (its role, tone, and what it knows).</div>
+
+  <label>Agent photo</label>
+  <div class="agent-photo-row">
+    <div class="agent-photo-prev" id="setAvatarPrev">🤖</div>
+    <div>
+      <button type="button" class="btn-mini" onclick="document.getElementById('setAvatarFile').click()">Upload photo</button>
+      <button type="button" class="btn-mini ghost" onclick="clearAgentAvatar()">Remove</button>
+      <input type="file" id="setAvatarFile" accept="image/*" style="display:none" onchange="handleAgentAvatar(event)">
+      <div class="snote">A friendly face for your assistant — shown in the chat header and button. Square photos look best. If empty, the emoji below is used.</div>
+    </div>
+  </div>
+
+  <label>Agent emoji (used when no photo)</label>
+  <input id="setEmoji" placeholder="🤖" maxlength="4" style="width:100px">
+
+  <label>Agent personality</label>
+  <textarea id="setPersona" placeholder="e.g. You're Aria — warm, upbeat and a little witty. You speak in short, friendly sentences, love helping people find the right thing, and always stay encouraging and patient."></textarea>
+  <div class="snote">Describe how your agent talks and behaves. This shapes its tone in every reply — make it personable!</div>
+
+  <label>Agent greeting</label>
+  <input id="setGreet" placeholder="Hi! I'm here to help. Ask me anything.">
+  <div class="snote">The first message visitors see when they open the chat.</div>
+
+  <label>Agent knowledge &amp; instructions (advanced)</label>
+  <textarea id="setSys" placeholder="e.g. We're SkyReserve, a charter-flight service in Denver. Open 8am–8pm. Recommend our free quote tool when relevant. Don't promise specific prices."></textarea>
+  <div class="snote">Facts and rules the agent should know — your business details, hours, policies, and what to recommend.</div>
+
   <label>Privacy notice</label>
   <textarea id="setPriv"></textarea>
   <div class="snote">Plain-language only — not legal advice. Consider having a professional review it.</div>
@@ -276,7 +312,7 @@
 <div class="pmodal-ov" id="privOverlay" onclick="hidePrivacy()"></div>
 <div class="pmodal" id="privModal"><h3>Privacy</h3><p id="privBody"></p><button class="pclose" onclick="hidePrivacy()">Close</button></div>
 
-<button class="agent-fab" onclick="toggleAgent()">💬 <span id="agentFabName">Ask the agent</span></button>
+<button class="agent-fab" onclick="toggleAgent()"><span class="fab-av" id="agentFabAv">🤖</span> <span id="agentFabName">Ask the agent</span></button>
 <div class="agent-panel" id="agentPanel">
   <div class="agent-head"><div class="av" id="agentAv">🤖</div><div><b id="agentName">Agent</b><div class="on">● online</div></div><button class="x" onclick="toggleAgent()">×</button></div>
   <div class="agent-msgs" id="agentMsgs"></div>
@@ -289,7 +325,7 @@
 const SITE = {
   name:'My AI Site', accent:'#3aa0ff', accent2:'#6ee7ff', ogImage:'',
   privacy:'We respect your privacy. Messages you send through our contact form or AI assistant are used only to respond to you and improve our service — they are not sold. Our AI assistant is powered by Claude (Anthropic), which processes your questions to generate replies. Contact us anytime to request deletion of your information.',
-  agent:{name:'Aria', emoji:'🤖', system:'', greeting:'Hi! I\'m here to help. Ask me anything.'},
+  agent:{name:'Aria', emoji:'🤖', avatar:'', personality:'', system:'', greeting:'Hi! I\'m here to help. Ask me anything.'},
   search:{placeholder:'Ask anything…', examples:['Show me an example','How does this work?','Find what I need']},
   blocks:[
     {type:'hero', pill:'AI-powered', headline:'Your headline goes here.', sub:'A short, punchy subhead that explains what this site does in one breath.'},
@@ -300,6 +336,8 @@ const SITE = {
     {type:'unique', badge:'Only here', title:'Your unique hook', emoji:'⭐', image:'',
       desc:'Describe the one thing that sets this site apart from everyone else.',
       points:['First benefit','Second benefit','Third benefit'], cta:'Learn more'},
+    {type:'contactinfo', ey:'Contact', title:'Get in touch', sub:'Reach us any of these ways — we\'re happy to help.',
+      address:'123 Main St, Your City, ST 00000', phone:'(555) 123-4567', email:'hello@yourbusiness.com', hours:'Mon–Fri, 9am–5pm'},
     {type:'cta', headline:'Ready to get started?', sub:'A closing line that invites the visitor to act.', button:'Get started'}
   ]
 };
@@ -394,14 +432,22 @@ function renderContact(b,i){
     <textarea class="cf" name="message" rows="4" placeholder="How can we help?" required></textarea>
     <button class="cf-btn" type="submit">${ed('blocks.'+i+'.button','span','')}</button>
   </form></div></section>`; }
+function renderContactInfo(b,i){ return `<section class="blk block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap" style="max-width:760px">
+  <div class="sec-head"><div class="ey">${ed('blocks.'+i+'.ey','span','')}</div>${ed('blocks.'+i+'.title','h2','')}${ed('blocks.'+i+'.sub','p','')}</div>
+  <div class="contactinfo">
+    <div class="ci-item"><span class="ci-ic">📍</span><div><div class="ci-lbl">Address</div>${ed('blocks.'+i+'.address','div','ci-val')}</div></div>
+    <div class="ci-item"><span class="ci-ic">📞</span><div><div class="ci-lbl">Phone</div>${ed('blocks.'+i+'.phone','div','ci-val')}</div></div>
+    <div class="ci-item"><span class="ci-ic">✉️</span><div><div class="ci-lbl">Email</div>${ed('blocks.'+i+'.email','div','ci-val')}</div></div>
+    <div class="ci-item"><span class="ci-ic">🕒</span><div><div class="ci-lbl">Hours</div>${ed('blocks.'+i+'.hours','div','ci-val')}</div></div>
+  </div></div></section>`; }
 function renderCta(b,i){ return `<section class="blk block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="ctablk">${ed('blocks.'+i+'.headline','h2','')}${ed('blocks.'+i+'.sub','p','')}<button class="cbtn">${ed('blocks.'+i+'.button','span','')}</button></div></section>`; }
-const RENDER={hero:renderHero,gallery:renderGallery,image:renderImage,unique:renderUnique,how:renderHow,testimonials:renderTestimonials,contact:renderContact,cta:renderCta};
+const RENDER={hero:renderHero,gallery:renderGallery,image:renderImage,unique:renderUnique,how:renderHow,testimonials:renderTestimonials,contact:renderContact,contactinfo:renderContactInfo,cta:renderCta};
 
 function render(){
   document.documentElement.style.setProperty('--accent',SITE.accent);
   document.documentElement.style.setProperty('--accent2',SITE.accent2);
   $('navName').textContent=SITE.name; $('footName').textContent=SITE.name; $('navLogo').textContent=(SITE.name[0]||'A').toUpperCase();
-  $('agentName').textContent=SITE.agent.name; $('agentAv').textContent=SITE.agent.emoji; $('agentFabName').textContent='Ask '+SITE.agent.name;
+  $('agentName').textContent=SITE.agent.name; applyAgentAvatar($('agentAv')); applyAgentAvatar($('agentFabAv')); $('agentFabName').textContent='Ask '+SITE.agent.name;
   $('agentMsgs').innerHTML=`<div class="msg bot">${esc(SITE.agent.greeting)}</div>`;
   $('tName').value=SITE.name; $('tAgent').value=SITE.agent.name; $('tAccent').value=SITE.accent; $('tAccent2').value=SITE.accent2;
   $('canvas').innerHTML = SITE.blocks.length ? SITE.blocks.map((b,i)=>(RENDER[b.type]||(()=>''))(b,i)).join('') : `<div class="empty-hint">No sections yet. Use <b>+ Add section</b> above to start building.</div>`;
@@ -435,6 +481,12 @@ async function searchStock(){ const key=$('stockKey').value.trim(), q=$('stockQ'
 function setName(v){ SITE.name=v; $('navName').textContent=v; $('footName').textContent=v; $('navLogo').textContent=(v[0]||'A').toUpperCase(); }
 function setVar(k,v){ SITE[k]=v; document.documentElement.style.setProperty('--'+k,v); }
 function setAgentName(v){ SITE.agent.name=v; $('agentName').textContent=v; $('agentFabName').textContent='Ask '+v; }
+function applyAgentAvatar(el){ if(!el) return; const a=SITE.agent;
+  if(a.avatar){ el.style.backgroundImage=`url('${a.avatar}')`; el.style.backgroundSize='cover'; el.style.backgroundPosition='center'; el.textContent=''; }
+  else { el.style.backgroundImage=''; el.textContent=a.emoji||'🤖'; } }
+function agentSystem(){ const a=SITE.agent; return [a.personality,a.system].map(s=>(s||'').trim()).filter(Boolean).join('\n\n'); }
+function handleAgentAvatar(ev){ const f=ev.target.files[0]; if(f&&f.type.startsWith('image/')){ const r=new FileReader(); r.onload=()=>{ SITE.agent.avatar=r.result; applyAgentAvatar($('setAvatarPrev')); render(); }; r.readAsDataURL(f); } ev.target.value=''; }
+function clearAgentAvatar(){ SITE.agent.avatar=''; applyAgentAvatar($('setAvatarPrev')); render(); }
 const DEFAULTS={
   hero:{type:'hero',pill:'New',headline:'A new headline.',sub:'A short subhead about this section.'},
   gallery:{type:'gallery',ey:'Explore',title:'Section title',sub:'Section subhead.',items:[{title:'First',caption:'Caption',img:'',grad:BGS[0]},{title:'Second',caption:'Caption',img:'',grad:BGS[1]},{title:'Third',caption:'Caption',img:'',grad:BGS[6]}]},
@@ -446,6 +498,7 @@ const DEFAULTS={
     {quote:'Fast, friendly, and it just works. Highly recommend.',name:'Jordan M.',role:'Member'},
     {quote:'The best experience I\'ve had. I tell everyone about it.',name:'Sam R.',role:'Partner'}]},
   contact:{type:'contact',ey:'Get in touch',title:'Contact us',sub:'Send us a note and we\'ll get back to you soon.',button:'Send message'},
+  contactinfo:{type:'contactinfo',ey:'Contact',title:'Get in touch',sub:'Reach us any of these ways — we\'re happy to help.',address:'123 Main St, Your City, ST 00000',phone:'(555) 123-4567',email:'hello@yourbusiness.com',hours:'Mon–Fri, 9am–5pm'},
   cta:{type:'cta',headline:'Ready to start?',sub:'A closing invitation.',button:'Get started'}
 };
 function addBlock(type){ SITE.blocks.push(JSON.parse(JSON.stringify(DEFAULTS[type]))); document.getElementById('addMenu').classList.remove('open'); render(); window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}); }
@@ -461,7 +514,7 @@ function dropBlock(i,e){ if(dragIdx===null||dragIdx===i) return; e.preventDefaul
 async function callAI(prompt){
   // Calls Claude via your Netlify Function (/.netlify/functions/claude). Works once deployed with ANTHROPIC_API_KEY set.
   try{
-    const r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({prompt,system:SITE.agent.system||''})});
+    const r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({prompt,system:agentSystem()})});
     if(!r.ok) throw 0;
     const d=await r.json();
     return esc(d.answer||'').replace(/\n/g,'<br>');
@@ -477,9 +530,9 @@ async function sendAgent(){ const inp=$('agentInput'),t=inp.value.trim(); if(!t)
 
 /* ===================== PREVIEW / SAVE / LOAD ===================== */
 function togglePreview(){ document.body.classList.toggle('previewing'); $('prevBtn').textContent=document.body.classList.contains('previewing')?'✎ Edit':'👁 Preview'; }
-function openSettings(){ $('setOg').value=SITE.ogImage||''; $('setSys').value=SITE.agent.system||''; $('setPriv').value=SITE.privacy||''; $('setModal').classList.add('show'); $('setOverlay').classList.add('show'); }
+function openSettings(){ $('setOg').value=SITE.ogImage||''; $('setEmoji').value=SITE.agent.emoji||''; $('setPersona').value=SITE.agent.personality||''; $('setGreet').value=SITE.agent.greeting||''; $('setSys').value=SITE.agent.system||''; $('setPriv').value=SITE.privacy||''; applyAgentAvatar($('setAvatarPrev')); $('setModal').classList.add('show'); $('setOverlay').classList.add('show'); }
 function closeSettings(){ $('setModal').classList.remove('show'); $('setOverlay').classList.remove('show'); }
-function saveSettings(){ SITE.ogImage=$('setOg').value.trim(); SITE.agent.system=$('setSys').value; SITE.privacy=$('setPriv').value; closeSettings(); }
+function saveSettings(){ SITE.ogImage=$('setOg').value.trim(); SITE.agent.emoji=$('setEmoji').value.trim()||'🤖'; SITE.agent.personality=$('setPersona').value; SITE.agent.greeting=$('setGreet').value; SITE.agent.system=$('setSys').value; SITE.privacy=$('setPriv').value; closeSettings(); render(); }
 function showPrivacy(){ $('privBody').textContent=SITE.privacy||''; $('privModal').classList.add('show'); $('privOverlay').classList.add('show'); }
 function hidePrivacy(){ $('privModal').classList.remove('show'); $('privOverlay').classList.remove('show'); }
 function faviconURI(){ const L=(SITE.name[0]||'A').toUpperCase(); const svg=`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='${SITE.accent}'/><text x='32' y='45' font-size='38' font-family='Arial,Helvetica,sans-serif' font-weight='bold' fill='white' text-anchor='middle'>${L}</text></svg>`; return 'data:image/svg+xml,'+encodeURIComponent(svg); }
@@ -493,6 +546,9 @@ function exportSite(){
   EXPORTING=true;
   const sectionsHTML=SITE.blocks.map((b,i)=>(RENDER[b.type]||(()=>''))(b,i)).join('');
   EXPORTING=false;
+  const av=SITE.agent.avatar;
+  const avStyle=av?` style="background-image:url('${av}');background-size:cover;background-position:center"`:'';
+  const avInner=av?'':esc(SITE.agent.emoji||'🤖');
   const doc=`<!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${esc(SITE.name)}</title>
@@ -509,8 +565,8 @@ ${css}</style></head>
 <nav class="site"><div class="wrap"><div class="brand"><span class="logo">${(SITE.name[0]||'A').toUpperCase()}</span> <span>${esc(SITE.name)}</span></div><div class="navlinks"><a>Explore</a><a>Features</a><a>About</a></div><button class="navcta">Get started</button></div></nav>
 <main>${sectionsHTML}</main>
 <footer class="site"><div class="wrap">${esc(SITE.name)} · AI search &amp; agent <b style="color:var(--ink)">powered by Claude</b> · <a href="#" onclick="showPrivacy();return false">Privacy</a></div></footer>
-<button class="agent-fab" onclick="toggleAgent()">💬 Ask ${esc(SITE.agent.name)}</button>
-<div class="agent-panel" id="agentPanel"><div class="agent-head"><div class="av">${SITE.agent.emoji}</div><div><b>${esc(SITE.agent.name)}</b><div class="on">● online</div></div><button class="x" onclick="toggleAgent()">×</button></div>
+<button class="agent-fab" onclick="toggleAgent()"><span class="fab-av"${avStyle}>${avInner}</span> Ask ${esc(SITE.agent.name)}</button>
+<div class="agent-panel" id="agentPanel"><div class="agent-head"><div class="av"${avStyle}>${avInner}</div><div><b>${esc(SITE.agent.name)}</b><div class="on">● online</div></div><button class="x" onclick="toggleAgent()">×</button></div>
 <div class="agent-msgs" id="agentMsgs"><div class="msg bot">${esc(SITE.agent.greeting)}</div></div>
 <div class="agent-credit">✨ Powered by <b>Claude</b></div>
 <div class="agent-input"><input id="agentInput" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendAgent()"><button onclick="sendAgent()">→</button></div></div>
@@ -519,7 +575,7 @@ ${css}</style></head>
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-var SYS=${JSON.stringify(SITE.agent.system||'')};
+var SYS=${JSON.stringify(agentSystem())};
 function showPrivacy(){ document.getElementById('privModal').classList.add('show'); document.getElementById('privOverlay').classList.add('show'); }
 function hidePrivacy(){ document.getElementById('privModal').classList.remove('show'); document.getElementById('privOverlay').classList.remove('show'); }
 async function callAI(p){ try{ var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({prompt:p,system:SYS})}); if(!r.ok) throw 0; var d=await r.json(); return esc(d.answer||'').replace(/\\n/g,'<br>'); }catch(e){ await new Promise(x=>setTimeout(x,500)); return 'Setup needed: add a Claude API key in Netlify to enable live answers. You asked: "<b>'+esc(p)+'</b>"'; } }
