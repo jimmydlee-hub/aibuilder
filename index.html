@@ -66,6 +66,8 @@
   nav.site .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
   .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.4px}
   .brand .logo{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#fff;font-weight:900}
+  .brand .logo.has-img{background:none}
+  .brand .logo img{width:100%;height:100%;object-fit:cover;border-radius:9px;display:block}
   .navlinks{display:flex;gap:22px;font-size:14px;color:var(--muted);font-weight:600}
   .navcta{background:var(--ink);color:#fff;border:none;padding:10px 16px;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer}
   @media(max-width:860px){.navlinks{display:none}}
@@ -102,6 +104,12 @@
   .gallery{display:grid;grid-template-columns:2fr 1fr 1fr;gap:16px}
   @media(max-width:820px){.gallery{grid-template-columns:1fr 1fr}}
   @media(max-width:540px){.gallery{grid-template-columns:1fr}}
+  .gallery.lay-equal3{grid-template-columns:1fr 1fr 1fr}
+  .gallery.lay-quad{grid-template-columns:1fr 1fr}
+  .gallery.lay-pair{grid-template-columns:1fr 1fr}
+  .gallery.lay-row4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:820px){.gallery.lay-equal3,.gallery.lay-quad,.gallery.lay-pair,.gallery.lay-row4{grid-template-columns:1fr 1fr}}
+  @media(max-width:540px){.gallery.lay-equal3,.gallery.lay-quad,.gallery.lay-pair,.gallery.lay-row4{grid-template-columns:1fr}}
   .gcard{position:relative;border-radius:var(--radius);overflow:hidden;min-height:240px;display:flex;align-items:flex-end;box-shadow:var(--shadow);color:#fff;background-size:cover;background-position:center;border:1px solid var(--line)}
   .gcard.big{min-height:330px}
   .gcard .ov{position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(8,16,28,.78));z-index:1}
@@ -183,6 +191,36 @@
   .blocktools button:hover{background:var(--accent);color:#04121f}
   .blocktools .lbl{color:#8aa0bd;font-size:11px;display:flex;align-items:center;padding:0 6px;cursor:grab}
   .empty-hint{max-width:520px;margin:60px auto;text-align:center;color:var(--muted);border:2px dashed var(--line);border-radius:16px;padding:40px}
+
+  .layout-pick{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:-14px 0 22px}
+  .layout-pick .lbtn{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:6px 11px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer}
+  .layout-pick .lbtn.on{border-color:var(--accent);color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+  body.previewing .layout-pick,body.exporting .layout-pick{display:none}
+
+  /* shared builder dialog (test + help) */
+  .bxd-ov{position:fixed;inset:0;background:rgba(8,16,28,.55);z-index:140;display:none}
+  .bxd-ov.show{display:block}
+  .bxd{position:fixed;z-index:141;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,92vw);max-height:86vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.4);padding:26px;display:none;color:var(--ink)}
+  .bxd.show{display:block}
+  .bxd h3{margin:0 0 4px;font-size:21px}
+  .bxd .sub{color:var(--muted);font-size:13.5px;margin:0 0 16px}
+  .bxd .x{position:absolute;top:16px;right:18px;background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer}
+  .bxd label{display:block;font-size:12.5px;font-weight:700;color:#334155;margin:14px 0 5px}
+  .bxd input,.bxd textarea,.bxd select{width:100%;border:1px solid #e2e8f0;border-radius:9px;padding:10px 12px;font-size:13.5px;font-family:inherit;outline:none}
+  .bxd textarea{min-height:84px;resize:vertical}
+  .bxd .primary{margin-top:18px;background:var(--accent);color:#04121f;border:none;border-radius:10px;padding:12px 22px;font-weight:800;cursor:pointer;font-size:14px}
+  .bxd .row{display:flex;gap:12px}.bxd .row>*{flex:1}
+  /* test report */
+  .score{display:flex;align-items:center;gap:14px;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+  .score .num{font-size:34px;font-weight:900;letter-spacing:-1px}
+  .score .meta{font-size:13px;color:var(--muted)}
+  .checks{list-style:none;padding:0;margin:0}
+  .checks li{display:flex;gap:11px;align-items:flex-start;padding:11px 0;border-top:1px solid var(--line);font-size:14px}
+  .checks li .ic{font-size:16px;line-height:1.4;flex:none}
+  .checks li.pass .ic{color:var(--good)} .checks li.warn .ic{color:var(--warn)} .checks li.fail .ic{color:var(--bad)}
+  .checks li .ct b{display:block;font-size:14px;margin-bottom:1px}
+  .checks li .ct span{color:var(--muted);font-size:12.5px}
+  .help-ok{text-align:center;padding:20px 4px}.help-ok .em{font-size:46px}
 </style>
 </head>
 <body class="panel-open">
@@ -191,7 +229,8 @@
 <div class="toolbar">
   <div class="grp"><span style="font-weight:800;color:#fff">⚡ AI Website Builder</span></div>
   <div class="sep"></div>
-  <div class="grp"><label>Site</label><input type="text" id="tName" oninput="setName(this.value)" placeholder="My Site"></div>
+  <div class="grp"><label>Company</label><input type="text" id="tName" oninput="setName(this.value)" placeholder="My Company"></div>
+  <div class="grp"><label>Logo</label><button class="btn ghost" onclick="document.getElementById('logoUpload').click()" id="logoBtn" title="Upload a logo image">⬆ Add logo</button><button class="btn ghost" id="logoClear" onclick="removeLogo()" title="Remove logo" style="display:none">✕</button><input type="file" id="logoUpload" accept="image/*" style="display:none" onchange="setLogo(event)"></div>
   <div class="grp"><label>Colors</label><input type="color" id="tAccent" oninput="setVar('accent',this.value)"><input type="color" id="tAccent2" oninput="setVar('accent2',this.value)"></div>
   <div class="grp"><label>Agent</label><input type="text" id="tAgent" oninput="setAgentName(this.value)" placeholder="Agent" style="width:84px"></div>
   <div class="sep"></div>
@@ -210,8 +249,19 @@
       <button onclick="addBlock('cta')">📣 Call to action</button>
     </div>
   </div>
+  <div class="addmenu" id="tplMenu">
+    <button class="btn" onclick="document.getElementById('tplMenu').classList.toggle('open')">🧩 Templates ▾</button>
+    <div class="menu">
+      <button onclick="applyTemplate('restaurant')">🍽️ Restaurant / Café</button>
+      <button onclick="applyTemplate('shop')">🛍️ Shop / Boutique</button>
+      <button onclick="applyTemplate('salon')">💇 Salon / Spa</button>
+      <button onclick="applyTemplate('services')">🔧 Services / Trades</button>
+    </div>
+  </div>
   <div class="spacer"></div>
   <div class="grp">
+    <button class="btn ghost" onclick="runTests()" id="testBtn">🧪 Test site</button>
+    <button class="btn ghost" onclick="openHelp()" id="helpBtn">🙋 Get expert help</button>
     <button class="btn ghost" onclick="togglePreview()" id="prevBtn">👁 Preview</button>
     <button class="btn" onclick="saveProject()">💾 Save</button>
     <button class="btn" onclick="document.getElementById('loadFile').click()">📂 Load</button>
@@ -219,7 +269,7 @@
     <button class="btn primary" onclick="exportSite()">⬇ Export site</button>
   </div>
 </div>
-<div class="hint">👉 Add photos in the left panel, then <b>drag a photo onto any picture area</b> (or click a photo, then click where you want it). Click text to edit. Hover a section to move/delete. Then <b>Export</b>.</div>
+<div class="hint">👉 Set your <b>Company name</b> &amp; <b>Logo</b> at the top-left, pick a <b>Template</b> to start fast, then drag photos onto any picture area (use the layout buttons to rearrange them). Run <b>🧪 Test site</b> before you publish, or <b>🙋 Get expert help</b>. Then <b>Export</b>.</div>
 
 <!-- ===== PHOTOS RAIL (Canva-style) ===== -->
 <aside class="photos-rail">
@@ -276,6 +326,63 @@
 <div class="pmodal-ov" id="privOverlay" onclick="hidePrivacy()"></div>
 <div class="pmodal" id="privModal"><h3>Privacy</h3><p id="privBody"></p><button class="pclose" onclick="hidePrivacy()">Close</button></div>
 
+<!-- Test-my-website report -->
+<div class="bxd-ov" id="testOv" onclick="closeTest()"></div>
+<div class="bxd" id="testModal">
+  <button class="x" onclick="closeTest()">×</button>
+  <h3>🧪 Website check</h3>
+  <p class="sub">A quick review of your site before you publish. Fix the ✕ items and consider the ⚠ suggestions.</p>
+  <div class="score"><div class="num" id="testScore">—</div><div><div id="testGrade" style="font-weight:800"></div><div class="meta" id="testMeta"></div></div></div>
+  <ul class="checks" id="testList"></ul>
+  <button class="primary" onclick="closeTest()">Done</button>
+</div>
+
+<!-- Get expert help (Netlify Form) -->
+<div class="bxd-ov" id="helpOv" onclick="closeHelp()"></div>
+<div class="bxd" id="helpModal">
+  <button class="x" onclick="closeHelp()">×</button>
+  <div id="helpFormWrap">
+    <h3>🙋 Get expert help</h3>
+    <p class="sub">Want a professional to set up, update, or add features to your site? Send a request and we'll match you with someone who can help.</p>
+    <form name="expert-help" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="helpForm" onsubmit="return submitHelp(event)">
+      <input type="hidden" name="form-name" value="expert-help">
+      <p style="display:none"><label>Leave blank: <input name="bot-field"></label></p>
+      <div class="row">
+        <div><label>Your name</label><input type="text" name="name" required></div>
+        <div><label>Email</label><input type="email" name="email" required></div>
+      </div>
+      <label>Business / website name</label>
+      <input type="text" name="business">
+      <label>What do you need help with?</label>
+      <select name="need">
+        <option>Initial setup &amp; launch</option>
+        <option>Design &amp; layout improvements</option>
+        <option>Adding photos &amp; content</option>
+        <option>New features / enhancements</option>
+        <option>Ongoing updates &amp; maintenance</option>
+        <option>Something else</option>
+      </select>
+      <label>Tell us a bit more</label>
+      <textarea name="message" placeholder="Describe your business and what you'd like done…"></textarea>
+      <label>Budget (optional)</label>
+      <select name="budget">
+        <option>Not sure yet</option>
+        <option>Under $250</option>
+        <option>$250–$1,000</option>
+        <option>$1,000–$5,000</option>
+        <option>$5,000+</option>
+      </select>
+      <button class="primary" type="submit">Send request</button>
+    </form>
+  </div>
+  <div id="helpThanks" class="help-ok" style="display:none">
+    <div class="em">✅</div>
+    <h3>Request sent!</h3>
+    <p class="sub">Thanks — your request was received. Submissions appear in your Netlify dashboard under <b>Forms → expert-help</b>, and you'll be contacted at the email you provided.</p>
+    <button class="primary" onclick="closeHelp()">Close</button>
+  </div>
+</div>
+
 <button class="agent-fab" onclick="toggleAgent()">💬 <span id="agentFabName">Ask the agent</span></button>
 <div class="agent-panel" id="agentPanel">
   <div class="agent-head"><div class="av" id="agentAv">🤖</div><div><b id="agentName">Agent</b><div class="on">● online</div></div><button class="x" onclick="toggleAgent()">×</button></div>
@@ -287,13 +394,13 @@
 <script>
 /* ===================== MODEL ===================== */
 const SITE = {
-  name:'My AI Site', accent:'#3aa0ff', accent2:'#6ee7ff', ogImage:'',
+  name:'My AI Site', logo:'', accent:'#3aa0ff', accent2:'#6ee7ff', ogImage:'',
   privacy:'We respect your privacy. Messages you send through our contact form or AI assistant are used only to respond to you and improve our service — they are not sold. Our AI assistant is powered by Claude (Anthropic), which processes your questions to generate replies. Contact us anytime to request deletion of your information.',
   agent:{name:'Aria', emoji:'🤖', system:'', greeting:'Hi! I\'m here to help. Ask me anything.'},
   search:{placeholder:'Ask anything…', examples:['Show me an example','How does this work?','Find what I need']},
   blocks:[
     {type:'hero', pill:'AI-powered', headline:'Your headline goes here.', sub:'A short, punchy subhead that explains what this site does in one breath.'},
-    {type:'gallery', ey:'Explore', title:'Big, beautiful visuals', sub:'Drag your photos from the left panel onto these tiles.',
+    {type:'gallery', ey:'Explore', title:'Big, beautiful visuals', sub:'Drag your photos from the left panel onto these tiles.', layout:'featured',
       items:[{title:'First',caption:'Caption here',img:'',grad:'linear-gradient(135deg,#dbeafe,#93c5fd)'},
              {title:'Second',caption:'Caption here',img:'',grad:'linear-gradient(135deg,#dcfce7,#86efac)'},
              {title:'Third',caption:'Caption here',img:'',grad:'linear-gradient(135deg,#ede9fe,#c4b5fd)'}]},
@@ -354,9 +461,18 @@ function renderHero(b,i){ return `<section class="blk hero block" data-i="${i}" 
     <div class="chips">${SITE.search.examples.map(x=>`<span class="chip" onclick="fillSearch('${esc(x).replace(/'/g,"&#39;")}')">${esc(x)}</span>`).join('')}</div>
     <div class="results" id="searchResults"><div class="rhead">✨ AI answer <span class="claude-badge">Powered by Claude</span></div><div id="searchAns"></div></div>
   </div></div></section>`; }
-function renderGallery(b,i){ return `<section class="blk block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap">
+const GLAYOUTS=[{k:'featured',n:'Featured + 2',c:3},{k:'equal3',n:'Even row of 3',c:3},{k:'quad',n:'2×2 grid',c:4},{k:'pair',n:'Side by side',c:2},{k:'row4',n:'Filmstrip of 4',c:4}];
+function galleryPicker(b,i){ if(EXPORTING) return ''; const cur=b.layout||'featured';
+  return `<div class="layout-pick">${GLAYOUTS.map(l=>`<button class="lbtn ${l.k===cur?'on':''}" onclick="setGalleryLayout(${i},'${l.k}')" title="Rearrange the pictures">${l.n}</button>`).join('')}</div>`; }
+function setGalleryLayout(i,layout){ const b=SITE.blocks[i]; b.layout=layout; const want=(GLAYOUTS.find(l=>l.k===layout)||{c:3}).c;
+  if(!b.items) b.items=[];
+  while(b.items.length<want){ const k=b.items.length; b.items.push({title:'Title',caption:'Caption here',img:'',grad:BGS[k%BGS.length]}); }
+  if(b.items.length>want) b.items=b.items.slice(0,want);
+  render(); }
+function renderGallery(b,i){ const lay=b.layout||'featured'; return `<section class="blk block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap">
   <div class="sec-head"><div class="ey">${ed('blocks.'+i+'.ey','span','')}</div>${ed('blocks.'+i+'.title','h2','')}${ed('blocks.'+i+'.sub','p','')}</div>
-  <div class="gallery">${b.items.map((g,j)=>imgCard(j===0?'big':'',`blocks.${i}.items.${j}.img`,`blocks.${i}.items.${j}.grad`,
+  ${galleryPicker(b,i)}
+  <div class="gallery lay-${lay}">${b.items.map((g,j)=>imgCard((lay==='featured'&&j===0)?'big':'',`blocks.${i}.items.${j}.img`,`blocks.${i}.items.${j}.grad`,
      g.img?`background-image:url('${g.img}')`:`background:${g.grad}`,
      ed('blocks.'+i+'.items.'+j+'.title','h3','')+ed('blocks.'+i+'.items.'+j+'.caption','p',''))).join('')}</div>
   </div></section>`; }
@@ -400,7 +516,7 @@ const RENDER={hero:renderHero,gallery:renderGallery,image:renderImage,unique:ren
 function render(){
   document.documentElement.style.setProperty('--accent',SITE.accent);
   document.documentElement.style.setProperty('--accent2',SITE.accent2);
-  $('navName').textContent=SITE.name; $('footName').textContent=SITE.name; $('navLogo').textContent=(SITE.name[0]||'A').toUpperCase();
+  $('navName').textContent=SITE.name; $('footName').textContent=SITE.name; applyLogo();
   $('agentName').textContent=SITE.agent.name; $('agentAv').textContent=SITE.agent.emoji; $('agentFabName').textContent='Ask '+SITE.agent.name;
   $('agentMsgs').innerHTML=`<div class="msg bot">${esc(SITE.agent.greeting)}</div>`;
   $('tName').value=SITE.name; $('tAgent').value=SITE.agent.name; $('tAccent').value=SITE.accent; $('tAccent2').value=SITE.accent2;
@@ -432,7 +548,13 @@ async function searchStock(){ const key=$('stockKey').value.trim(), q=$('stockQ'
 })();
 
 /* ===================== TOOLBAR ACTIONS ===================== */
-function setName(v){ SITE.name=v; $('navName').textContent=v; $('footName').textContent=v; $('navLogo').textContent=(v[0]||'A').toUpperCase(); }
+function setName(v){ SITE.name=v; $('navName').textContent=v; $('footName').textContent=v; applyLogo(); }
+function applyLogo(){ const el=$('navLogo'); if(!el) return;
+  if(SITE.logo){ el.classList.add('has-img'); el.innerHTML=`<img src="${SITE.logo}" alt="logo">`; }
+  else { el.classList.remove('has-img'); el.textContent=(SITE.name[0]||'A').toUpperCase(); }
+  const clr=$('logoClear'), b=$('logoBtn'); if(clr) clr.style.display=SITE.logo?'':'none'; if(b) b.textContent=SITE.logo?'↻ Change logo':'⬆ Add logo'; }
+function setLogo(ev){ const f=ev.target.files[0]; ev.target.value=''; if(!f||!f.type.startsWith('image/'))return; const r=new FileReader(); r.onload=()=>{ SITE.logo=r.result; applyLogo(); }; r.readAsDataURL(f); }
+function removeLogo(){ SITE.logo=''; applyLogo(); }
 function setVar(k,v){ SITE[k]=v; document.documentElement.style.setProperty('--'+k,v); }
 function setAgentName(v){ SITE.agent.name=v; $('agentName').textContent=v; $('agentFabName').textContent='Ask '+v; }
 const DEFAULTS={
@@ -456,6 +578,128 @@ let dragIdx=null;
 function dragStart(i,e){ dragIdx=i; e.dataTransfer.effectAllowed='move'; }
 function dragOver(i,e){ if(dragIdx!==null) e.preventDefault(); }
 function dropBlock(i,e){ if(dragIdx===null||dragIdx===i) return; e.preventDefault(); const b=SITE.blocks.splice(dragIdx,1)[0]; SITE.blocks.splice(i,0,b); dragIdx=null; render(); }
+
+/* ===================== STARTER TEMPLATES (small business) ===================== */
+function gi(list){ return list.map((x,k)=>({title:x[0],caption:x[1],img:'',grad:BGS[k%BGS.length]})); }
+const TEMPLATES={
+  restaurant:{name:'Bella Tavola', accent:'#e2674a', accent2:'#f0a868',
+    agent:{name:'Sofia',emoji:'🍝',system:'You are the host for Bella Tavola, a neighborhood Italian restaurant. Help guests with the menu, hours, reservations, and dietary questions. Be warm and concise.',greeting:'Ciao! Hungry? Ask me about our menu, hours, or booking a table.'},
+    search:{placeholder:'Ask about our menu, hours, or booking…',examples:['Do you have vegetarian dishes?','What are your hours?','Can I book a table for 4?']},
+    blocks:[
+      {type:'hero',pill:'Now taking reservations',headline:'Fresh pasta, made by hand every morning.',sub:'A cozy neighborhood table for great food, good wine, and better company.'},
+      {type:'gallery',ey:'On the menu',title:'A taste of what we serve',sub:'Drag your own dish photos onto these tiles.',layout:'quad',items:gi([['Signature pasta','House-made daily'],['Wood-fired pizza','Naples style'],['Seasonal plates','Locally sourced'],['Dolci','Sweet endings']])},
+      {type:'unique',badge:'Why us',title:'Family recipes, modern kitchen',emoji:'🍝',image:'',desc:'Three generations of recipes, plated with care and served like you are family.',points:['Made fresh, never frozen','Local, seasonal ingredients','Warm, unhurried service'],cta:'See the full menu'},
+      {type:'how',ey:'Good to know',title:'Plan your visit',items:[{emoji:'🕐',title:'Hours',desc:'Tue–Sun, 5pm–10pm. Closed Mondays.'},{emoji:'📍',title:'Find us',desc:'123 Main Street, your town. Street parking available.'},{emoji:'📞',title:'Reserve',desc:'Call ahead or use the form below for groups of 4+.'}]},
+      {type:'testimonials',ey:'Loved by locals',title:'What guests say',items:[{quote:'Best Italian in town — the pasta tastes like Rome.',name:'Maria L.',role:'Regular'},{quote:'Cozy, friendly, and the wine list is perfect.',name:'James T.',role:'Date night'},{quote:'They treated our big group like family.',name:'Priya S.',role:'Birthday dinner'}]},
+      {type:'contact',ey:'Reservations',title:'Book a table',sub:'Send your details and we will confirm by email.',button:'Request a table'},
+      {type:'cta',headline:'Come hungry. Leave happy.',sub:'We save the best seat for you.',button:'Reserve now'}
+    ]},
+  shop:{name:'Maple & Co.', accent:'#7c6cf0', accent2:'#a78bfa',
+    agent:{name:'Ivy',emoji:'🛍️',system:'You are a shopping assistant for Maple & Co., a small boutique. Help visitors find products, sizes, shipping, and return info. Be friendly and helpful.',greeting:'Hi! Looking for something special? I can help you find it.'},
+    search:{placeholder:'Search products, sizes, shipping…',examples:['What is your return policy?','Do you ship internationally?','Show me gift ideas']},
+    blocks:[
+      {type:'hero',pill:'New arrivals',headline:'Thoughtfully made goods you will love.',sub:'A small shop with a big heart — curated pieces for everyday life.'},
+      {type:'gallery',ey:'Shop',title:'Featured products',sub:'Add your product photos here.',layout:'row4',items:gi([['Bestseller','From $24'],['New in','Just arrived'],['Gift sets','Ready to give'],['Sale','Limited time']])},
+      {type:'unique',badge:'Our promise',title:'Quality you can feel',emoji:'🛍️',image:'',desc:'Every item is chosen by hand and backed by a no-fuss return policy.',points:['Free shipping over $50','30-day easy returns','Securely packed with care'],cta:'Shop all'},
+      {type:'testimonials',ey:'Happy customers',title:'People love shopping here',items:[{quote:'Beautiful quality and it arrived so fast!',name:'Dana K.',role:'Verified buyer'},{quote:'My go-to shop for gifts. Never disappoints.',name:'Leo M.',role:'Repeat customer'},{quote:'Lovely packaging and great service.',name:'Nina R.',role:'Verified buyer'}]},
+      {type:'contact',ey:'Questions?',title:'Get in touch',sub:'Ask about an order, sizing, or anything else.',button:'Send message'}
+    ]},
+  salon:{name:'Lumière Studio', accent:'#d6618f', accent2:'#f0a6c4',
+    agent:{name:'Remy',emoji:'💇',system:'You are the front desk for Lumière Studio, a hair and beauty salon. Help with services, pricing, and booking appointments. Be polished and friendly.',greeting:'Welcome to Lumière! How can I help you look and feel your best?'},
+    search:{placeholder:'Ask about services or booking…',examples:['How much is a haircut?','Do you do color?','How do I book?']},
+    blocks:[
+      {type:'hero',pill:'Now booking',headline:'Look amazing. Feel even better.',sub:'A modern studio for hair, color, and care — by stylists who listen.'},
+      {type:'gallery',ey:'Our work',title:'Recent transformations',sub:'Showcase your best before/after photos.',layout:'equal3',items:gi([['Cuts & styling','Tailored to you'],['Color & balayage','Glow up'],['Treatments','Healthy hair']])},
+      {type:'unique',badge:'The experience',title:'More than an appointment',emoji:'💇',image:'',desc:'Relaxed, unhurried sessions with stylists who care about the details.',points:['Free consultation','Premium, kind-to-hair products','Flexible evening hours'],cta:'View services'},
+      {type:'how',ey:'Easy booking',title:'How it works',items:[{emoji:'💬',title:'Tell us',desc:'Share what you are after — we will recommend the right service.'},{emoji:'📅',title:'Pick a time',desc:'Choose a slot that suits you, including evenings.'},{emoji:'✨',title:'Relax',desc:'Sit back and leave looking and feeling great.'}]},
+      {type:'contact',ey:'Appointments',title:'Book your visit',sub:'Send a request and we will confirm your time.',button:'Request appointment'}
+    ]},
+  services:{name:'Rivera Home Services', accent:'#2f9e6f', accent2:'#6ee7b7',
+    agent:{name:'Marco',emoji:'🔧',system:'You are the assistant for Rivera Home Services, a local trades and repair business. Help with service info, service areas, quotes, and scheduling. Be clear and reassuring.',greeting:'Hi! Need a hand around the house? Tell me what is going on.'},
+    search:{placeholder:'Ask about services, areas, or quotes…',examples:['Do you offer free quotes?','What areas do you cover?','How fast can you come?']},
+    blocks:[
+      {type:'hero',pill:'Licensed & insured',headline:'Reliable home repairs, done right.',sub:'Friendly local pros for the jobs on your list — on time and tidy.'},
+      {type:'how',ey:'What we do',title:'Our services',items:[{emoji:'🔧',title:'Repairs',desc:'Plumbing, electrical, and general fixes done properly.'},{emoji:'🏠',title:'Maintenance',desc:'Keep your home in top shape year-round.'},{emoji:'🛠️',title:'Upgrades',desc:'Small renovations and improvements, big or small.'}]},
+      {type:'gallery',ey:'Our work',title:'Before & after',sub:'Show off completed jobs with your own photos.',layout:'pair',items:gi([['Before','The starting point'],['After','The finished result']])},
+      {type:'testimonials',ey:'Trusted locally',title:'What clients say',items:[{quote:'On time, fair price, and spotless cleanup.',name:'Ed & Carol',role:'Homeowners'},{quote:'Fixed in an hour what others wanted to replace.',name:'Tanya B.',role:'Client'},{quote:'Professional and friendly from start to finish.',name:'Greg P.',role:'Client'}]},
+      {type:'contact',ey:'Free quote',title:'Request a quote',sub:'Tell us about the job and we will get right back to you.',button:'Get my quote'},
+      {type:'cta',headline:'Got a job on your list?',sub:'Free quotes, no pressure. We are happy to help.',button:'Request a quote'}
+    ]}
+};
+function applyTemplate(kind){ const t=TEMPLATES[kind]; if(!t) return;
+  document.getElementById('tplMenu').classList.remove('open');
+  if(!confirm('Load the "'+t.name+'" starter template? This replaces your current sections and content (your logo and uploaded photos are kept).')) return;
+  SITE.name=t.name; SITE.accent=t.accent; SITE.accent2=t.accent2;
+  SITE.agent={...SITE.agent,...t.agent}; SITE.search=JSON.parse(JSON.stringify(t.search));
+  SITE.blocks=JSON.parse(JSON.stringify(t.blocks));
+  render();
+}
+
+/* ===================== TEST MY WEBSITE ===================== */
+function runTests(){
+  const c=[], add=(level,title,detail)=>c.push({level,title,detail});
+  const name=(SITE.name||'').trim();
+  if(!name||name==='My AI Site') add('warn','Add your company name','Replace the placeholder in the Company box so visitors know who you are.');
+  else add('pass','Company name set','Your site shows "'+name+'".');
+
+  if(SITE.logo) add('pass','Logo added','A custom logo appears in your header.');
+  else add('warn','No logo yet','Click "Add logo" in the toolbar to upload your brand mark (optional but recommended).');
+
+  if(!SITE.blocks.length){ add('fail','No sections','Use "+ Add section" or a Template to build your page.'); }
+  else add('pass',SITE.blocks.length+' sections on the page','Your page has content to show.');
+
+  const hero=SITE.blocks.find(b=>b.type==='hero');
+  const heroDefaults=['Your headline goes here.','A new headline.','A new headline'];
+  if(!hero) add('warn','No hero / headline section','Add a Hero section so visitors instantly see what you offer.');
+  else if(!hero.headline||heroDefaults.includes(hero.headline.trim())) add('warn','Headline still a placeholder','Write a headline that says what your business does in one line.');
+  else add('pass','Clear headline','"'+hero.headline.trim().slice(0,60)+'"');
+
+  let slots=0, filled=0;
+  SITE.blocks.forEach(b=>{ if(b.type==='gallery'&&b.items) b.items.forEach(it=>{slots++; if(it.img) filled++;});
+    if(b.type==='image'){slots++; if(b.src) filled++;}
+    if(b.type==='unique'){slots++; if(b.image) filled++;} });
+  if(slots===0) add('warn','No picture areas','Add a Gallery or Image section to showcase your business.');
+  else if(filled===0) add('warn','Photos are still placeholders','Drag your own photos onto the picture tiles — '+slots+' spots are waiting.');
+  else if(filled<slots) add('warn',filled+' of '+slots+' photos added','Fill the remaining '+(slots-filled)+' picture spots for a complete look.');
+  else add('pass','All '+slots+' photos added','Every picture area has a real image.');
+
+  if(SITE.blocks.some(b=>b.type==='contact')) add('pass','Contact form present','Visitors can reach you and messages are captured by Netlify Forms.');
+  else add('warn','No contact section','Add a Contact section so visitors can get in touch.');
+
+  if((SITE.privacy||'').trim().length>40) add('pass','Privacy notice in place','A privacy notice is linked in your footer.');
+  else add('warn','Privacy notice is thin','Add a short privacy notice in Settings.');
+
+  if((SITE.agent.system||'').trim()) add('pass','AI assistant has instructions','Your chat assistant knows how to answer about your business.');
+  else add('warn','AI assistant not briefed','Open Settings → "Agent instructions" so the AI answers accurately for your business.');
+
+  const total=c.length, pts=c.reduce((s,x)=>s+(x.level==='pass'?1:x.level==='warn'?0.5:0),0);
+  const score=Math.round(pts/total*100);
+  const grade=score>=90?'Excellent — ready to publish 🎉':score>=75?'Looking good — a few tweaks left':score>=50?'Getting there — keep going':'Just getting started';
+  $('testScore').textContent=score; $('testScore').style.color=score>=75?'var(--good)':score>=50?'var(--warn)':'var(--bad)';
+  $('testGrade').textContent=grade;
+  $('testMeta').textContent=c.filter(x=>x.level==='pass').length+' passed · '+c.filter(x=>x.level==='warn').length+' to improve · '+c.filter(x=>x.level==='fail').length+' to fix';
+  const ic={pass:'✓',warn:'⚠',fail:'✕'};
+  $('testList').innerHTML=c.map(x=>`<li class="${x.level}"><span class="ic">${ic[x.level]}</span><div class="ct"><b>${esc(x.title)}</b><span>${esc(x.detail)}</span></div></li>`).join('');
+  $('testModal').classList.add('show'); $('testOv').classList.add('show');
+}
+function closeTest(){ $('testModal').classList.remove('show'); $('testOv').classList.remove('show'); }
+
+/* ===================== GET EXPERT HELP (Netlify Form) ===================== */
+function openHelp(){ $('helpFormWrap').style.display=''; $('helpThanks').style.display='none'; $('helpForm').reset(); $('helpModal').classList.add('show'); $('helpOv').classList.add('show'); }
+function closeHelp(){ $('helpModal').classList.remove('show'); $('helpOv').classList.remove('show'); }
+async function submitHelp(e){ e.preventDefault(); const form=e.target;
+  try{
+    const r=await fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(new FormData(form)).toString()});
+    if(!r.ok) throw 0;
+    $('helpFormWrap').style.display='none'; $('helpThanks').style.display='';
+  }catch(err){
+    alert('Could not send right now. This request form works automatically once your site is published on Netlify — then submissions appear under Forms → expert-help.');
+  }
+  return false;
+}
+/* close open dropdown menus when clicking elsewhere */
+document.addEventListener('click',e=>{ if(!e.target.closest('.addmenu')) document.querySelectorAll('.addmenu.open').forEach(m=>m.classList.remove('open')); });
+
 
 /* ===================== AI SEARCH + AGENT (demo) ===================== */
 async function callAI(prompt){
@@ -506,7 +750,7 @@ ${SITE.ogImage?`<meta property="og:image" content="${esc(SITE.ogImage)}">`:''}
 <style>:root{--accent:${SITE.accent};--accent2:${SITE.accent2};--ink:#0f1622;--ink2:#1b2737;--muted:#64748b;--line:#e6ebf2;--bg:#f7f9fc;--card:#fff;--good:#16a34a;--warn:#d9a400;--radius:18px;--shadow:0 10px 40px rgba(20,40,80,.08)}
 ${css}</style></head>
 <body>
-<nav class="site"><div class="wrap"><div class="brand"><span class="logo">${(SITE.name[0]||'A').toUpperCase()}</span> <span>${esc(SITE.name)}</span></div><div class="navlinks"><a>Explore</a><a>Features</a><a>About</a></div><button class="navcta">Get started</button></div></nav>
+<nav class="site"><div class="wrap"><div class="brand"><span class="logo${SITE.logo?' has-img':''}">${SITE.logo?`<img src="${SITE.logo}" alt="logo">`:(SITE.name[0]||'A').toUpperCase()}</span> <span>${esc(SITE.name)}</span></div><div class="navlinks"><a>Explore</a><a>Features</a><a>About</a></div><button class="navcta">Get started</button></div></nav>
 <main>${sectionsHTML}</main>
 <footer class="site"><div class="wrap">${esc(SITE.name)} · AI search &amp; agent <b style="color:var(--ink)">powered by Claude</b> · <a href="#" onclick="showPrivacy();return false">Privacy</a></div></footer>
 <button class="agent-fab" onclick="toggleAgent()">💬 Ask ${esc(SITE.agent.name)}</button>
