@@ -39,6 +39,23 @@
   .setmodal .sdone{margin-top:18px;background:var(--accent);color:#04121f;border:none;border-radius:10px;padding:11px 20px;font-weight:800;cursor:pointer}
   .setmodal .snote{font-size:11px;color:#94a3b8;margin-top:4px}
 
+  /* ===== COMPARE-ON-MY-SITE MODAL ===== */
+  .cmp-ov{position:fixed;inset:0;background:rgba(8,16,28,.6);z-index:140;display:none}
+  .cmp-ov.show{display:block}
+  .cmp-modal{position:fixed;z-index:141;left:50%;top:50%;transform:translate(-50%,-50%);width:min(1100px,95vw);height:min(86vh,860px);background:#fff;border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.45);display:none;flex-direction:column;overflow:hidden;color:var(--ink)}
+  .cmp-modal.show{display:flex}
+  .cmp-bar{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line);font-size:15px}
+  .cmp-bar b{flex:1}
+  .cmp-x{background:none;border:none;font-size:24px;color:var(--muted);cursor:pointer;line-height:1}
+  .cmp-form{display:flex;gap:8px;padding:14px 18px 4px}
+  .cmp-form input{flex:1;border:1px solid var(--line);border-radius:10px;padding:11px 13px;font-size:14px;outline:none;font-family:inherit}
+  .cmp-form input:focus{border-color:var(--accent)}
+  .cmp-go{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none;border-radius:10px;padding:0 20px;font-weight:800;font-size:14px;cursor:pointer}
+  .cmp-note{padding:6px 18px 12px;font-size:12px;color:var(--muted);line-height:1.5}
+  .cmp-stage{flex:1;margin:0 18px 18px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg);position:relative}
+  .cmp-stage iframe{width:100%;height:100%;border:none;background:#fff}
+  .cmp-empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--muted);font-size:14px;padding:20px}
+
   /* ===== CANVA-STYLE PHOTOS RAIL ===== */
   .photos-rail{position:fixed;left:0;top:0;bottom:0;width:var(--rail);background:#0c1422;color:#dbe4f0;z-index:90;overflow-y:auto;border-right:1px solid #1f2b3d;padding:14px 14px 40px;padding-top:96px}
   body:not(.panel-open) .photos-rail{display:none}
@@ -196,6 +213,7 @@
   <div class="grp"><label>Agent</label><input type="text" id="tAgent" oninput="setAgentName(this.value)" placeholder="Agent" style="width:84px"></div>
   <div class="sep"></div>
   <button class="btn ghost" onclick="document.body.classList.toggle('panel-open')">🖼 Photos</button>
+  <button class="btn ghost" onclick="openCompare()">🔍 Compare on my site</button>
   <button class="btn ghost" onclick="openSettings()">⚙ Settings</button>
   <div class="addmenu" id="addMenu">
     <button class="btn" onclick="document.getElementById('addMenu').classList.toggle('open')">+ Add section ▾</button>
@@ -270,6 +288,24 @@
   <textarea id="setPriv"></textarea>
   <div class="snote">Plain-language only — not legal advice. Consider having a professional review it.</div>
   <button class="sdone" onclick="saveSettings()">Done</button>
+</div>
+
+<!-- Compare-on-my-site dialog -->
+<div class="cmp-ov" id="cmpOverlay" onclick="closeCompare()"></div>
+<div class="cmp-modal" id="cmpModal">
+  <div class="cmp-bar">
+    <b>🔍 Preview the AI features on your existing site</b>
+    <button class="cmp-x" onclick="closeCompare()" title="Close">×</button>
+  </div>
+  <div class="cmp-form">
+    <input id="cmpUrl" placeholder="yourexistingsite.com" onkeydown="if(event.key==='Enter')runCompare()">
+    <button class="cmp-go" onclick="runCompare()">Show preview</button>
+  </div>
+  <div class="cmp-note">Loads your live site and overlays the same AI search bar and “Ask the agent” chat — so you can see exactly how the features look on top of what you already have. Uses the agent name, greeting, and colors from your current settings.</div>
+  <div class="cmp-stage" id="cmpStage">
+    <div class="cmp-empty" id="cmpEmpty">Enter your website address above and press <b>Show preview</b>.</div>
+    <iframe id="cmpFrame" title="Your site with AI features" style="display:none"></iframe>
+  </div>
 </div>
 
 <!-- Privacy modal (also baked into exported sites) -->
@@ -480,6 +516,24 @@ function togglePreview(){ document.body.classList.toggle('previewing'); $('prevB
 function openSettings(){ $('setOg').value=SITE.ogImage||''; $('setSys').value=SITE.agent.system||''; $('setPriv').value=SITE.privacy||''; $('setModal').classList.add('show'); $('setOverlay').classList.add('show'); }
 function closeSettings(){ $('setModal').classList.remove('show'); $('setOverlay').classList.remove('show'); }
 function saveSettings(){ SITE.ogImage=$('setOg').value.trim(); SITE.agent.system=$('setSys').value; SITE.privacy=$('setPriv').value; closeSettings(); }
+
+/* ===================== COMPARE ON MY EXISTING SITE ===================== */
+function openCompare(){ $('cmpModal').classList.add('show'); $('cmpOverlay').classList.add('show'); $('cmpUrl').focus(); }
+function closeCompare(){ $('cmpModal').classList.remove('show'); $('cmpOverlay').classList.remove('show'); const f=$('cmpFrame'); f.src='about:blank'; f.style.display='none'; $('cmpEmpty').style.display='grid'; }
+function runCompare(){
+  let url=$('cmpUrl').value.trim();
+  if(!url){ $('cmpUrl').focus(); return; }
+  if(!/^https?:\/\//i.test(url)) url='https://'+url;
+  const qs=new URLSearchParams({
+    url,
+    name:SITE.agent.name||'Agent', emoji:SITE.agent.emoji||'🤖',
+    greeting:SITE.agent.greeting||'', system:SITE.agent.system||'',
+    accent:SITE.accent, accent2:SITE.accent2, placeholder:SITE.search.placeholder||'Ask anything…'
+  });
+  const f=$('cmpFrame');
+  $('cmpEmpty').style.display='none'; f.style.display='block';
+  f.src='/.netlify/functions/embed-preview?'+qs.toString();
+}
 function showPrivacy(){ $('privBody').textContent=SITE.privacy||''; $('privModal').classList.add('show'); $('privOverlay').classList.add('show'); }
 function hidePrivacy(){ $('privModal').classList.remove('show'); $('privOverlay').classList.remove('show'); }
 function faviconURI(){ const L=(SITE.name[0]||'A').toUpperCase(); const svg=`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='${SITE.accent}'/><text x='32' y='45' font-size='38' font-family='Arial,Helvetica,sans-serif' font-weight='bold' fill='white' text-anchor='middle'>${L}</text></svg>`; return 'data:image/svg+xml,'+encodeURIComponent(svg); }
