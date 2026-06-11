@@ -38,6 +38,10 @@
   .setmodal textarea{min-height:78px;resize:vertical}
   .setmodal .sdone{margin-top:18px;background:var(--accent);color:#04121f;border:none;border-radius:10px;padding:11px 20px;font-weight:800;cursor:pointer}
   .setmodal .snote{font-size:11px;color:#94a3b8;margin-top:4px}
+  .agent-photo-row{display:flex;gap:14px;align-items:center;margin-top:6px}
+  .agent-photo-prev{width:60px;height:60px;flex:none;border-radius:50%;display:grid;place-items:center;font-size:26px;background:linear-gradient(135deg,var(--accent),var(--accent2));background-size:cover;background-position:center;color:#04121f}
+  .btn-mini{background:var(--accent);color:#04121f;border:none;border-radius:8px;padding:7px 12px;font-size:12.5px;font-weight:800;cursor:pointer}
+  .btn-mini.ghost{background:#eef2f7;color:#334155}
 
   /* ===== CANVA-STYLE PHOTOS RAIL ===== */
   .photos-rail{position:fixed;left:0;top:0;bottom:0;width:var(--rail);background:#0c1422;color:#dbe4f0;z-index:90;overflow-y:auto;border-right:1px solid #1f2b3d;padding:14px 14px 40px;padding-top:96px}
@@ -145,6 +149,12 @@
   .contactform .cf{border:1px solid var(--line);border-radius:11px;padding:12px 14px;font-size:15px;font-family:inherit;outline:none;background:var(--bg)}
   .contactform .cf:focus{border-color:var(--accent);background:#fff}
   .contactform .cf-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none;border-radius:12px;padding:14px;font-weight:800;font-size:15px;cursor:pointer}
+  .contactinfo{display:grid;grid-template-columns:1fr 1fr;gap:16px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;box-shadow:var(--shadow)}
+  @media(max-width:600px){.contactinfo{grid-template-columns:1fr}}
+  .ci-item{display:flex;gap:13px;align-items:flex-start}
+  .ci-ic{width:44px;height:44px;flex:none;border-radius:13px;display:grid;place-items:center;font-size:20px;background:color-mix(in srgb,var(--accent) 13%,transparent)}
+  .ci-lbl{font-size:11.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+  .ci-val{font-size:15px;color:var(--ink);line-height:1.45}
   .pmodal-ov{position:fixed;inset:0;background:rgba(8,16,28,.5);z-index:80;display:none}
   .pmodal-ov.show{display:block}
   .pmodal{position:fixed;z-index:81;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,92vw);max-height:80vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 30px 80px rgba(10,30,60,.3);padding:28px;display:none}
@@ -155,7 +165,8 @@
   footer.site a{text-decoration:underline}
   footer.site{border-top:1px solid var(--line);padding:30px 0;color:var(--muted);font-size:13.5px;text-align:center}
 
-  .agent-fab{position:fixed;right:20px;bottom:20px;z-index:60;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none;border-radius:999px;padding:13px 18px;font-weight:800;cursor:pointer;box-shadow:0 12px 36px color-mix(in srgb,var(--accent) 45%,transparent);display:flex;gap:8px}
+  .agent-fab{position:fixed;right:20px;bottom:20px;z-index:60;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none;border-radius:999px;padding:13px 18px;font-weight:800;cursor:pointer;box-shadow:0 12px 36px color-mix(in srgb,var(--accent) 45%,transparent);display:flex;align-items:center;gap:8px}
+  .fab-av{width:24px;height:24px;border-radius:50%;display:inline-grid;place-items:center;background:rgba(255,255,255,.45);font-size:15px;background-size:cover;background-position:center}
   .agent-panel{position:fixed;right:20px;bottom:80px;z-index:60;width:340px;max-width:calc(100vw - 40px);height:460px;max-height:70vh;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 24px 70px rgba(10,30,60,.25);display:none;flex-direction:column;overflow:hidden}
   .agent-panel.show{display:flex}
   .agent-head{padding:13px 15px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
@@ -169,6 +180,10 @@
   .agent-input{display:flex;gap:7px;padding:11px;border-top:1px solid var(--line)}
   .agent-input input{flex:1;border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:13.5px;outline:none}
   .agent-input button{background:var(--accent);color:#04121f;border:none;border-radius:10px;padding:0 15px;font-weight:800;cursor:pointer}
+  .agent-chips{display:flex;gap:6px;flex-wrap:wrap;padding:0 11px 10px}
+  .agent-chips:empty{display:none}
+  .qchip{background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:6px 11px;font-size:12px;color:var(--ink);cursor:pointer;font-weight:600}
+  .qchip:hover{border-color:var(--accent);color:var(--accent)}
 
   /* EDIT AFFORDANCES */
   [contenteditable]{outline:none}
@@ -195,6 +210,7 @@
   <div class="grp"><label>Colors</label><input type="color" id="tAccent" oninput="setVar('accent',this.value)"><input type="color" id="tAccent2" oninput="setVar('accent2',this.value)"></div>
   <div class="grp"><label>Agent</label><input type="text" id="tAgent" oninput="setAgentName(this.value)" placeholder="Agent" style="width:84px"></div>
   <div class="sep"></div>
+  <button class="btn ghost" onclick="openBusiness()">🏢 Business info</button>
   <button class="btn ghost" onclick="document.body.classList.toggle('panel-open')">🖼 Photos</button>
   <button class="btn ghost" onclick="openSettings()">⚙ Settings</button>
   <div class="addmenu" id="addMenu">
@@ -206,6 +222,7 @@
       <button onclick="addBlock('unique')">⭐ Unique feature</button>
       <button onclick="addBlock('how')">🔢 Three columns</button>
       <button onclick="addBlock('testimonials')">💬 Testimonials</button>
+      <button onclick="addBlock('contactinfo')">📍 Contact info</button>
       <button onclick="addBlock('contact')">✉️ Contact form</button>
       <button onclick="addBlock('cta')">📣 Call to action</button>
     </div>
@@ -216,7 +233,8 @@
     <button class="btn" onclick="saveProject()">💾 Save</button>
     <button class="btn" onclick="document.getElementById('loadFile').click()">📂 Load</button>
     <input type="file" id="loadFile" accept=".json" style="display:none" onchange="loadProject(event)">
-    <button class="btn primary" onclick="exportSite()">⬇ Export site</button>
+    <button class="btn" onclick="exportSite()">⬇ Export site</button>
+    <button class="btn primary" id="pubBtn" onclick="publishSite()">🚀 Publish</button>
   </div>
 </div>
 <div class="hint">👉 Add photos in the left panel, then <b>drag a photo onto any picture area</b> (or click a photo, then click where you want it). Click text to edit. Hover a section to move/delete. Then <b>Export</b>.</div>
@@ -263,33 +281,120 @@
   <label>Social share image URL</label>
   <input id="setOg" placeholder="https://yoursite.com/share.jpg">
   <div class="snote">Shown when your link is shared (texts, social). Use a full https URL to a ~1200×630 image. Optional.</div>
-  <label>Agent instructions for Claude</label>
-  <textarea id="setSys" placeholder="e.g. You are SkyReserve's booking assistant. Help visitors with charter-flight questions; be concise, warm, and accurate."></textarea>
-  <div class="snote">Tells Claude how to behave on this site (its role, tone, and what it knows).</div>
+
+  <label>Agent photo</label>
+  <div class="agent-photo-row">
+    <div class="agent-photo-prev" id="setAvatarPrev">🤖</div>
+    <div>
+      <button type="button" class="btn-mini" onclick="document.getElementById('setAvatarFile').click()">Upload photo</button>
+      <button type="button" class="btn-mini ghost" onclick="clearAgentAvatar()">Remove</button>
+      <input type="file" id="setAvatarFile" accept="image/*" style="display:none" onchange="handleAgentAvatar(event)">
+      <div class="snote">A friendly face for your assistant — shown in the chat header and button. Square photos look best. If empty, the emoji below is used.</div>
+    </div>
+  </div>
+
+  <label>Agent emoji (used when no photo)</label>
+  <input id="setEmoji" placeholder="🤖" maxlength="4" style="width:100px">
+
+  <label>Agent personality</label>
+  <textarea id="setPersona" placeholder="e.g. You're Aria — warm, upbeat and a little witty. You speak in short, friendly sentences, love helping people find the right thing, and always stay encouraging and patient."></textarea>
+  <div class="snote">Describe how your agent talks and behaves. This shapes its tone in every reply — make it personable!</div>
+
+  <label>Agent greeting</label>
+  <input id="setGreet" placeholder="Hi! I'm here to help. Ask me anything.">
+  <div class="snote">The first message visitors see when they open the chat.</div>
+
+  <label>Quick replies (one per line)</label>
+  <textarea id="setSuggest" placeholder="What do you offer?&#10;What are your hours?&#10;How can I reach you?"></textarea>
+  <div class="snote">Tappable starter questions shown in the chat — just like the search bar's example chips. Leave blank to hide them.</div>
+
+  <label>Agent knowledge &amp; instructions (advanced)</label>
+  <textarea id="setSys" placeholder="e.g. We're SkyReserve, a charter-flight service in Denver. Open 8am–8pm. Recommend our free quote tool when relevant. Don't promise specific prices."></textarea>
+  <div class="snote">Facts and rules the agent should know — your business details, hours, policies, and what to recommend.</div>
+
   <label>Privacy notice</label>
   <textarea id="setPriv"></textarea>
   <div class="snote">Plain-language only — not legal advice. Consider having a professional review it.</div>
   <button class="sdone" onclick="saveSettings()">Done</button>
 </div>
 
+<!-- Business info dialog -->
+<div class="setmodal-ov" id="bizOverlay" onclick="closeBusiness()"></div>
+<div class="setmodal" id="bizModal">
+  <h3>🏢 Tell us about your business</h3>
+  <div class="snote" style="margin-top:0">Answer once and the builder fills your contact section, footer, agent knowledge — and can write your website copy for you.</div>
+
+  <label>Business name</label>
+  <input id="bizName" placeholder="e.g. SkyReserve Charters">
+
+  <label>Logo</label>
+  <div class="agent-photo-row">
+    <div class="agent-photo-prev" id="bizLogoPrev">A</div>
+    <div>
+      <button type="button" class="btn-mini" onclick="document.getElementById('bizLogoFile').click()">Upload logo</button>
+      <button type="button" class="btn-mini ghost" onclick="clearLogo()">Remove</button>
+      <input type="file" id="bizLogoFile" accept="image/*" style="display:none" onchange="handleLogo(event)">
+      <div class="snote">Shown in the header and footer. Square or wide images both work. If empty, your initial is used.</div>
+    </div>
+  </div>
+
+  <label>Address</label>
+  <input id="bizAddr" placeholder="123 Main St, Your City, ST 00000">
+  <label>Phone</label>
+  <input id="bizPhone" placeholder="(555) 123-4567">
+  <label>Email</label>
+  <input id="bizEmail" placeholder="hello@yourbusiness.com">
+  <label>Opening hours</label>
+  <input id="bizHours" placeholder="Mon–Fri, 9am–5pm">
+
+  <label>Describe your company</label>
+  <textarea id="bizDesc" placeholder="What do you do, who do you serve, and what's the feel you want? e.g. We're a family-run charter-flight service in Denver helping busy teams skip the airport hassle."></textarea>
+
+  <label>Similar companies' websites</label>
+  <textarea id="bizComp" placeholder="Paste a few links or names of businesses like yours, so the wording matches your industry."></textarea>
+
+  <label>Three unique things about your service</label>
+  <textarea id="bizUnique" placeholder="1. Same-day departures&#10;2. Pilots with 20+ years' experience&#10;3. Transparent, all-in pricing"></textarea>
+
+  <button class="sdone" onclick="applyBusiness()">Apply to my site</button>
+  <button class="sdone" id="genBtn" onclick="generateCopy()" style="background:linear-gradient(135deg,var(--accent),var(--accent2));margin-left:8px">✨ Write my website copy</button>
+  <div class="snote">“Apply” fills your contact details, footer and agent knowledge. “Write my website copy” uses AI to draft your headline, sections and starter questions from the answers above.</div>
+</div>
+
+<!-- Published / live-site dialog -->
+<div class="setmodal-ov" id="pubOverlay" onclick="closePublished()"></div>
+<div class="setmodal" id="pubModal" style="width:min(460px,92vw);text-align:center">
+  <div style="font-size:42px">🎉</div>
+  <h3>Your site is live!</h3>
+  <p class="snote" style="margin-bottom:14px">It may take a few seconds for the page to finish going live.</p>
+  <a id="pubLink" href="#" target="_blank" rel="noopener" style="display:inline-block;word-break:break-all;color:var(--accent);font-weight:800;font-size:15px;margin-bottom:16px"></a>
+  <div>
+    <button class="btn-mini" onclick="copyPublishedUrl()">Copy link</button>
+    <button class="btn-mini ghost" onclick="closePublished()">Close</button>
+  </div>
+</div>
+
 <!-- Privacy modal (also baked into exported sites) -->
 <div class="pmodal-ov" id="privOverlay" onclick="hidePrivacy()"></div>
 <div class="pmodal" id="privModal"><h3>Privacy</h3><p id="privBody"></p><button class="pclose" onclick="hidePrivacy()">Close</button></div>
 
-<button class="agent-fab" onclick="toggleAgent()">💬 <span id="agentFabName">Ask the agent</span></button>
+<button class="agent-fab" onclick="toggleAgent()"><span class="fab-av" id="agentFabAv">🤖</span> <span id="agentFabName">Ask the agent</span></button>
 <div class="agent-panel" id="agentPanel">
   <div class="agent-head"><div class="av" id="agentAv">🤖</div><div><b id="agentName">Agent</b><div class="on">● online</div></div><button class="x" onclick="toggleAgent()">×</button></div>
   <div class="agent-msgs" id="agentMsgs"></div>
   <div class="agent-credit">✨ Powered by <b>Claude</b></div>
+  <div class="agent-chips" id="agentChips"></div>
   <div class="agent-input"><input id="agentInput" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendAgent()"><button onclick="sendAgent()">→</button></div>
 </div>
 
 <script>
 /* ===================== MODEL ===================== */
 const SITE = {
-  name:'My AI Site', accent:'#3aa0ff', accent2:'#6ee7ff', ogImage:'',
+  name:'My AI Site', accent:'#3aa0ff', accent2:'#6ee7ff', ogImage:'', logo:'',
+  business:{description:'', competitors:'', unique:''},
+  publish:{siteId:'', url:''},
   privacy:'We respect your privacy. Messages you send through our contact form or AI assistant are used only to respond to you and improve our service — they are not sold. Our AI assistant is powered by Claude (Anthropic), which processes your questions to generate replies. Contact us anytime to request deletion of your information.',
-  agent:{name:'Aria', emoji:'🤖', system:'', greeting:'Hi! I\'m here to help. Ask me anything.'},
+  agent:{name:'Aria', emoji:'🤖', avatar:'', personality:'', system:'', greeting:'Hi! I\'m here to help. Ask me anything.', suggestions:['What do you offer?','What are your hours?','How can I reach you?']},
   search:{placeholder:'Ask anything…', examples:['Show me an example','How does this work?','Find what I need']},
   blocks:[
     {type:'hero', pill:'AI-powered', headline:'Your headline goes here.', sub:'A short, punchy subhead that explains what this site does in one breath.'},
@@ -300,6 +405,8 @@ const SITE = {
     {type:'unique', badge:'Only here', title:'Your unique hook', emoji:'⭐', image:'',
       desc:'Describe the one thing that sets this site apart from everyone else.',
       points:['First benefit','Second benefit','Third benefit'], cta:'Learn more'},
+    {type:'contactinfo', ey:'Contact', title:'Get in touch', sub:'Reach us any of these ways — we\'re happy to help.',
+      address:'123 Main St, Your City, ST 00000', phone:'(555) 123-4567', email:'hello@yourbusiness.com', hours:'Mon–Fri, 9am–5pm'},
     {type:'cta', headline:'Ready to get started?', sub:'A closing line that invites the visitor to act.', button:'Get started'}
   ]
 };
@@ -394,17 +501,27 @@ function renderContact(b,i){
     <textarea class="cf" name="message" rows="4" placeholder="How can we help?" required></textarea>
     <button class="cf-btn" type="submit">${ed('blocks.'+i+'.button','span','')}</button>
   </form></div></section>`; }
+function renderContactInfo(b,i){ return `<section class="blk block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap" style="max-width:760px">
+  <div class="sec-head"><div class="ey">${ed('blocks.'+i+'.ey','span','')}</div>${ed('blocks.'+i+'.title','h2','')}${ed('blocks.'+i+'.sub','p','')}</div>
+  <div class="contactinfo">
+    <div class="ci-item"><span class="ci-ic">📍</span><div><div class="ci-lbl">Address</div>${ed('blocks.'+i+'.address','div','ci-val')}</div></div>
+    <div class="ci-item"><span class="ci-ic">📞</span><div><div class="ci-lbl">Phone</div>${ed('blocks.'+i+'.phone','div','ci-val')}</div></div>
+    <div class="ci-item"><span class="ci-ic">✉️</span><div><div class="ci-lbl">Email</div>${ed('blocks.'+i+'.email','div','ci-val')}</div></div>
+    <div class="ci-item"><span class="ci-ic">🕒</span><div><div class="ci-lbl">Hours</div>${ed('blocks.'+i+'.hours','div','ci-val')}</div></div>
+  </div></div></section>`; }
 function renderCta(b,i){ return `<section class="blk block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="ctablk">${ed('blocks.'+i+'.headline','h2','')}${ed('blocks.'+i+'.sub','p','')}<button class="cbtn">${ed('blocks.'+i+'.button','span','')}</button></div></section>`; }
-const RENDER={hero:renderHero,gallery:renderGallery,image:renderImage,unique:renderUnique,how:renderHow,testimonials:renderTestimonials,contact:renderContact,cta:renderCta};
+const RENDER={hero:renderHero,gallery:renderGallery,image:renderImage,unique:renderUnique,how:renderHow,testimonials:renderTestimonials,contact:renderContact,contactinfo:renderContactInfo,cta:renderCta};
 
 function render(){
   document.documentElement.style.setProperty('--accent',SITE.accent);
   document.documentElement.style.setProperty('--accent2',SITE.accent2);
-  $('navName').textContent=SITE.name; $('footName').textContent=SITE.name; $('navLogo').textContent=(SITE.name[0]||'A').toUpperCase();
-  $('agentName').textContent=SITE.agent.name; $('agentAv').textContent=SITE.agent.emoji; $('agentFabName').textContent='Ask '+SITE.agent.name;
+  $('navName').textContent=SITE.name; $('footName').textContent=SITE.name; applyLogo($('navLogo'));
+  $('agentName').textContent=SITE.agent.name; applyAgentAvatar($('agentAv')); applyAgentAvatar($('agentFabAv')); $('agentFabName').textContent='Ask '+SITE.agent.name;
   $('agentMsgs').innerHTML=`<div class="msg bot">${esc(SITE.agent.greeting)}</div>`;
+  renderAgentChips();
   $('tName').value=SITE.name; $('tAgent').value=SITE.agent.name; $('tAccent').value=SITE.accent; $('tAccent2').value=SITE.accent2;
   $('canvas').innerHTML = SITE.blocks.length ? SITE.blocks.map((b,i)=>(RENDER[b.type]||(()=>''))(b,i)).join('') : `<div class="empty-hint">No sections yet. Use <b>+ Add section</b> above to start building.</div>`;
+  updatePubBtn();
 }
 
 /* ===================== PHOTOS PANEL ===================== */
@@ -432,9 +549,25 @@ async function searchStock(){ const key=$('stockKey').value.trim(), q=$('stockQ'
 })();
 
 /* ===================== TOOLBAR ACTIONS ===================== */
-function setName(v){ SITE.name=v; $('navName').textContent=v; $('footName').textContent=v; $('navLogo').textContent=(v[0]||'A').toUpperCase(); }
+function setName(v){ SITE.name=v; $('navName').textContent=v; $('footName').textContent=v; applyLogo($('navLogo')); }
 function setVar(k,v){ SITE[k]=v; document.documentElement.style.setProperty('--'+k,v); }
 function setAgentName(v){ SITE.agent.name=v; $('agentName').textContent=v; $('agentFabName').textContent='Ask '+v; }
+function applyAgentAvatar(el){ if(!el) return; const a=SITE.agent;
+  if(a.avatar){ el.style.backgroundImage=`url('${a.avatar}')`; el.style.backgroundSize='cover'; el.style.backgroundPosition='center'; el.textContent=''; }
+  else { el.style.backgroundImage=''; el.textContent=a.emoji||'🤖'; } }
+function applyLogo(el){ if(!el) return;
+  if(SITE.logo){ el.style.backgroundImage=`url('${SITE.logo}')`; el.style.backgroundSize='cover'; el.style.backgroundPosition='center'; el.textContent=''; }
+  else { el.style.backgroundImage=''; el.textContent=(SITE.name[0]||'A').toUpperCase(); } }
+function renderAgentChips(){ const c=$('agentChips'); if(!c) return; const list=(SITE.agent.suggestions||[]).filter(s=>(s||'').trim());
+  c.innerHTML=list.map(s=>`<span class="qchip" onclick="sendQuick('${esc(s).replace(/'/g,"&#39;")}')">${esc(s)}</span>`).join(''); }
+function sendQuick(t){ const inp=$('agentInput'); if(inp){ inp.value=t; sendAgent(); } }
+function agentSystem(){ const a=SITE.agent; return [a.personality,businessFacts(),a.system].map(s=>(s||'').trim()).filter(Boolean).join('\n\n'); }
+function businessFacts(){ const lines=[]; if(SITE.name) lines.push(`The business is called "${SITE.name}".`);
+  const b=SITE.business||{}; if(b.description) lines.push('About the business: '+b.description); if(b.unique) lines.push('What makes it unique: '+b.unique);
+  const ci=SITE.blocks.find(x=>x.type==='contactinfo'); if(ci){ const p=[]; if(ci.address)p.push('Address: '+ci.address); if(ci.phone)p.push('Phone: '+ci.phone); if(ci.email)p.push('Email: '+ci.email); if(ci.hours)p.push('Hours: '+ci.hours); if(p.length) lines.push('Contact — '+p.join('; ')+'.'); }
+  return lines.length?('Key facts about this business (use them to answer accurately):\n'+lines.join('\n')):''; }
+function handleAgentAvatar(ev){ const f=ev.target.files[0]; if(f&&f.type.startsWith('image/')){ const r=new FileReader(); r.onload=()=>{ SITE.agent.avatar=r.result; applyAgentAvatar($('setAvatarPrev')); render(); }; r.readAsDataURL(f); } ev.target.value=''; }
+function clearAgentAvatar(){ SITE.agent.avatar=''; applyAgentAvatar($('setAvatarPrev')); render(); }
 const DEFAULTS={
   hero:{type:'hero',pill:'New',headline:'A new headline.',sub:'A short subhead about this section.'},
   gallery:{type:'gallery',ey:'Explore',title:'Section title',sub:'Section subhead.',items:[{title:'First',caption:'Caption',img:'',grad:BGS[0]},{title:'Second',caption:'Caption',img:'',grad:BGS[1]},{title:'Third',caption:'Caption',img:'',grad:BGS[6]}]},
@@ -446,6 +579,7 @@ const DEFAULTS={
     {quote:'Fast, friendly, and it just works. Highly recommend.',name:'Jordan M.',role:'Member'},
     {quote:'The best experience I\'ve had. I tell everyone about it.',name:'Sam R.',role:'Partner'}]},
   contact:{type:'contact',ey:'Get in touch',title:'Contact us',sub:'Send us a note and we\'ll get back to you soon.',button:'Send message'},
+  contactinfo:{type:'contactinfo',ey:'Contact',title:'Get in touch',sub:'Reach us any of these ways — we\'re happy to help.',address:'123 Main St, Your City, ST 00000',phone:'(555) 123-4567',email:'hello@yourbusiness.com',hours:'Mon–Fri, 9am–5pm'},
   cta:{type:'cta',headline:'Ready to start?',sub:'A closing invitation.',button:'Get started'}
 };
 function addBlock(type){ SITE.blocks.push(JSON.parse(JSON.stringify(DEFAULTS[type]))); document.getElementById('addMenu').classList.remove('open'); render(); window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}); }
@@ -461,7 +595,7 @@ function dropBlock(i,e){ if(dragIdx===null||dragIdx===i) return; e.preventDefaul
 async function callAI(prompt){
   // Calls Claude via your Netlify Function (/.netlify/functions/claude). Works once deployed with ANTHROPIC_API_KEY set.
   try{
-    const r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({prompt,system:SITE.agent.system||''})});
+    const r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({prompt,system:agentSystem()})});
     if(!r.ok) throw 0;
     const d=await r.json();
     return esc(d.answer||'').replace(/\n/g,'<br>');
@@ -477,22 +611,99 @@ async function sendAgent(){ const inp=$('agentInput'),t=inp.value.trim(); if(!t)
 
 /* ===================== PREVIEW / SAVE / LOAD ===================== */
 function togglePreview(){ document.body.classList.toggle('previewing'); $('prevBtn').textContent=document.body.classList.contains('previewing')?'✎ Edit':'👁 Preview'; }
-function openSettings(){ $('setOg').value=SITE.ogImage||''; $('setSys').value=SITE.agent.system||''; $('setPriv').value=SITE.privacy||''; $('setModal').classList.add('show'); $('setOverlay').classList.add('show'); }
+function openSettings(){ $('setOg').value=SITE.ogImage||''; $('setEmoji').value=SITE.agent.emoji||''; $('setPersona').value=SITE.agent.personality||''; $('setGreet').value=SITE.agent.greeting||''; $('setSuggest').value=(SITE.agent.suggestions||[]).join('\n'); $('setSys').value=SITE.agent.system||''; $('setPriv').value=SITE.privacy||''; applyAgentAvatar($('setAvatarPrev')); $('setModal').classList.add('show'); $('setOverlay').classList.add('show'); }
 function closeSettings(){ $('setModal').classList.remove('show'); $('setOverlay').classList.remove('show'); }
-function saveSettings(){ SITE.ogImage=$('setOg').value.trim(); SITE.agent.system=$('setSys').value; SITE.privacy=$('setPriv').value; closeSettings(); }
+function saveSettings(){ SITE.ogImage=$('setOg').value.trim(); SITE.agent.emoji=$('setEmoji').value.trim()||'🤖'; SITE.agent.personality=$('setPersona').value; SITE.agent.greeting=$('setGreet').value; SITE.agent.suggestions=$('setSuggest').value.split('\n').map(s=>s.trim()).filter(Boolean); SITE.agent.system=$('setSys').value; SITE.privacy=$('setPriv').value; closeSettings(); render(); }
 function showPrivacy(){ $('privBody').textContent=SITE.privacy||''; $('privModal').classList.add('show'); $('privOverlay').classList.add('show'); }
 function hidePrivacy(){ $('privModal').classList.remove('show'); $('privOverlay').classList.remove('show'); }
+
+/* ===================== BUSINESS INFO STEP ===================== */
+function ensureDefaults(){ if(!SITE.business) SITE.business={description:'',competitors:'',unique:''}; if(!SITE.publish) SITE.publish={siteId:'',url:''}; if(!SITE.agent) SITE.agent={}; if(!Array.isArray(SITE.agent.suggestions)) SITE.agent.suggestions=[]; if(SITE.logo==null) SITE.logo=''; }
+function openBusiness(){ ensureDefaults(); $('bizName').value=SITE.name||''; const ci=SITE.blocks.find(b=>b.type==='contactinfo')||{};
+  $('bizAddr').value=ci.address||''; $('bizPhone').value=ci.phone||''; $('bizEmail').value=ci.email||''; $('bizHours').value=ci.hours||'';
+  $('bizDesc').value=SITE.business.description||''; $('bizComp').value=SITE.business.competitors||''; $('bizUnique').value=SITE.business.unique||'';
+  applyLogoPrev(); $('bizModal').classList.add('show'); $('bizOverlay').classList.add('show'); }
+function closeBusiness(){ $('bizModal').classList.remove('show'); $('bizOverlay').classList.remove('show'); }
+function applyLogoPrev(){ const el=$('bizLogoPrev'); if(!el) return; if(SITE.logo){ el.style.backgroundImage=`url('${SITE.logo}')`; el.style.backgroundSize='cover'; el.style.backgroundPosition='center'; el.textContent=''; } else { el.style.backgroundImage=''; el.textContent=(($('bizName').value||SITE.name||'A')[0]||'A').toUpperCase(); } }
+function handleLogo(ev){ const f=ev.target.files[0]; if(f&&f.type.startsWith('image/')){ const r=new FileReader(); r.onload=()=>{ SITE.logo=r.result; applyLogoPrev(); applyLogo($('navLogo')); }; r.readAsDataURL(f); } ev.target.value=''; }
+function clearLogo(){ SITE.logo=''; applyLogoPrev(); applyLogo($('navLogo')); }
+function syncBizFields(){ SITE.business.description=$('bizDesc').value.trim(); SITE.business.competitors=$('bizComp').value.trim(); SITE.business.unique=$('bizUnique').value.trim(); }
+function applyBusiness(){ ensureDefaults(); const name=$('bizName').value.trim(); if(name) SITE.name=name; syncBizFields();
+  let ci=SITE.blocks.find(b=>b.type==='contactinfo'); if(!ci){ ci=JSON.parse(JSON.stringify(DEFAULTS.contactinfo)); SITE.blocks.push(ci); }
+  const addr=$('bizAddr').value.trim(), ph=$('bizPhone').value.trim(), em=$('bizEmail').value.trim(), hr=$('bizHours').value.trim();
+  if(addr)ci.address=addr; if(ph)ci.phone=ph; if(em)ci.email=em; if(hr)ci.hours=hr;
+  closeBusiness(); render(); $('tName').value=SITE.name; }
+
+function parseJSON(t){ if(!t) return null; let s=String(t).trim().replace(/^```json\s*/i,'').replace(/^```\s*/,'').replace(/```\s*$/,''); const a=s.indexOf('{'), b=s.lastIndexOf('}'); if(a>=0&&b>a) s=s.slice(a,b+1); try{ return JSON.parse(s); }catch(e){ return null; } }
+async function generateCopy(){ ensureDefaults(); const name=$('bizName').value.trim()||SITE.name; if(name) SITE.name=name; syncBizFields();
+  if(!SITE.business.description && !SITE.business.unique){ alert('Add a short description of your company (and ideally the three unique things) so the AI has something to work from.'); return; }
+  const btn=$('genBtn'); const old=btn.textContent; btn.disabled=true; btn.textContent='✨ Writing…';
+  const sys='You are an expert website copywriter for small businesses. You write clear, warm, benefit-led marketing copy. Respond with ONLY a single valid JSON object — no markdown fences, no commentary.';
+  const prompt=`Write website copy for this business. Return a JSON object with exactly these keys:
+{"tagline": "2-3 word pill label", "headline": "punchy hero headline, max ~8 words", "subhead": "one-sentence hero subhead",
+ "unique": {"badge": "2-3 word label", "title": "short title", "desc": "one sentence", "points": ["benefit","benefit","benefit"]},
+ "columns": [{"emoji":"one emoji","title":"short","desc":"one sentence"},{"emoji":"","title":"","desc":""},{"emoji":"","title":"","desc":""}],
+ "cta": {"headline": "short", "sub": "one sentence", "button": "2-3 words"},
+ "greeting": "friendly one-sentence chat greeting", "suggestions": ["short visitor question","question","question"]}
+
+Business name: ${name}
+Description: ${SITE.business.description||'(none given)'}
+Similar companies / sites: ${SITE.business.competitors||'(none given)'}
+Three unique things: ${SITE.business.unique||'(none given)'}`;
+  try{ const r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({prompt,system:sys,raw:true})});
+    const d=await r.json(); if(!r.ok) throw new Error(d.error||'Generation failed.');
+    const data=parseJSON(d.answer); if(!data) throw new Error('The AI response could not be read. Please try again.');
+    applyCopy(data); closeBusiness(); render(); $('tName').value=SITE.name;
+    alert('✨ Draft copy added! Review and tweak any text directly on the page, then Publish.');
+  }catch(e){ alert(e.message||'Could not generate copy right now. Please try again.'); }
+  finally{ btn.disabled=false; btn.textContent=old; } }
+function applyCopy(d){
+  let hero=SITE.blocks.find(b=>b.type==='hero'); if(!hero){ hero=JSON.parse(JSON.stringify(DEFAULTS.hero)); SITE.blocks.unshift(hero); }
+  if(d.tagline)hero.pill=d.tagline; if(d.headline)hero.headline=d.headline; if(d.subhead)hero.sub=d.subhead;
+  if(d.unique){ let u=SITE.blocks.find(b=>b.type==='unique'); if(!u){ u=JSON.parse(JSON.stringify(DEFAULTS.unique)); SITE.blocks.push(u); }
+    if(d.unique.badge)u.badge=d.unique.badge; if(d.unique.title)u.title=d.unique.title; if(d.unique.desc)u.desc=d.unique.desc;
+    if(Array.isArray(d.unique.points)&&d.unique.points.length)u.points=d.unique.points.slice(0,3); }
+  if(Array.isArray(d.columns)&&d.columns.length){ let h=SITE.blocks.find(b=>b.type==='how'); if(!h){ h=JSON.parse(JSON.stringify(DEFAULTS.how)); SITE.blocks.push(h); }
+    h.items=d.columns.slice(0,3).map(c=>({emoji:(c&&c.emoji)||'✨',title:(c&&c.title)||'',desc:(c&&c.desc)||''})); }
+  if(d.cta){ let c=SITE.blocks.find(b=>b.type==='cta'); if(!c){ c=JSON.parse(JSON.stringify(DEFAULTS.cta)); SITE.blocks.push(c); }
+    if(d.cta.headline)c.headline=d.cta.headline; if(d.cta.sub)c.sub=d.cta.sub; if(d.cta.button)c.button=d.cta.button; }
+  if(d.greeting)SITE.agent.greeting=d.greeting;
+  if(Array.isArray(d.suggestions)&&d.suggestions.length)SITE.agent.suggestions=d.suggestions.slice(0,4).map(s=>String(s).trim()).filter(Boolean); }
+
+/* ===================== ONE-CLICK PUBLISH ===================== */
+function updatePubBtn(){ const b=$('pubBtn'); if(b) b.textContent=(SITE.publish&&SITE.publish.url)?'🚀 Update site':'🚀 Publish'; }
+async function publishSite(){ ensureDefaults(); const btn=$('pubBtn'); btn.disabled=true; btn.textContent='🚀 Publishing…';
+  try{ const html=buildSiteDoc(location.origin);
+    const r=await fetch('/.netlify/functions/publish',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({html,siteId:SITE.publish.siteId||''})});
+    const d=await r.json(); if(!r.ok) throw new Error(d.error||'Publishing failed.');
+    SITE.publish.siteId=d.siteId||SITE.publish.siteId; SITE.publish.url=d.url||SITE.publish.url;
+    try{ localStorage.setItem('aiwb_publish',JSON.stringify(SITE.publish)); }catch(e){}
+    showPublished(d.url);
+  }catch(e){ alert(e.message||'Publishing failed. You can still use Export to download your site.'); }
+  finally{ btn.disabled=false; updatePubBtn(); } }
+function showPublished(url){ const a=$('pubLink'); a.href=url||'#'; a.textContent=url||''; $('pubModal').classList.add('show'); $('pubOverlay').classList.add('show'); }
+function closePublished(){ $('pubModal').classList.remove('show'); $('pubOverlay').classList.remove('show'); }
+function copyPublishedUrl(){ const u=$('pubLink').textContent; if(u&&navigator.clipboard) navigator.clipboard.writeText(u); }
 function faviconURI(){ const L=(SITE.name[0]||'A').toUpperCase(); const svg=`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='${SITE.accent}'/><text x='32' y='45' font-size='38' font-family='Arial,Helvetica,sans-serif' font-weight='bold' fill='white' text-anchor='middle'>${L}</text></svg>`; return 'data:image/svg+xml,'+encodeURIComponent(svg); }
 function download(name,content,type='text/plain'){ const b=new Blob([content],{type}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=name; a.click(); URL.revokeObjectURL(a.href); }
 function saveProject(){ download('ai-website-project.json', JSON.stringify({site:SITE,uploads},null,2)); }
-function loadProject(ev){ const f=ev.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=()=>{ try{ const d=JSON.parse(r.result); const s=d.site||d; Object.keys(SITE).forEach(k=>delete SITE[k]); Object.assign(SITE,s); uploads=d.uploads||[]; renderUploads(); render(); }catch(e){ alert('Could not read that project file.'); } }; r.readAsText(f); ev.target.value=''; }
+function loadProject(ev){ const f=ev.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=()=>{ try{ const d=JSON.parse(r.result); const s=d.site||d; Object.keys(SITE).forEach(k=>delete SITE[k]); Object.assign(SITE,s); uploads=d.uploads||[]; ensureDefaults(); renderUploads(); render(); }catch(e){ alert('Could not read that project file.'); } }; r.readAsText(f); ev.target.value=''; }
 
-/* ===================== EXPORT CLEAN index.html ===================== */
-function exportSite(){
+/* ===================== EXPORT / PUBLISH: BUILD CLEAN index.html ===================== */
+/* apiBase: '' keeps AI calls same-origin (for a downloaded site you host yourself);
+   the builder's origin is baked in when publishing, so the live static site reaches
+   this builder's Claude function without shipping its own. */
+function buildSiteDoc(apiBase){
   const css=stripBuilderCss(document.querySelector('style').innerHTML);
   EXPORTING=true;
   const sectionsHTML=SITE.blocks.map((b,i)=>(RENDER[b.type]||(()=>''))(b,i)).join('');
   EXPORTING=false;
+  const av=SITE.agent.avatar;
+  const avStyle=av?` style="background-image:url('${av}');background-size:cover;background-position:center"`:'';
+  const avInner=av?'':esc(SITE.agent.emoji||'🤖');
+  const logoStyle=SITE.logo?` style="background-image:url('${SITE.logo}');background-size:cover;background-position:center"`:'';
+  const logoInner=SITE.logo?'':(SITE.name[0]||'A').toUpperCase();
+  const chipsHTML=(SITE.agent.suggestions||[]).filter(s=>(s||'').trim()).map(s=>`<span class="qchip" onclick="sendQuick('${esc(s).replace(/'/g,"&#39;")}')">${esc(s)}</span>`).join('');
   const doc=`<!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${esc(SITE.name)}</title>
@@ -506,36 +717,42 @@ ${SITE.ogImage?`<meta property="og:image" content="${esc(SITE.ogImage)}">`:''}
 <style>:root{--accent:${SITE.accent};--accent2:${SITE.accent2};--ink:#0f1622;--ink2:#1b2737;--muted:#64748b;--line:#e6ebf2;--bg:#f7f9fc;--card:#fff;--good:#16a34a;--warn:#d9a400;--radius:18px;--shadow:0 10px 40px rgba(20,40,80,.08)}
 ${css}</style></head>
 <body>
-<nav class="site"><div class="wrap"><div class="brand"><span class="logo">${(SITE.name[0]||'A').toUpperCase()}</span> <span>${esc(SITE.name)}</span></div><div class="navlinks"><a>Explore</a><a>Features</a><a>About</a></div><button class="navcta">Get started</button></div></nav>
+<nav class="site"><div class="wrap"><div class="brand"><span class="logo"${logoStyle}>${logoInner}</span> <span>${esc(SITE.name)}</span></div><div class="navlinks"><a>Explore</a><a>Features</a><a>About</a></div><button class="navcta">Get started</button></div></nav>
 <main>${sectionsHTML}</main>
 <footer class="site"><div class="wrap">${esc(SITE.name)} · AI search &amp; agent <b style="color:var(--ink)">powered by Claude</b> · <a href="#" onclick="showPrivacy();return false">Privacy</a></div></footer>
-<button class="agent-fab" onclick="toggleAgent()">💬 Ask ${esc(SITE.agent.name)}</button>
-<div class="agent-panel" id="agentPanel"><div class="agent-head"><div class="av">${SITE.agent.emoji}</div><div><b>${esc(SITE.agent.name)}</b><div class="on">● online</div></div><button class="x" onclick="toggleAgent()">×</button></div>
+<button class="agent-fab" onclick="toggleAgent()"><span class="fab-av"${avStyle}>${avInner}</span> Ask ${esc(SITE.agent.name)}</button>
+<div class="agent-panel" id="agentPanel"><div class="agent-head"><div class="av"${avStyle}>${avInner}</div><div><b>${esc(SITE.agent.name)}</b><div class="on">● online</div></div><button class="x" onclick="toggleAgent()">×</button></div>
 <div class="agent-msgs" id="agentMsgs"><div class="msg bot">${esc(SITE.agent.greeting)}</div></div>
 <div class="agent-credit">✨ Powered by <b>Claude</b></div>
+<div class="agent-chips" id="agentChips">${chipsHTML}</div>
 <div class="agent-input"><input id="agentInput" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendAgent()"><button onclick="sendAgent()">→</button></div></div>
 <div class="pmodal-ov" id="privOverlay" onclick="hidePrivacy()"></div>
 <div class="pmodal" id="privModal"><h3>Privacy</h3><p>${esc(SITE.privacy)}</p><button class="pclose" onclick="hidePrivacy()">Close</button></div>
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-var SYS=${JSON.stringify(SITE.agent.system||'')};
+var SYS=${JSON.stringify(agentSystem())};
+var API=${JSON.stringify(apiBase||'')};
 function showPrivacy(){ document.getElementById('privModal').classList.add('show'); document.getElementById('privOverlay').classList.add('show'); }
 function hidePrivacy(){ document.getElementById('privModal').classList.remove('show'); document.getElementById('privOverlay').classList.remove('show'); }
-async function callAI(p){ try{ var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({prompt:p,system:SYS})}); if(!r.ok) throw 0; var d=await r.json(); return esc(d.answer||'').replace(/\\n/g,'<br>'); }catch(e){ await new Promise(x=>setTimeout(x,500)); return 'Setup needed: add a Claude API key in Netlify to enable live answers. You asked: "<b>'+esc(p)+'</b>"'; } }
+async function callAI(p){ try{ var r=await fetch(API+'/.netlify/functions/claude',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({prompt:p,system:SYS})}); if(!r.ok) throw 0; var d=await r.json(); return esc(d.answer||'').replace(/\\n/g,'<br>'); }catch(e){ await new Promise(x=>setTimeout(x,500)); return 'The assistant is unavailable right now. You asked: "<b>'+esc(p)+'</b>"'; } }
 function fillSearch(t){ var s=$('aiSearch'); if(s){s.value=t;runSearch();} }
 async function runSearch(){ var s=$('aiSearch'); if(!s)return; var q=s.value.trim(); if(!q)return; var b=$('searchResults'); b.classList.add('show'); $('searchAns').innerHTML='thinking…'; $('searchAns').innerHTML=await callAI(q); }
 function toggleAgent(){ $('agentPanel').classList.toggle('show'); }
+function sendQuick(t){ var i=$('agentInput'); if(i){ i.value=t; sendAgent(); } }
 async function sendAgent(){ var i=$('agentInput'),t=i.value.trim(); if(!t)return; var m=$('agentMsgs'); m.insertAdjacentHTML('beforeend','<div class="msg me">'+esc(t)+'</div>'); i.value=''; var r=await callAI(t); m.insertAdjacentHTML('beforeend','<div class="msg bot">'+r+'</div>'); m.scrollTop=m.scrollHeight; }
 <\/script></body></html>`;
-  download('index.html', doc, 'text/html');
+  return doc;
 }
+function exportSite(){ download('index.html', buildSiteDoc(''), 'text/html'); }
 function stripBuilderCss(css){
   return css.replace(/\/\* =+ BUILDER CHROME =+ \*\/[\s\S]*?(?=\/\* =+ SITE STYLES)/,'')
             .replace(/\/\* =+ CANVA-STYLE PHOTOS RAIL =+ \*\/[\s\S]*?(?=\/\* =+ SITE STYLES)/,'')
             .replace(/\/\* EDIT AFFORDANCES \*\/[\s\S]*$/,'');
 }
 
+try{ const p=localStorage.getItem('aiwb_publish'); if(p){ const pj=JSON.parse(p); SITE.publish=Object.assign({siteId:'',url:''},pj); } }catch(e){}
+ensureDefaults();
 renderUploads(); renderBgs(); render();
 </script>
 </body>

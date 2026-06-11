@@ -1,0 +1,13 @@
+{
+  "name": "site-builderai",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AI Website Builder — drag & drop site builder with a live Claude-powered search bar and chat agent.",
+  "dependencies": {
+    "@anthropic-ai/sdk": ">=0.30.0"
+  },
+  "devDependencies": {
+    "@netlify/functions": ">=2.0.0"
+  }
+}
