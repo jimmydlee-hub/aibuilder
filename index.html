@@ -183,9 +183,75 @@
   .blocktools button:hover{background:var(--accent);color:#04121f}
   .blocktools .lbl{color:#8aa0bd;font-size:11px;display:flex;align-items:center;padding:0 6px;cursor:grab}
   .empty-hint{max-width:520px;margin:60px auto;text-align:center;color:var(--muted);border:2px dashed var(--line);border-radius:16px;padding:40px}
+
+  /* ===== WEBSITE ANALYZER (builder-only; stripped from exports) ===== */
+  .analyzer{position:fixed;inset:0;z-index:200;background:linear-gradient(160deg,#0c1422,#0f1d33 55%,#10243f);color:#dbe4f0;overflow-y:auto;display:none;padding:46px 20px}
+  .analyzer.show{display:block}
+  .az-wrap{max-width:760px;margin:0 auto}
+  .az-badge{display:inline-flex;gap:8px;align-items:center;background:rgba(58,160,255,.14);border:1px solid rgba(58,160,255,.35);color:#cfe6ff;border-radius:999px;padding:7px 14px;font-size:12.5px;font-weight:700;margin-bottom:22px}
+  .az-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+  .az-h{font-size:clamp(28px,5vw,44px);line-height:1.08;letter-spacing:-1.2px;font-weight:800;margin:0 0 12px;color:#fff}
+  .az-sub{font-size:17px;color:#9fb3d0;margin:0 0 26px;max-width:560px;line-height:1.55}
+  .az-form{display:flex;gap:10px;background:#fff;border-radius:16px;padding:8px 8px 8px 16px;box-shadow:0 20px 60px rgba(0,0,0,.4);max-width:560px;align-items:center}
+  .az-form input{flex:1;border:none;outline:none;font-size:16px;color:#0f1622;background:transparent}
+  .az-form button{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none;border-radius:11px;padding:13px 22px;font-weight:800;font-size:15px;cursor:pointer;white-space:nowrap}
+  .az-form button:disabled{opacity:.6;cursor:default}
+  .az-skip{display:inline-block;margin-top:16px;color:#7e93b3;font-size:13.5px;background:none;border:none;cursor:pointer;text-decoration:underline;padding:0}
+  .az-status{display:none;margin-top:22px;color:#9fc3ef;font-size:14px}
+  .az-results{display:none;margin-top:30px;background:#fff;color:#0f1622;border-radius:20px;padding:28px;box-shadow:0 24px 70px rgba(0,0,0,.35)}
+  .az-results.show{display:block}
+  .az-rtop{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+  .az-rtop h2{font-size:22px;letter-spacing:-.5px;margin:0}
+  .az-demo{font-size:11px;color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 40%,transparent);border-radius:6px;padding:2px 7px;font-weight:700}
+  .az-summary{color:#475569;font-size:15px;line-height:1.6;margin:0 0 20px}
+  .az-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px}
+  @media(max-width:600px){.az-cols{grid-template-columns:1fr}}
+  .az-col h4{font-size:12px;text-transform:uppercase;letter-spacing:.6px;margin:0 0 8px;color:#64748b}
+  .az-col ul{list-style:none;margin:0;padding:0}
+  .az-col li{font-size:14px;color:#334155;padding:5px 0 5px 22px;position:relative;line-height:1.45}
+  .az-col.good li::before{content:"✓";position:absolute;left:0;color:var(--good);font-weight:800}
+  .az-col.opp li::before{content:"➜";position:absolute;left:0;color:var(--accent);font-weight:800}
+  .az-enh-title{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:#64748b;margin:0 0 12px;font-weight:800}
+  .az-enh{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+  @media(max-width:600px){.az-enh{grid-template-columns:1fr}}
+  .az-card{border:1px solid var(--line);border-radius:14px;padding:16px;background:linear-gradient(160deg,#fff,color-mix(in srgb,var(--accent) 6%,#fff))}
+  .az-card .ic{font-size:26px}
+  .az-card b{display:block;font-size:15px;margin:8px 0 4px}
+  .az-card span{font-size:13px;color:#64748b;line-height:1.5}
+  .az-build{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none;border-radius:13px;padding:16px;font-weight:800;font-size:16px;cursor:pointer}
+  .az-foot{text-align:center;color:#5d6f8c;font-size:12px;margin-top:22px}
+  .az-foot b{color:#0f1622}
 </style>
 </head>
 <body class="panel-open">
+
+<!-- ===== WEBSITE ANALYZER (first screen) ===== -->
+<div class="analyzer show" id="analyzer">
+  <div class="az-wrap">
+    <div class="az-badge"><span class="dot"></span> AI Website Analyzer · powered by Claude</div>
+    <h1 class="az-h">See what AI can do for your website.</h1>
+    <p class="az-sub">Enter your website address. The AI visits it, evaluates it, and shows the AI features you can add — then builds an enhanced version for you in one click.</p>
+    <div class="az-form">
+      <input type="text" id="azUrl" placeholder="yourwebsite.com" onkeydown="if(event.key==='Enter')analyzeSite()">
+      <button id="azBtn" onclick="analyzeSite()">Analyze my site</button>
+    </div>
+    <button class="az-skip" onclick="skipAnalyzer()">Skip — start from a blank builder</button>
+    <div class="az-status" id="azStatus"></div>
+
+    <div class="az-results" id="azResults">
+      <div class="az-rtop"><h2 id="azName">Your site</h2><span class="az-demo" id="azDemo" style="display:none">Demo preview</span></div>
+      <p class="az-summary" id="azSummary"></p>
+      <div class="az-cols">
+        <div class="az-col good"><h4>What's working</h4><ul id="azStrengths"></ul></div>
+        <div class="az-col opp"><h4>Opportunities</h4><ul id="azOpps"></ul></div>
+      </div>
+      <div class="az-enh-title">✨ AI enhancements you can add</div>
+      <div class="az-enh" id="azEnh"></div>
+      <button class="az-build" onclick="buildMySite()">✨ Build my AI-enhanced site</button>
+      <div class="az-foot">You can edit everything afterward, then <b>Export</b> a ready-to-host site.</div>
+    </div>
+  </div>
+</div>
 
 <!-- ===== TOOLBAR ===== -->
 <div class="toolbar">
@@ -534,6 +600,96 @@ function stripBuilderCss(css){
   return css.replace(/\/\* =+ BUILDER CHROME =+ \*\/[\s\S]*?(?=\/\* =+ SITE STYLES)/,'')
             .replace(/\/\* =+ CANVA-STYLE PHOTOS RAIL =+ \*\/[\s\S]*?(?=\/\* =+ SITE STYLES)/,'')
             .replace(/\/\* EDIT AFFORDANCES \*\/[\s\S]*$/,'');
+}
+
+/* ===================== WEBSITE ANALYZER (first screen) ===================== */
+let lastBuild=null;
+async function analyzeSite(){
+  const input=$('azUrl'), url=(input.value||'').trim();
+  if(!url){ input.focus(); return; }
+  const btn=$('azBtn'), label=btn.textContent;
+  btn.disabled=true; btn.textContent='Analyzing…';
+  $('azResults').classList.remove('show');
+  $('azStatus').style.display='block';
+  $('azStatus').innerHTML='✨ Visiting <b>'+esc(url)+'</b> and reviewing it with AI…';
+  try{
+    const r=await fetch('/.netlify/functions/analyze',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({url})});
+    const d=await r.json();
+    if(!r.ok||!d.ok) throw new Error(d.error||'failed');
+    renderAnalysis(d,false);
+  }catch(e){
+    renderAnalysis(demoAnalysis(url),true);
+  }finally{ btn.disabled=false; btn.textContent=label; }
+}
+function renderAnalysis(d,isDemo){
+  lastBuild=d.build||null;
+  $('azName').textContent=(d.site&&d.site.name)||'Your site';
+  $('azDemo').style.display=(isDemo||d.demo)?'inline-block':'none';
+  const ev=d.evaluation||{};
+  $('azSummary').textContent=ev.summary||'';
+  $('azStrengths').innerHTML=(ev.strengths||[]).map(s=>`<li>${esc(s)}</li>`).join('');
+  $('azOpps').innerHTML=(ev.opportunities||[]).map(s=>`<li>${esc(s)}</li>`).join('');
+  $('azEnh').innerHTML=(d.enhancements||[]).map(e=>`<div class="az-card"><div class="ic">${esc(e.icon||'✨')}</div><b>${esc(e.title||'')}</b><span>${esc(e.desc||'')}</span></div>`).join('');
+  $('azStatus').style.display='none';
+  $('azResults').classList.add('show');
+  $('azResults').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function skipAnalyzer(){ $('analyzer').classList.remove('show'); }
+function buildMySite(){ if(lastBuild) applyBuild(lastBuild); $('analyzer').classList.remove('show'); window.scrollTo({top:0}); }
+
+// Merge an AI-provided block over the matching DEFAULTS template so required fields always exist.
+function mergeBlock(base,src){
+  const out=Array.isArray(base)?[]:Object.assign({},base);
+  for(const k in src){
+    if(k==='type') continue;
+    const sv=src[k];
+    if(Array.isArray(sv)&&Array.isArray(base[k])){
+      out[k]=sv.map((it,idx)=>{ const tmpl=base[k][idx%base[k].length]||base[k][0];
+        return (it&&typeof it==='object'&&tmpl&&typeof tmpl==='object')?mergeBlock(JSON.parse(JSON.stringify(tmpl)),it):it; });
+    } else if(sv&&typeof sv==='object'&&base[k]&&typeof base[k]==='object'){
+      out[k]=mergeBlock(base[k],sv);
+    } else if(sv!==undefined&&sv!==null&&sv!==''){ out[k]=sv; }
+  }
+  return out;
+}
+function applyBuild(seed){
+  if(!seed) return;
+  if(seed.name) setName(seed.name);
+  if(seed.accent) setVar('accent',seed.accent);
+  if(seed.accent2) setVar('accent2',seed.accent2);
+  if(seed.agent){ SITE.agent=Object.assign({},SITE.agent,seed.agent); if(!SITE.agent.emoji) SITE.agent.emoji='🤖'; }
+  if(seed.search){ SITE.search=Object.assign({},SITE.search,seed.search);
+    if(!Array.isArray(SITE.search.examples)||!SITE.search.examples.length) SITE.search.examples=['Show me an example','How does this work?','Find what I need']; }
+  let blocks=(Array.isArray(seed.blocks)?seed.blocks:[])
+    .filter(b=>b&&DEFAULTS[b.type])
+    .map(b=>mergeBlock(JSON.parse(JSON.stringify(DEFAULTS[b.type])),b));
+  if(!blocks.some(b=>b.type==='hero')){ blocks.unshift(JSON.parse(JSON.stringify(DEFAULTS.hero))); }
+  else if(blocks[0].type!=='hero'){ const i=blocks.findIndex(b=>b.type==='hero'); blocks.unshift(blocks.splice(i,1)[0]); }
+  if(blocks.length) SITE.blocks=blocks;
+  render();
+}
+function demoAnalysis(url){
+  const host=url.replace(/^https?:\/\//i,'').replace(/\/.*$/,'').replace(/^www\./i,'');
+  const brand=((host.split('.')[0]||'Your Site').replace(/[-_]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase()))||'Your Site';
+  return {ok:true,demo:true,site:{name:brand,url},
+    evaluation:{
+      summary:`${brand} has a clear online presence and explains what it offers. Right now, though, visitors can't get instant answers or interactive help — every question waits on a person.`,
+      strengths:['Recognizable brand with a clear purpose','Clean, straightforward layout','A solid foundation to build on'],
+      opportunities:['No AI assistant to answer visitor questions 24/7','No instant AI answer box to guide visitors','Static content that could convert better with interactive sections']},
+    enhancements:[
+      {icon:'💬',title:'24/7 AI assistant',desc:`A Claude-powered chatbot that answers ${brand}'s visitors instantly, any time of day.`},
+      {icon:'✨',title:'AI answer box',desc:'A hero search where visitors ask anything and get an instant, on-brand answer.'},
+      {icon:'📝',title:'AI-written sections',desc:'Polished, conversion-focused copy generated for your key pages.'},
+      {icon:'⚡',title:'One-click publish',desc:'Export a ready-to-host site with every AI feature already built in.'}],
+    build:{name:brand,
+      agent:{name:'Aria',emoji:'🤖',greeting:`Hi! I'm Aria, the ${brand} assistant. How can I help?`,system:`You are Aria, the friendly assistant for ${brand}. Answer visitor questions about ${brand} concisely and warmly. If you're unsure of a specific detail, say so and invite them to get in touch.`},
+      search:{placeholder:`Ask ${brand} anything…`,examples:['What do you offer?','How do I get started?','How can I contact you?']},
+      blocks:[
+        {type:'hero',pill:'AI-powered',headline:`${brand}, now with built-in AI`,sub:'Answer every visitor instantly and turn more visits into customers.'},
+        {type:'how',ey:'What AI adds',title:'Three ways AI works for you',items:[{emoji:'💬',title:'Always-on assistant',desc:'Answers questions any time, in your brand voice.'},{emoji:'✨',title:'Instant answers',desc:'Visitors ask, AI replies — no waiting.'},{emoji:'📈',title:'More conversions',desc:'Guides visitors toward getting in touch.'}]},
+        {type:'unique',badge:'Only here',title:`Why ${brand} + AI`,emoji:'⭐',desc:'Give every visitor a concierge experience without hiring one.',points:['Round-the-clock answers','On-brand, accurate replies','Set up in minutes'],cta:'See how'},
+        {type:'contact',ey:'Get in touch',title:'Talk to us',sub:"Questions? Send a note and we'll get right back to you.",button:'Send message'}
+      ]}};
 }
 
 renderUploads(); renderBgs(); render();
