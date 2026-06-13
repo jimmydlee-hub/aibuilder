@@ -1,0 +1,10 @@
+{
+  "name": "grantsgpt",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
+    "@netlify/functions": "^2.8.2"
+  }
+}
