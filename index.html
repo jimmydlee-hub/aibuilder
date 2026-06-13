@@ -58,11 +58,12 @@
   /* ===== AGENCY LOGO MARQUEE (Netlify-style scroll) ===== */
   .logos-blk{padding:46px 0}
   .logos{overflow:hidden;position:relative;padding:6px 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
-  .logos-track{display:flex;gap:34px;width:max-content;animation:logoscroll 40s linear infinite}
+  .logos-track{display:flex;gap:40px;width:max-content;animation:logoscroll 40s linear infinite}
   .logos:hover .logos-track{animation-play-state:paused}
-  .logo-item{display:flex;align-items:center;gap:12px;flex:0 0 auto;padding:11px 20px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
-  .logo-seal{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:13px;letter-spacing:.4px;flex:0 0 auto;background:var(--accent)}
-  .logo-name{font-size:14px;font-weight:700;color:var(--ink);white-space:nowrap}
+  /* Each logo is a clickable seal — no agency name text */
+  .logo-item{display:grid;place-items:center;flex:0 0 auto;text-decoration:none;transition:transform .18s ease}
+  .logo-item:hover{transform:translateY(-3px)}
+  .logo-seal{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:17px;letter-spacing:.4px;flex:0 0 auto;background:var(--accent);box-shadow:var(--shadow)}
   @keyframes logoscroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
   @media(prefers-reduced-motion:reduce){.logos-track{animation:none;flex-wrap:wrap;width:auto;justify-content:center}}
 
@@ -106,16 +107,16 @@ const SITE = {
   blocks:[
     {type:'hero', pill:'AI-powered', headline:'Find federal grants, fast.', sub:'Ask a question in plain English and get matching opportunities, eligibility tips, and deadlines.'},
     {type:'agencies', ey:'Trusted sources', title:'We track grants from every major federal agency', sub:'Open funding opportunities, pulled together from the agencies that matter to you.',
-      items:[{short:'NIH',name:'National Institutes of Health',color:'#20558a'},
-             {short:'NSF',name:'National Science Foundation',color:'#1a7a8c'},
-             {short:'DOE',name:'Department of Energy',color:'#0a6b3b'},
-             {short:'USDA',name:'U.S. Dept. of Agriculture',color:'#5a7d2a'},
-             {short:'DOD',name:'Department of Defense',color:'#2f4858'},
-             {short:'NASA',name:'NASA',color:'#0b3d91'},
-             {short:'ED',name:'Department of Education',color:'#7a3b8c'},
-             {short:'SBA',name:'Small Business Administration',color:'#1f6feb'},
-             {short:'EPA',name:'Environmental Protection Agency',color:'#13795b'},
-             {short:'HHS',name:'Health & Human Services',color:'#205493'}]}
+      items:[{short:'NIH',name:'National Institutes of Health',color:'#20558a',url:'https://grants.nih.gov'},
+             {short:'NSF',name:'National Science Foundation',color:'#1a7a8c',url:'https://www.nsf.gov/funding'},
+             {short:'DOE',name:'Department of Energy',color:'#0a6b3b',url:'https://www.energy.gov/science/office-science-funding-opportunities'},
+             {short:'USDA',name:'U.S. Dept. of Agriculture',color:'#5a7d2a',url:'https://www.usda.gov/topics/farming/grants-and-loans'},
+             {short:'DOD',name:'Department of Defense',color:'#2f4858',url:'https://www.defense.gov'},
+             {short:'NASA',name:'NASA',color:'#0b3d91',url:'https://www.nasa.gov'},
+             {short:'ED',name:'Department of Education',color:'#7a3b8c',url:'https://www.ed.gov/grants-and-programs'},
+             {short:'SBA',name:'Small Business Administration',color:'#1f6feb',url:'https://www.sba.gov/funding-programs/grants'},
+             {short:'EPA',name:'Environmental Protection Agency',color:'#13795b',url:'https://www.epa.gov/grants'},
+             {short:'HHS',name:'Health & Human Services',color:'#205493',url:'https://www.hhs.gov/grants'}]}
   ]
 };
 
@@ -131,14 +132,12 @@ function renderHero(b){ return `<section class="blk hero"><div class="wrap">
     <div class="chips">${SITE.search.examples.map(x=>`<span class="chip" onclick="fillSearch('${esc(x).replace(/'/g,"&#39;")}')">${esc(x)}</span>`).join('')}</div>
     <div class="results" id="searchResults"><div class="rhead">✨ AI answer <span class="claude-badge">Powered by Claude</span></div><div id="searchAns"></div></div>
   </div></div></section>`; }
-function logoItem(a,hidden){ const col=a.color||'var(--accent)';
-  return `<div class="logo-item"${hidden?' aria-hidden="true"':''}><span class="logo-seal" style="background:${col}">${esc(a.short||'')}</span><span class="logo-name">${esc(a.name||'')}</span></div>`; }
+function logoItem(a,hidden){ const col=a.color||'var(--accent)'; const url=a.url||'#';
+  return `<a class="logo-item" href="${esc(url)}" target="_blank" rel="noopener" title="${esc(a.name||'')}" aria-label="${esc(a.name||'')}"${hidden?' aria-hidden="true" tabindex="-1"':''}><span class="logo-seal" style="background:${col}">${esc(a.short||'')}</span></a>`; }
 function renderAgencies(b){
   const live=b.items.map(a=>logoItem(a,false)).join('');
   const dup=b.items.map(a=>logoItem(a,true)).join('');
-  return `<section class="blk logos-blk" style="background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)"><div class="wrap">
-  <div class="sec-head"><div class="ey">${esc(b.ey)}</div><h2>${esc(b.title)}</h2><p>${esc(b.sub)}</p></div>
-  </div>
+  return `<section class="blk logos-blk" style="background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
   <div class="logos"><div class="logos-track">${live}${dup}</div></div></section>`; }
 const RENDER={hero:renderHero,agencies:renderAgencies};
 
