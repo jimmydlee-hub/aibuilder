@@ -54,6 +54,10 @@
   .pmodal .pclose{margin-top:16px;background:var(--ink);color:#fff;border:none;border-radius:10px;padding:10px 18px;font-weight:700;cursor:pointer}
   footer.site a{text-decoration:underline}
   footer.site{border-top:1px solid var(--line);padding:30px 0;color:var(--muted);font-size:13.5px;text-align:center}
+  /* "Powered and managed by NXAVERSE" credit with logo */
+  .nxa-credit{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:16px;flex-wrap:wrap}
+  .nxa-credit span{font-size:13px;color:var(--muted);font-weight:600}
+  .nxa-credit img{height:30px;width:auto;display:block}
 
   /* ===== AGENCY LOGO MARQUEE (Netlify-style scroll) ===== */
   .logos-blk{padding:46px 0}
@@ -83,7 +87,9 @@
 
 <!-- ===== SITE ===== -->
 <main id="canvas"></main>
-<footer class="site"><div class="wrap"><span id="footName">Grant Finder</span> · AI grant search <b style="color:var(--ink)">powered by Claude</b> · <a href="#" onclick="showPrivacy();return false">Privacy</a></div></footer>
+<footer class="site"><div class="wrap"><span id="footName">Grant Finder</span> · AI grant search <b style="color:var(--ink)">powered by Claude</b> · <a href="#" onclick="showPrivacy();return false">Privacy</a>
+  <div class="nxa-credit"><span>Powered and managed by</span><img src="/assets/nxaverse.jpeg" alt="NXAVERSE"></div>
+</div></footer>
 
 <!-- Privacy modal -->
 <div class="pmodal-ov" id="privOverlay" onclick="hidePrivacy()"></div>
@@ -110,12 +116,12 @@ const SITE = {
     {type:'hero', pill:'AI-powered', headline:'Find federal grants, fast.', sub:'Ask a question in plain English and get matching opportunities, eligibility tips, and deadlines.'},
     {type:'agencies', ey:'Trusted sources', title:'We track grants from every major federal agency', sub:'Open funding opportunities, pulled together from the agencies that matter to you.',
       items:[{short:'NIH',name:'National Institutes of Health',img:'/assets/logos/nih.jpeg',url:'https://grants.nih.gov'},
-             {short:'NSF',name:'National Science Foundation',color:'#1a7a8c',url:'https://www.nsf.gov/funding'},
+             {short:'NSF',name:'National Science Foundation',img:'/assets/logos/nsf.jpeg',url:'https://www.nsf.gov/funding'},
              {short:'DOE',name:'Department of Energy',img:'/assets/logos/doe-energy.jpeg',url:'https://www.energy.gov/science/office-science-funding-opportunities'},
              {short:'USDA',name:'U.S. Dept. of Agriculture',img:'/assets/logos/usda.jpeg',url:'https://www.usda.gov/topics/farming/grants-and-loans'},
-             {short:'DOD',name:'Department of Defense',color:'#2f4858',url:'https://www.defense.gov'},
-             {short:'NASA',name:'NASA',color:'#0b3d91',url:'https://www.nasa.gov'},
-             {short:'ED',name:'Department of Education',color:'#7a3b8c',url:'https://www.ed.gov/grants-and-programs'},
+             {short:'DOD',name:'Department of Defense',img:'/assets/logos/dod.jpeg',url:'https://www.defense.gov'},
+             {short:'NASA',name:'NASA',img:'/assets/logos/nasa.jpeg',url:'https://www.nasa.gov'},
+             {short:'ED',name:'Department of Education',img:'/assets/logos/ed.jpeg',url:'https://www.ed.gov/grants-and-programs'},
              {short:'DOC',name:'U.S. Department of Commerce',img:'/assets/logos/doc-commerce.jpeg',url:'https://www.commerce.gov/work-with-us/grants-and-cooperative-agreements'},
              {short:'SBA',name:'Small Business Administration',img:'/assets/logos/sba.jpeg',url:'https://www.sba.gov/funding-programs/grants'},
              {short:'EPA',name:'Environmental Protection Agency',img:'/assets/logos/epa.jpeg',url:'https://www.epa.gov/grants'},
