@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Website — Drag &amp; Drop Builder</title>
+<title>Grant Finder — Site Builder</title>
 <style>
-  :root{--accent:#d97757;--accent2:#c2613f;--ink:#1f1e1d;--ink2:#2a2825;--muted:#6b6862;--line:#e8e4d9;--bg:#faf9f5;--card:#fff;--good:#16a34a;--bad:#e5484d;--warn:#b8852a;--radius:16px;--shadow:0 8px 30px rgba(40,33,24,.06);--bchrome:#1f1e1d;--rail:268px;--serif:ui-serif,'Iowan Old Style',Georgia,'Times New Roman',serif}
+  :root{--accent:#d97757;--accent2:#c2613f;--ink:#1f1e1d;--ink2:#2a2825;--muted:#6b6862;--line:#e8e4d9;--bg:#faf9f5;--card:#fff;--good:#16a34a;--bad:#e5484d;--warn:#b8852a;--radius:16px;--shadow:0 8px 30px rgba(40,33,24,.06);--bchrome:#1f1e1d;--serif:ui-serif,'Iowan Old Style',Georgia,'Times New Roman',serif}
   *{box-sizing:border-box}
   body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
   /* Claude-style serif display headings — calm, simple, distinctive */
-  h1.hero-h,.sec-head h2,.u-left h2,.ctablk h2{font-family:var(--serif);font-weight:600;letter-spacing:-.5px}
+  h1.hero-h,.sec-head h2{font-family:var(--serif);font-weight:600;letter-spacing:-.5px}
 
   /* ===== BUILDER CHROME ===== */
   .toolbar{position:sticky;top:0;z-index:100;background:var(--bchrome);color:#dbe4f0;display:flex;align-items:center;gap:10px;padding:10px 16px;flex-wrap:wrap;border-bottom:1px solid #1f2b3d}
@@ -29,7 +29,7 @@
   .addmenu .menu button{display:flex;gap:9px;width:100%;background:none;border:none;color:#dbe4f0;text-align:left;padding:9px 11px;border-radius:8px;cursor:pointer;font-size:13px}
   .addmenu .menu button:hover{background:#22304a}
   .hint{background:#10203a;color:#9fc3ef;font-size:12.5px;padding:8px 16px;display:flex;gap:8px;align-items:center;border-bottom:1px solid #1f2b3d}
-  body.previewing .toolbar,body.previewing .hint,body.previewing .photos-rail{display:none}
+  body.previewing .toolbar,body.previewing .hint{display:none}
   .setmodal-ov{position:fixed;inset:0;background:rgba(8,16,28,.55);z-index:130;display:none}
   .setmodal-ov.show{display:block}
   .setmodal{position:fixed;z-index:131;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,92vw);max-height:86vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.4);padding:26px;display:none;color:var(--ink)}
@@ -40,25 +40,6 @@
   .setmodal textarea{min-height:78px;resize:vertical}
   .setmodal .sdone{margin-top:18px;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:11px 20px;font-weight:800;cursor:pointer}
   .setmodal .snote{font-size:11px;color:#94a3b8;margin-top:4px}
-
-  /* ===== CANVA-STYLE PHOTOS RAIL ===== */
-  .photos-rail{position:fixed;left:0;top:0;bottom:0;width:var(--rail);background:#0c1422;color:#dbe4f0;z-index:90;overflow-y:auto;border-right:1px solid #1f2b3d;padding:14px 14px 40px;padding-top:96px}
-  body:not(.panel-open) .photos-rail{display:none}
-  .pr-head{font-size:15px;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;margin-bottom:12px}
-  .pr-section{margin-bottom:20px}
-  .pr-title{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:#7e93b3;margin-bottom:8px}
-  .pr-upload{width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:11px;font-weight:800;font-size:13px;cursor:pointer}
-  .pr-drop{margin-top:8px;border:2px dashed #2a3950;border-radius:10px;padding:14px;text-align:center;font-size:12px;color:#7e93b3;transition:.15s}
-  .pr-drop.over{border-color:var(--accent);background:rgba(58,160,255,.12);color:#cfe6ff}
-  .pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-  .pr-grid img,.bgsw{width:100%;height:62px;object-fit:cover;border-radius:8px;cursor:grab;border:2px solid transparent;background-size:cover}
-  .pr-grid img.sel,.bgsw.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
-  .pr-empty{font-size:12px;color:#5d6f8c;grid-column:1/-1;text-align:center;padding:10px 0}
-  .pr-search{width:100%;background:#16223a;border:1px solid #2a3950;color:#fff;border-radius:8px;padding:8px 10px;font-size:12.5px;outline:none;margin-bottom:6px}
-  .pr-go{background:#22304a;border:1px solid #33465f;color:#dbe4f0;border-radius:8px;padding:8px 12px;font-weight:700;font-size:12.5px;cursor:pointer}
-  .pr-note{font-size:11px;color:#7e93b3;margin-bottom:6px;line-height:1.4}
-  .pr-tip{font-size:11.5px;color:#7e93b3;background:#101c30;border-radius:10px;padding:10px;line-height:1.5}
-  body.panel-open:not(.previewing) .sitewrap{margin-left:var(--rail)}
 
   /* ===== SITE STYLES (shared with export) ===== */
   .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
@@ -91,62 +72,13 @@
   .results{max-width:700px;margin:16px auto 0;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;box-shadow:var(--shadow);display:none}
   .results.show{display:block}
   .results .rhead{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;gap:8px;align-items:center}
-  .demo-tag{font-size:10.5px;color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 40%,transparent);border-radius:6px;padding:1px 6px;margin-left:auto}
   .claude-badge{font-size:10.5px;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);border-radius:6px;padding:1px 7px;margin-left:auto;font-weight:700}
-  .agent-credit{text-align:center;font-size:11px;color:var(--muted);padding:6px;border-top:1px solid var(--line);background:var(--bg)}
-  .agent-credit b{color:var(--ink)}
 
   .sec-head{text-align:center;max-width:620px;margin:0 auto 34px}
   .sec-head .ey{font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent)}
   .sec-head h2{font-size:clamp(25px,4vw,36px);letter-spacing:-1px;margin:9px 0 8px}
   .sec-head p{color:var(--muted);font-size:16px;margin:0}
 
-  .gallery{display:grid;grid-template-columns:2fr 1fr 1fr;gap:16px}
-  @media(max-width:820px){.gallery{grid-template-columns:1fr 1fr}}
-  @media(max-width:540px){.gallery{grid-template-columns:1fr}}
-  .gcard{position:relative;border-radius:var(--radius);overflow:hidden;min-height:240px;display:flex;align-items:flex-end;box-shadow:var(--shadow);color:#fff;background-size:cover;background-position:center;border:1px solid var(--line)}
-  .gcard.big{min-height:330px}
-  .gcard .ov{position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(8,16,28,.78));z-index:1}
-  .gcard .gc-body{position:relative;z-index:2;padding:20px}
-  .gcard .gc-body h3{margin:0 0 4px;font-size:19px}
-  .gcard .gc-body p{margin:0;font-size:13px;opacity:.92}
-  .dropimg{position:absolute;inset:0;z-index:3;display:none;align-items:center;justify-content:center;color:#fff;font-size:12.5px;font-weight:700;background:rgba(8,16,28,.5);border:2px dashed rgba(255,255,255,.6);border-radius:var(--radius);cursor:pointer;text-align:center;padding:10px}
-  body:not(.previewing) .gcard:hover .dropimg{display:flex}
-  .gcard.dragover .dropimg{display:flex;background:rgba(58,160,255,.6)}
-  .imgblock{min-height:420px!important}
-
-  .unique-card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);display:grid;grid-template-columns:1.1fr .9fr;overflow:hidden}
-  @media(max-width:820px){.unique-card{grid-template-columns:1fr}}
-  .u-left{padding:38px}
-  .u-left .badge{display:inline-block;background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--accent);font-weight:800;font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:6px 12px;border-radius:999px;margin-bottom:12px}
-  .u-left h2{font-size:28px;letter-spacing:-.8px;margin:0 0 10px}
-  .u-left p{color:var(--muted);font-size:15.5px;margin:0 0 16px}
-  .u-left ul{list-style:none;padding:0;margin:0 0 20px}
-  .u-left li{display:flex;gap:9px;padding:6px 0;font-size:14.5px}
-  .u-left li::before{content:"✦";color:var(--accent);font-weight:900}
-  .u-left .ubtn{background:var(--ink);color:#fff;border:none;padding:12px 22px;border-radius:11px;font-weight:700;cursor:pointer}
-  .u-right{position:relative;background:linear-gradient(150deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#fff;min-height:280px;overflow:hidden;background-size:cover;background-position:center}
-  .u-right .em{font-size:70px}
-
-  .ctablk{text-align:center;background:linear-gradient(135deg,var(--ink),var(--ink2));color:#fff;border-radius:24px;padding:54px 24px;margin:0 22px}
-  .ctablk h2{font-size:clamp(26px,4vw,40px);letter-spacing:-1px;margin:0 0 10px}
-  .ctablk p{font-size:17px;opacity:.85;max-width:480px;margin:0 auto 22px}
-  .ctablk .cbtn{background:var(--accent);color:#fff;border:none;padding:14px 28px;border-radius:13px;font-weight:800;font-size:16px;cursor:pointer}
-
-  .cols3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
-  @media(max-width:820px){.cols3{grid-template-columns:1fr}}
-  .howcard{background:linear-gradient(160deg,#fff,color-mix(in srgb,var(--accent) 7%,#fff));border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:var(--shadow)}
-  .howcard .he{font-size:30px;margin-bottom:8px}
-  .howcard h3{margin:0 0 6px;font-size:19px;letter-spacing:-.3px}
-  .howcard p{margin:0;color:var(--muted);font-size:14.5px}
-  .tcard{background:var(--bg);border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:var(--shadow)}
-  .tcard .stars{color:#f5b301;font-size:15px;letter-spacing:2px;margin-bottom:10px}
-  .tcard .tq{font-size:15.5px;color:var(--ink);margin:0 0 14px;line-height:1.55}
-  .tcard .tby{font-size:13.5px;color:var(--muted)} .tcard .tby b{color:var(--ink)} .tcard .tby span{color:var(--muted)}
-  .contactform{display:flex;flex-direction:column;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;box-shadow:var(--shadow)}
-  .contactform .cf{border:1px solid var(--line);border-radius:11px;padding:12px 14px;font-size:15px;font-family:inherit;outline:none;background:var(--bg)}
-  .contactform .cf:focus{border-color:var(--accent);background:#fff}
-  .contactform .cf-btn{background:var(--accent);color:#fff;border:none;border-radius:12px;padding:14px;font-weight:800;font-size:15px;cursor:pointer}
   .pmodal-ov{position:fixed;inset:0;background:rgba(8,16,28,.5);z-index:80;display:none}
   .pmodal-ov.show{display:block}
   .pmodal{position:fixed;z-index:81;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,92vw);max-height:80vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 30px 80px rgba(10,30,60,.3);padding:28px;display:none}
@@ -177,21 +109,6 @@
   .grant-card .glabel{color:var(--muted);font-weight:700;min-width:84px;flex:0 0 auto}
   .grant-card a{color:var(--accent);font-weight:700;text-decoration:underline}
 
-  .agent-fab{position:fixed;right:20px;bottom:20px;z-index:60;background:var(--accent);color:#fff;border:none;border-radius:999px;padding:13px 18px;font-weight:800;cursor:pointer;box-shadow:0 12px 36px color-mix(in srgb,var(--accent) 45%,transparent);display:flex;gap:8px}
-  .agent-panel{position:fixed;right:20px;bottom:80px;z-index:60;width:340px;max-width:calc(100vw - 40px);height:460px;max-height:70vh;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 24px 70px rgba(10,30,60,.25);display:none;flex-direction:column;overflow:hidden}
-  .agent-panel.show{display:flex}
-  .agent-head{padding:13px 15px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
-  .agent-head .av{width:36px;height:36px;border-radius:50%;background:var(--accent);display:grid;place-items:center;font-size:17px}
-  .agent-head b{font-size:14px}.agent-head .on{font-size:11.5px;color:var(--good)}
-  .agent-head .x{margin-left:auto;background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer}
-  .agent-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:9px;background:var(--bg)}
-  .msg{max-width:82%;padding:9px 12px;border-radius:13px;font-size:13.5px}
-  .msg.bot{background:var(--card);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px}
-  .msg.me{background:var(--ink);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
-  .agent-input{display:flex;gap:7px;padding:11px;border-top:1px solid var(--line)}
-  .agent-input input{flex:1;border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:13.5px;outline:none}
-  .agent-input button{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:0 15px;font-weight:800;cursor:pointer}
-
   /* EDIT AFFORDANCES */
   [contenteditable]{outline:none}
   body:not(.previewing) [contenteditable]:hover{box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 40%,transparent);border-radius:4px}
@@ -211,30 +128,21 @@
   body:not(.previewing) .logo-item[aria-hidden]{display:none}
 </style>
 </head>
-<body class="panel-open">
+<body>
 
 <!-- ===== TOOLBAR ===== -->
 <div class="toolbar">
-  <div class="grp"><span style="font-weight:800;color:#fff">⚡ AI Website Builder</span></div>
+  <div class="grp"><span style="font-weight:800;color:#fff">⚡ Grant Finder Builder</span></div>
   <div class="sep"></div>
   <div class="grp"><label>Site</label><input type="text" id="tName" oninput="setName(this.value)" placeholder="My Site"></div>
   <div class="grp"><label>Colors</label><input type="color" id="tAccent" oninput="setVar('accent',this.value)"><input type="color" id="tAccent2" oninput="setVar('accent2',this.value)"></div>
-  <div class="grp"><label>Agent</label><input type="text" id="tAgent" oninput="setAgentName(this.value)" placeholder="Agent" style="width:84px"></div>
   <div class="sep"></div>
-  <button class="btn ghost" onclick="document.body.classList.toggle('panel-open')">🖼 Photos</button>
   <button class="btn ghost" onclick="openSettings()">⚙ Settings</button>
   <div class="addmenu" id="addMenu">
     <button class="btn" onclick="document.getElementById('addMenu').classList.toggle('open')">+ Add section ▾</button>
     <div class="menu">
-      <button onclick="addBlock('hero')">✨ Hero + AI search</button>
-      <button onclick="addBlock('gallery')">🖼️ Picture gallery</button>
+      <button onclick="addBlock('hero')">✨ Hero + grant search</button>
       <button onclick="addBlock('agencies')">🏛️ Agency logo scroll</button>
-      <button onclick="addBlock('image')">🏞️ Single big image</button>
-      <button onclick="addBlock('unique')">⭐ Unique feature</button>
-      <button onclick="addBlock('how')">🔢 Three columns</button>
-      <button onclick="addBlock('testimonials')">💬 Testimonials</button>
-      <button onclick="addBlock('contact')">✉️ Contact form</button>
-      <button onclick="addBlock('cta')">📣 Call to action</button>
     </div>
   </div>
   <div class="spacer"></div>
@@ -246,41 +154,17 @@
     <button class="btn primary" onclick="exportSite()">⬇ Export site</button>
   </div>
 </div>
-<div class="hint">👉 Add photos in the left panel, then <b>drag a photo onto any picture area</b> (or click a photo, then click where you want it). Click text to edit. Hover a section to move/delete. Then <b>Export</b>.</div>
-
-<!-- ===== PHOTOS RAIL (Canva-style) ===== -->
-<aside class="photos-rail">
-  <div class="pr-head">🖼 Photos</div>
-  <div class="pr-section">
-    <div class="pr-title">Your uploads</div>
-    <button class="pr-upload" onclick="document.getElementById('imgUpload').click()">⬆ Upload images</button>
-    <input type="file" id="imgUpload" accept="image/*" multiple style="display:none" onchange="handleUpload(event)">
-    <div class="pr-drop" id="prDrop">…or drag image files here</div>
-    <div class="pr-grid" id="uploadGrid"></div>
-  </div>
-  <div class="pr-section">
-    <div class="pr-title">Backgrounds</div>
-    <div class="pr-grid" id="bgGrid"></div>
-  </div>
-  <div class="pr-section">
-    <div class="pr-title">Search stock photos</div>
-    <div class="pr-note">Optional. Paste a free Unsplash access key (unsplash.com/developers) to search millions of photos.</div>
-    <input class="pr-search" id="stockKey" placeholder="Unsplash access key (optional)">
-    <div style="display:flex;gap:6px"><input class="pr-search" id="stockQ" style="margin-bottom:0" placeholder="search e.g. mountains" onkeydown="if(event.key==='Enter')searchStock()"><button class="pr-go" onclick="searchStock()">Go</button></div>
-    <div class="pr-grid" id="stockGrid"></div>
-  </div>
-  <div class="pr-tip">💡 Drag a photo onto any picture area, or <b>click a photo to select it</b>, then click where you want it placed.</div>
-</aside>
+<div class="hint">👉 Click any text to edit it. Hover a section to move or delete it. Adjust colors in the toolbar, then <b>Export</b>.</div>
 
 <!-- ===== SITE ===== -->
 <div class="sitewrap">
   <nav class="site"><div class="wrap">
     <div class="brand"><span class="logo" id="navLogo">A</span> <span id="navName">My Site</span></div>
-    <div class="navlinks"><a>Explore</a><a>Features</a><a>About</a></div>
+    <div class="navlinks"><a>Explore</a><a>Agencies</a><a>About</a></div>
     <button class="navcta">Get started</button>
   </div></nav>
   <main id="canvas"></main>
-  <footer class="site"><div class="wrap"><span id="footName">My Site</span> · AI search &amp; agent <b style="color:var(--ink)">powered by Claude</b> · <a href="#" onclick="showPrivacy();return false" style="text-decoration:underline">Privacy</a></div></footer>
+  <footer class="site"><div class="wrap"><span id="footName">My Site</span> · AI grant search <b style="color:var(--ink)">powered by Claude</b> · <a href="#" onclick="showPrivacy();return false" style="text-decoration:underline">Privacy</a></div></footer>
 </div>
 
 <!-- builder Settings dialog -->
@@ -290,9 +174,9 @@
   <label>Social share image URL</label>
   <input id="setOg" placeholder="https://yoursite.com/share.jpg">
   <div class="snote">Shown when your link is shared (texts, social). Use a full https URL to a ~1200×630 image. Optional.</div>
-  <label>Agent instructions for Claude</label>
-  <textarea id="setSys" placeholder="e.g. You are SkyReserve's booking assistant. Help visitors with charter-flight questions; be concise, warm, and accurate."></textarea>
-  <div class="snote">Tells Claude how to behave on this site (its role, tone, and what it knows).</div>
+  <label>Search instructions for Claude</label>
+  <textarea id="setSys" placeholder="e.g. You help applicants find U.S. federal grants. Be concise, accurate, and point to grants.gov where relevant."></textarea>
+  <div class="snote">Tells Claude how to answer grant questions on this site (its role, tone, and what it knows).</div>
   <label>Privacy notice</label>
   <textarea id="setPriv"></textarea>
   <div class="snote">Plain-language only — not legal advice. Consider having a professional review it.</div>
@@ -303,20 +187,12 @@
 <div class="pmodal-ov" id="privOverlay" onclick="hidePrivacy()"></div>
 <div class="pmodal" id="privModal"><h3>Privacy</h3><p id="privBody"></p><button class="pclose" onclick="hidePrivacy()">Close</button></div>
 
-<button class="agent-fab" onclick="toggleAgent()">💬 <span id="agentFabName">Ask the agent</span></button>
-<div class="agent-panel" id="agentPanel">
-  <div class="agent-head"><div class="av" id="agentAv">🤖</div><div><b id="agentName">Agent</b><div class="on">● online</div></div><button class="x" onclick="toggleAgent()">×</button></div>
-  <div class="agent-msgs" id="agentMsgs"></div>
-  <div class="agent-credit">✨ Powered by <b>Claude</b></div>
-  <div class="agent-input"><input id="agentInput" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendAgent()"><button onclick="sendAgent()">→</button></div>
-</div>
-
 <script>
 /* ===================== MODEL ===================== */
 const SITE = {
   name:'My AI Site', accent:'#d97757', accent2:'#c2613f', ogImage:'',
-  privacy:'We respect your privacy. Messages you send through our contact form or AI assistant are used only to respond to you and improve our service — they are not sold. Our AI assistant is powered by Claude (Anthropic), which processes your questions to generate replies. Contact us anytime to request deletion of your information.',
-  agent:{name:'Aria', emoji:'🤖', system:'', greeting:'Hi! I\'m here to help. Ask me anything.'},
+  privacy:'We respect your privacy. Questions you send through our grant search are used only to answer you and improve our service — they are not sold. Our search is powered by Claude (Anthropic), which processes your questions to generate replies. Contact us anytime to request deletion of your information.',
+  agent:{system:''},
   search:{placeholder:'Ask about federal grants — eligibility, deadlines, how to apply…', examples:[
     'I\'ve never applied for a federal grant — where do I start?',
     'How do I register on SAM.gov and Grants.gov?',
@@ -329,11 +205,7 @@ const SITE = {
     'How long does the application process take?',
     'Are there grants that don\'t require matching funds?']},
   blocks:[
-    {type:'hero', pill:'AI-powered', headline:'Your headline goes here.', sub:'A short, punchy subhead that explains what this site does in one breath.'},
-    {type:'gallery', ey:'Explore', title:'Big, beautiful visuals', sub:'Drag your photos from the left panel onto these tiles.',
-      items:[{title:'First',caption:'Caption here',img:'',grad:'linear-gradient(135deg,#dbeafe,#93c5fd)'},
-             {title:'Second',caption:'Caption here',img:'',grad:'linear-gradient(135deg,#dcfce7,#86efac)'},
-             {title:'Third',caption:'Caption here',img:'',grad:'linear-gradient(135deg,#ede9fe,#c4b5fd)'}]},
+    {type:'hero', pill:'AI-powered', headline:'Find federal grants, fast.', sub:'Ask a question in plain English and get matching opportunities, eligibility tips, and deadlines.'},
     {type:'agencies', ey:'Trusted sources', title:'We track grants from every major federal agency', sub:'Open funding opportunities, pulled together from the agencies that matter to you.',
       items:[{short:'NIH',name:'National Institutes of Health',color:'#20558a'},
              {short:'NSF',name:'National Science Foundation',color:'#1a7a8c'},
@@ -344,23 +216,10 @@ const SITE = {
              {short:'ED',name:'Department of Education',color:'#7a3b8c'},
              {short:'SBA',name:'Small Business Administration',color:'#1f6feb'},
              {short:'EPA',name:'Environmental Protection Agency',color:'#13795b'},
-             {short:'HHS',name:'Health & Human Services',color:'#205493'}]},
-    {type:'unique', badge:'Only here', title:'Your unique hook', emoji:'⭐', image:'',
-      desc:'Describe the one thing that sets this site apart from everyone else.',
-      points:['First benefit','Second benefit','Third benefit'], cta:'Learn more'},
-    {type:'cta', headline:'Ready to get started?', sub:'A closing line that invites the visitor to act.', button:'Get started'}
+             {short:'HHS',name:'Health & Human Services',color:'#205493'}]}
   ]
 };
-const BGS=[
-  'linear-gradient(135deg,#dbeafe,#93c5fd)','linear-gradient(135deg,#e0f2fe,#bae6fd)',
-  'linear-gradient(135deg,#ede9fe,#c4b5fd)','linear-gradient(135deg,#dcfce7,#86efac)',
-  'linear-gradient(135deg,#fef9c3,#fde047)','linear-gradient(135deg,#ffe4e6,#fda4af)',
-  'linear-gradient(135deg,#fce7f3,#f9a8d4)','linear-gradient(135deg,#cffafe,#67e8f9)',
-  'linear-gradient(135deg,#f8fafc,#e2e8f0)','linear-gradient(135deg,#fff7ed,#fed7aa)',
-  'linear-gradient(135deg,#60a5fa,#a78bfa)','linear-gradient(135deg,#34d399,#22d3ee)'];
 
-let uploads=[];        // data-URL strings of user images
-let selectedImg=null;  // {val, grad} picked in the panel for click-to-place
 let EXPORTING=false;
 
 const $=id=>document.getElementById(id);
@@ -370,23 +229,6 @@ function setPath(path,val){ const p=path.split('.'); let o=SITE; for(let i=0;i<p
 function getPath(path){ const p=path.split('.'); let o=SITE; for(const k of p) o=o[k]; return o; }
 function ed(path,tag,cls,extra=''){ const v=getPath(path); const e=EXPORTING?'':` data-path="${path}" contenteditable`; return `<${tag} class="${cls}" ${extra}${e}>${esc(v)}</${tag}>`; }
 document.addEventListener('input',e=>{ const el=e.target.closest('[data-path]'); if(!el) return; setPath(el.getAttribute('data-path'), el.innerText); if(el.getAttribute('data-path')==='name'){ $('navName').textContent=SITE.name; $('footName').textContent=SITE.name; } });
-
-/* ===================== IMAGE TARGET (drop / click-to-place) ===================== */
-function imgCard(cls,imgpath,gradpath,bgStyle,body){
-  const handlers=EXPORTING?'':`ondragover="targetOver(this,event)" ondragleave="this.classList.remove('dragover')" ondrop="targetDrop(this,event)" onclick="if(event.target.classList.contains('dropimg'))return; "`;
-  const overlay=EXPORTING?'':`<div class="dropimg" onclick="targetClick(this.closest('.imgtarget'))">⬆ Drop a photo here<br>or click to place the selected photo</div>`;
-  const gp=gradpath?`data-gradpath="${gradpath}"`:'';
-  return `<div class="gcard imgtarget ${cls}" data-imgpath="${imgpath}" ${gp} style="${bgStyle}" ${handlers}><div class="ov"></div><div class="gc-body">${body}</div>${overlay}</div>`;
-}
-function applyTarget(el,val,isGrad){ const ip=el.getAttribute('data-imgpath'),gp=el.getAttribute('data-gradpath');
-  if(isGrad){ if(gp) setPath(gp,val); if(ip) setPath(ip,''); } else if(ip) setPath(ip,val); render(); }
-function targetOver(el,e){ e.preventDefault(); el.classList.add('dragover'); }
-function targetDrop(el,e){ e.preventDefault(); el.classList.remove('dragover');
-  const grad=e.dataTransfer.getData('text/grad'), src=e.dataTransfer.getData('text/imgsrc'), file=e.dataTransfer.files[0];
-  if(grad) applyTarget(el,grad,true);
-  else if(src) applyTarget(el,src,false);
-  else if(file&&file.type.startsWith('image/')){ const r=new FileReader(); r.onload=()=>{ uploads.push(r.result); renderUploads(); applyTarget(el,r.result,false); }; r.readAsDataURL(file); } }
-function targetClick(el){ if(selectedImg){ applyTarget(el,selectedImg.val,selectedImg.grad); } else { const u=prompt('Paste an image URL (or upload photos in the left panel):'); if(u) applyTarget(el,u.trim(),false); } }
 
 /* ===================== RENDER BLOCKS ===================== */
 function blockTools(i){ if(EXPORTING) return '';
@@ -402,47 +244,6 @@ function renderHero(b,i){ return `<section class="blk hero block" data-i="${i}" 
     <div class="chips">${SITE.search.examples.map(x=>`<span class="chip" onclick="fillSearch('${esc(x).replace(/'/g,"&#39;")}')">${esc(x)}</span>`).join('')}</div>
     <div class="results" id="searchResults"><div class="rhead">✨ AI answer <span class="claude-badge">Powered by Claude</span></div><div id="searchAns"></div></div>
   </div></div></section>`; }
-function renderGallery(b,i){ return `<section class="blk block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap">
-  <div class="sec-head"><div class="ey">${ed('blocks.'+i+'.ey','span','')}</div>${ed('blocks.'+i+'.title','h2','')}${ed('blocks.'+i+'.sub','p','')}</div>
-  <div class="gallery">${b.items.map((g,j)=>imgCard(j===0?'big':'',`blocks.${i}.items.${j}.img`,`blocks.${i}.items.${j}.grad`,
-     g.img?`background-image:url('${g.img}')`:`background:${g.grad}`,
-     ed('blocks.'+i+'.items.'+j+'.title','h3','')+ed('blocks.'+i+'.items.'+j+'.caption','p',''))).join('')}</div>
-  </div></section>`; }
-function renderImage(b,i){ return `<section class="blk block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap">
-  ${imgCard('big imgblock',`blocks.${i}.src`,`blocks.${i}.grad`, b.src?`background-image:url('${b.src}')`:`background:${b.grad}`, ed('blocks.'+i+'.caption','p',''))}
-  </div></section>`; }
-function renderUnique(b,i){ const rightBg=b.image?`background-image:url('${b.image}')`:''; return `<section class="blk block" data-i="${i}" style="background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 9%,var(--bg)),var(--bg))" ${dnd(i)}>${blockTools(i)}<div class="wrap">
-  <div class="unique-card"><div class="u-left"><span class="badge">${ed('blocks.'+i+'.badge','span','')}</span>
-    ${ed('blocks.'+i+'.title','h2','')}${ed('blocks.'+i+'.desc','p','')}
-    <ul>${b.points.map((p,j)=>ed('blocks.'+i+'.points.'+j,'li','')).join('')}</ul>
-    <button class="ubtn">${ed('blocks.'+i+'.cta','span','')}</button></div>
-    <div class="u-right imgtarget" data-imgpath="blocks.${i}.image" style="${rightBg}" ${EXPORTING?'':`ondragover="targetOver(this,event)" ondragleave="this.classList.remove('dragover')" ondrop="targetDrop(this,event)" onclick="targetClick(this)"`}>
-      ${b.image?'':`<div class="em">${ed('blocks.'+i+'.emoji','span','')}</div>`}
-      ${EXPORTING||b.image?'':'<div style="position:absolute;bottom:10px;font-size:11px;opacity:.85">drop a photo here</div>'}
-    </div></div></div></section>`; }
-function renderHow(b,i){ if(!b.items) b.items=[{emoji:'✨',title:'One',desc:'Describe it.'},{emoji:'🤖',title:'Two',desc:'Describe it.'},{emoji:'🖼️',title:'Three',desc:'Describe it.'}];
-  return `<section class="blk block" style="background:var(--bg)" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap">
-  <div class="sec-head"><div class="ey">${ed('blocks.'+i+'.ey','span','')}</div>${ed('blocks.'+i+'.title','h2','')}</div>
-  <div class="cols3">${b.items.map((h,j)=>`<div class="howcard"><div class="he">${ed('blocks.'+i+'.items.'+j+'.emoji','span','')}</div>${ed('blocks.'+i+'.items.'+j+'.title','h3','')}${ed('blocks.'+i+'.items.'+j+'.desc','p','')}</div>`).join('')}</div>
-  </div></section>`; }
-function renderTestimonials(b,i){ if(!b.items) b.items=[];
-  return `<section class="blk block" style="background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap">
-  <div class="sec-head"><div class="ey">${ed('blocks.'+i+'.ey','span','')}</div>${ed('blocks.'+i+'.title','h2','')}</div>
-  <div class="cols3">${b.items.map((t,j)=>`<div class="tcard"><div class="stars">★★★★★</div>${ed('blocks.'+i+'.items.'+j+'.quote','p','tq')}<div class="tby">${ed('blocks.'+i+'.items.'+j+'.name','b','')} <span>${ed('blocks.'+i+'.items.'+j+'.role','span','')}</span></div></div>`).join('')}</div>
-  </div></section>`; }
-function renderContact(b,i){
-  const guard = EXPORTING ? '' : `onsubmit="event.preventDefault();alert('Once this site is deployed to Netlify, messages are captured automatically under Forms.');"`;
-  return `<section class="blk block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap" style="max-width:640px">
-  <div class="sec-head"><div class="ey">${ed('blocks.'+i+'.ey','span','')}</div>${ed('blocks.'+i+'.title','h2','')}${ed('blocks.'+i+'.sub','p','')}</div>
-  <form class="contactform" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" ${guard}>
-    <input type="hidden" name="form-name" value="contact">
-    <p style="display:none"><label>Leave blank: <input name="bot-field"></label></p>
-    <input class="cf" type="text" name="name" placeholder="Your name" required>
-    <input class="cf" type="email" name="email" placeholder="Your email" required>
-    <textarea class="cf" name="message" rows="4" placeholder="How can we help?" required></textarea>
-    <button class="cf-btn" type="submit">${ed('blocks.'+i+'.button','span','')}</button>
-  </form></div></section>`; }
-function renderCta(b,i){ return `<section class="blk block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="ctablk">${ed('blocks.'+i+'.headline','h2','')}${ed('blocks.'+i+'.sub','p','')}<button class="cbtn">${ed('blocks.'+i+'.button','span','')}</button></div></section>`; }
 function logoItem(b,i,j,liveEdit){ const a=b.items[j]; const col=a.color||'var(--accent)';
   const seal = liveEdit ? ed('blocks.'+i+'.items.'+j+'.short','span','logo-seal','style="background:'+col+'"')
                         : `<span class="logo-seal" style="background:${col}">${esc(a.short||'')}</span>`;
@@ -456,49 +257,21 @@ function renderAgencies(b,i){ if(!b.items) b.items=JSON.parse(JSON.stringify(DEF
   <div class="sec-head"><div class="ey">${ed('blocks.'+i+'.ey','span','')}</div>${ed('blocks.'+i+'.title','h2','')}${ed('blocks.'+i+'.sub','p','')}</div>
   </div>
   <div class="logos"><div class="logos-track">${live}${dup}</div></div></section>`; }
-const RENDER={hero:renderHero,gallery:renderGallery,image:renderImage,unique:renderUnique,how:renderHow,testimonials:renderTestimonials,contact:renderContact,cta:renderCta,agencies:renderAgencies};
+const RENDER={hero:renderHero,agencies:renderAgencies};
 
 function render(){
   document.documentElement.style.setProperty('--accent',SITE.accent);
   document.documentElement.style.setProperty('--accent2',SITE.accent2);
   $('navName').textContent=SITE.name; $('footName').textContent=SITE.name; $('navLogo').textContent=(SITE.name[0]||'A').toUpperCase();
-  $('agentName').textContent=SITE.agent.name; $('agentAv').textContent=SITE.agent.emoji; $('agentFabName').textContent='Ask '+SITE.agent.name;
-  $('agentMsgs').innerHTML=`<div class="msg bot">${esc(SITE.agent.greeting)}</div>`;
-  $('tName').value=SITE.name; $('tAgent').value=SITE.agent.name; $('tAccent').value=SITE.accent; $('tAccent2').value=SITE.accent2;
+  $('tName').value=SITE.name; $('tAccent').value=SITE.accent; $('tAccent2').value=SITE.accent2;
   $('canvas').innerHTML = SITE.blocks.length ? SITE.blocks.map((b,i)=>(RENDER[b.type]||(()=>''))(b,i)).join('') : `<div class="empty-hint">No sections yet. Use <b>+ Add section</b> above to start building.</div>`;
 }
-
-/* ===================== PHOTOS PANEL ===================== */
-function handleUpload(ev){ [...ev.target.files].forEach(f=>{ if(f.type.startsWith('image/')){ const r=new FileReader(); r.onload=()=>{ uploads.push(r.result); renderUploads(); }; r.readAsDataURL(f); } }); ev.target.value=''; }
-function renderUploads(){ const g=$('uploadGrid'); g.innerHTML = uploads.length ? uploads.map((s,k)=>`<img src="${s}" draggable="true" ondragstart="dragImg(event,'imgsrc',${k})" onclick="selectImg('imgsrc',${k},this)">`).join('') : '<div class="pr-empty">No uploads yet — add some above.</div>'; }
-function renderBgs(){ $('bgGrid').innerHTML = BGS.map((b,k)=>`<div class="bgsw" style="background:${b}" draggable="true" ondragstart="dragImg(event,'grad',${k})" onclick="selectImg('grad',${k},this)"></div>`).join(''); }
-function srcOf(kind,k){ return kind==='grad'?BGS[k]:(kind==='stock'?stockResults[k]:uploads[k]); }
-function dragImg(e,kind,k){ const val=srcOf(kind,k); e.dataTransfer.setData(kind==='grad'?'text/grad':'text/imgsrc', val); e.dataTransfer.effectAllowed='copy'; }
-function selectImg(kind,k,el){ selectedImg={val:srcOf(kind,k), grad:kind==='grad'}; document.querySelectorAll('.photos-rail img.sel,.photos-rail .bgsw.sel').forEach(x=>x.classList.remove('sel')); el.classList.add('sel'); }
-
-let stockResults=[];
-async function searchStock(){ const key=$('stockKey').value.trim(), q=$('stockQ').value.trim();
-  if(!key){ alert('To search stock photos, paste a free Unsplash access key (get one at unsplash.com/developers). Or just use Upload — that always works.'); return; }
-  if(!q) return; const g=$('stockGrid'); g.innerHTML='<div class="pr-note">Searching…</div>';
-  try{ const r=await fetch(`https://api.unsplash.com/search/photos?per_page=12&query=${encodeURIComponent(q)}&client_id=${encodeURIComponent(key)}`);
-    const d=await r.json(); stockResults=(d.results||[]).map(p=>p.urls.regular);
-    g.innerHTML = stockResults.length ? stockResults.map((s,k)=>`<img src="${s}" draggable="true" ondragstart="dragImg(event,'stock',${k})" onclick="selectImg('stock',${k},this)">`).join('') : '<div class="pr-empty">No results.</div>';
-  }catch(e){ g.innerHTML='<div class="pr-empty">Search failed — check the key / connection.</div>'; } }
-
-/* panel drop zone */
-(function(){ const d=$('prDrop'); if(!d) return;
-  d.addEventListener('dragover',e=>{e.preventDefault();d.classList.add('over');});
-  d.addEventListener('dragleave',()=>d.classList.remove('over'));
-  d.addEventListener('drop',e=>{e.preventDefault();d.classList.remove('over'); [...e.dataTransfer.files].forEach(f=>{ if(f.type.startsWith('image/')){ const r=new FileReader(); r.onload=()=>{uploads.push(r.result);renderUploads();}; r.readAsDataURL(f);} }); });
-})();
 
 /* ===================== TOOLBAR ACTIONS ===================== */
 function setName(v){ SITE.name=v; $('navName').textContent=v; $('footName').textContent=v; $('navLogo').textContent=(v[0]||'A').toUpperCase(); }
 function setVar(k,v){ SITE[k]=v; document.documentElement.style.setProperty('--'+k,v); }
-function setAgentName(v){ SITE.agent.name=v; $('agentName').textContent=v; $('agentFabName').textContent='Ask '+v; }
 const DEFAULTS={
-  hero:{type:'hero',pill:'New',headline:'A new headline.',sub:'A short subhead about this section.'},
-  gallery:{type:'gallery',ey:'Explore',title:'Section title',sub:'Section subhead.',items:[{title:'First',caption:'Caption',img:'',grad:BGS[0]},{title:'Second',caption:'Caption',img:'',grad:BGS[1]},{title:'Third',caption:'Caption',img:'',grad:BGS[6]}]},
+  hero:{type:'hero',pill:'AI-powered',headline:'Find federal grants, fast.',sub:'Ask a question in plain English and get matching opportunities, eligibility tips, and deadlines.'},
   agencies:{type:'agencies',ey:'Trusted sources',title:'Grants from every major federal agency',sub:'Open funding opportunities, pulled together from the agencies that matter to you.',items:[
     {short:'NIH',name:'National Institutes of Health',color:'#20558a'},
     {short:'NSF',name:'National Science Foundation',color:'#1a7a8c'},
@@ -509,16 +282,7 @@ const DEFAULTS={
     {short:'ED',name:'Department of Education',color:'#7a3b8c'},
     {short:'SBA',name:'Small Business Administration',color:'#1f6feb'},
     {short:'EPA',name:'Environmental Protection Agency',color:'#13795b'},
-    {short:'HHS',name:'Health & Human Services',color:'#205493'}]},
-  image:{type:'image',src:'',grad:BGS[0],caption:'Add a caption (optional)'},
-  unique:{type:'unique',badge:'Only here',title:'Unique feature',emoji:'⭐',image:'',desc:'What makes this different.',points:['Benefit one','Benefit two','Benefit three'],cta:'Learn more'},
-  how:{type:'how',ey:'How it works',title:'Three columns',items:[{emoji:'✨',title:'One',desc:'Describe it.'},{emoji:'🤖',title:'Two',desc:'Describe it.'},{emoji:'🖼️',title:'Three',desc:'Describe it.'}]},
-  testimonials:{type:'testimonials',ey:'Loved by',title:'What people are saying',items:[
-    {quote:'This is exactly what I was looking for — simple and effective.',name:'Alex P.',role:'Customer'},
-    {quote:'Fast, friendly, and it just works. Highly recommend.',name:'Jordan M.',role:'Member'},
-    {quote:'The best experience I\'ve had. I tell everyone about it.',name:'Sam R.',role:'Partner'}]},
-  contact:{type:'contact',ey:'Get in touch',title:'Contact us',sub:'Send us a note and we\'ll get back to you soon.',button:'Send message'},
-  cta:{type:'cta',headline:'Ready to start?',sub:'A closing invitation.',button:'Get started'}
+    {short:'HHS',name:'Health & Human Services',color:'#205493'}]}
 };
 function addBlock(type){ SITE.blocks.push(JSON.parse(JSON.stringify(DEFAULTS[type]))); document.getElementById('addMenu').classList.remove('open'); render(); window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}); }
 function delBlock(i){ if(confirm('Delete this section?')){ SITE.blocks.splice(i,1); render(); } }
@@ -529,7 +293,7 @@ function dragStart(i,e){ dragIdx=i; e.dataTransfer.effectAllowed='move'; }
 function dragOver(i,e){ if(dragIdx!==null) e.preventDefault(); }
 function dropBlock(i,e){ if(dragIdx===null||dragIdx===i) return; e.preventDefault(); const b=SITE.blocks.splice(dragIdx,1)[0]; SITE.blocks.splice(i,0,b); dragIdx=null; render(); }
 
-/* ===================== AI SEARCH + AGENT (demo) ===================== */
+/* ===================== AI GRANT SEARCH ===================== */
 async function callAI(prompt){
   // Calls Claude via your Netlify Function (/.netlify/functions/claude). Works once deployed with ANTHROPIC_API_KEY set.
   // Returns the raw answer text; fmtAI() handles escaping + grant-card formatting.
@@ -574,8 +338,6 @@ function fmtAI(t){
 }
 function fillSearch(t){ const s=$('aiSearch'); if(s){ s.value=t; runSearch(); } }
 async function runSearch(){ const s=$('aiSearch'); if(!s) return; const q=s.value.trim(); if(!q) return; const box=$('searchResults'); box.classList.add('show'); $('searchAns').innerHTML='<span style="opacity:.6">✨ thinking…</span>'; $('searchAns').innerHTML=fmtAI(await callAI(q)); }
-function toggleAgent(){ $('agentPanel').classList.toggle('show'); }
-async function sendAgent(){ const inp=$('agentInput'),t=inp.value.trim(); if(!t)return; const m=$('agentMsgs'); m.insertAdjacentHTML('beforeend',`<div class="msg me">${esc(t)}</div>`); inp.value=''; m.insertAdjacentHTML('beforeend',`<div class="msg bot" id="typing">…</div>`); m.scrollTop=m.scrollHeight; const r=fmtAI(await callAI(t)); $('typing').remove(); m.insertAdjacentHTML('beforeend',`<div class="msg bot">${r}</div>`); m.scrollTop=m.scrollHeight; }
 
 /* ===================== PREVIEW / SAVE / LOAD ===================== */
 function togglePreview(){ document.body.classList.toggle('previewing'); $('prevBtn').textContent=document.body.classList.contains('previewing')?'✎ Edit':'👁 Preview'; }
@@ -586,8 +348,8 @@ function showPrivacy(){ $('privBody').textContent=SITE.privacy||''; $('privModal
 function hidePrivacy(){ $('privModal').classList.remove('show'); $('privOverlay').classList.remove('show'); }
 function faviconURI(){ const L=(SITE.name[0]||'A').toUpperCase(); const svg=`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='${SITE.accent}'/><text x='32' y='45' font-size='38' font-family='Arial,Helvetica,sans-serif' font-weight='bold' fill='white' text-anchor='middle'>${L}</text></svg>`; return 'data:image/svg+xml,'+encodeURIComponent(svg); }
 function download(name,content,type='text/plain'){ const b=new Blob([content],{type}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=name; a.click(); URL.revokeObjectURL(a.href); }
-function saveProject(){ download('ai-website-project.json', JSON.stringify({site:SITE,uploads},null,2)); }
-function loadProject(ev){ const f=ev.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=()=>{ try{ const d=JSON.parse(r.result); const s=d.site||d; Object.keys(SITE).forEach(k=>delete SITE[k]); Object.assign(SITE,s); uploads=d.uploads||[]; renderUploads(); render(); }catch(e){ alert('Could not read that project file.'); } }; r.readAsText(f); ev.target.value=''; }
+function saveProject(){ download('grant-finder-project.json', JSON.stringify({site:SITE},null,2)); }
+function loadProject(ev){ const f=ev.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=()=>{ try{ const d=JSON.parse(r.result); const s=d.site||d; Object.keys(SITE).forEach(k=>delete SITE[k]); Object.assign(SITE,s); render(); }catch(e){ alert('Could not read that project file.'); } }; r.readAsText(f); ev.target.value=''; }
 
 /* ===================== EXPORT CLEAN index.html ===================== */
 function exportSite(){
@@ -608,14 +370,9 @@ ${SITE.ogImage?`<meta property="og:image" content="${esc(SITE.ogImage)}">`:''}
 <style>:root{--accent:${SITE.accent};--accent2:${SITE.accent2};--ink:#1f1e1d;--ink2:#2a2825;--muted:#6b6862;--line:#e8e4d9;--bg:#faf9f5;--card:#fff;--good:#16a34a;--warn:#b8852a;--radius:16px;--shadow:0 8px 30px rgba(40,33,24,.06);--serif:ui-serif,'Iowan Old Style',Georgia,'Times New Roman',serif}
 ${css}</style></head>
 <body>
-<nav class="site"><div class="wrap"><div class="brand"><span class="logo">${(SITE.name[0]||'A').toUpperCase()}</span> <span>${esc(SITE.name)}</span></div><div class="navlinks"><a>Explore</a><a>Features</a><a>About</a></div><button class="navcta">Get started</button></div></nav>
+<nav class="site"><div class="wrap"><div class="brand"><span class="logo">${(SITE.name[0]||'A').toUpperCase()}</span> <span>${esc(SITE.name)}</span></div><div class="navlinks"><a>Explore</a><a>Agencies</a><a>About</a></div><button class="navcta">Get started</button></div></nav>
 <main>${sectionsHTML}</main>
-<footer class="site"><div class="wrap">${esc(SITE.name)} · AI search &amp; agent <b style="color:var(--ink)">powered by Claude</b> · <a href="#" onclick="showPrivacy();return false">Privacy</a></div></footer>
-<button class="agent-fab" onclick="toggleAgent()">💬 Ask ${esc(SITE.agent.name)}</button>
-<div class="agent-panel" id="agentPanel"><div class="agent-head"><div class="av">${SITE.agent.emoji}</div><div><b>${esc(SITE.agent.name)}</b><div class="on">● online</div></div><button class="x" onclick="toggleAgent()">×</button></div>
-<div class="agent-msgs" id="agentMsgs"><div class="msg bot">${esc(SITE.agent.greeting)}</div></div>
-<div class="agent-credit">✨ Powered by <b>Claude</b></div>
-<div class="agent-input"><input id="agentInput" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendAgent()"><button onclick="sendAgent()">→</button></div></div>
+<footer class="site"><div class="wrap">${esc(SITE.name)} · AI grant search <b style="color:var(--ink)">powered by Claude</b> · <a href="#" onclick="showPrivacy();return false">Privacy</a></div></footer>
 <div class="pmodal-ov" id="privOverlay" onclick="hidePrivacy()"></div>
 <div class="pmodal" id="privModal"><h3>Privacy</h3><p>${esc(SITE.privacy)}</p><button class="pclose" onclick="hidePrivacy()">Close</button></div>
 <script>
@@ -628,18 +385,15 @@ var fmtAI=${fmtAI.toString()};
 async function callAI(p){ try{ var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({prompt:p,system:SYS})}); if(!r.ok) throw 0; var d=await r.json(); return d.answer||''; }catch(e){ await new Promise(x=>setTimeout(x,500)); return 'Setup needed: add a Claude API key in Netlify to enable live answers. You asked: "'+p+'"'; } }
 function fillSearch(t){ var s=$('aiSearch'); if(s){s.value=t;runSearch();} }
 async function runSearch(){ var s=$('aiSearch'); if(!s)return; var q=s.value.trim(); if(!q)return; var b=$('searchResults'); b.classList.add('show'); $('searchAns').innerHTML='thinking…'; $('searchAns').innerHTML=fmtAI(await callAI(q)); }
-function toggleAgent(){ $('agentPanel').classList.toggle('show'); }
-async function sendAgent(){ var i=$('agentInput'),t=i.value.trim(); if(!t)return; var m=$('agentMsgs'); m.insertAdjacentHTML('beforeend','<div class="msg me">'+esc(t)+'</div>'); i.value=''; var r=fmtAI(await callAI(t)); m.insertAdjacentHTML('beforeend','<div class="msg bot">'+r+'</div>'); m.scrollTop=m.scrollHeight; }
 <\/script></body></html>`;
   download('index.html', doc, 'text/html');
 }
 function stripBuilderCss(css){
   return css.replace(/\/\* =+ BUILDER CHROME =+ \*\/[\s\S]*?(?=\/\* =+ SITE STYLES)/,'')
-            .replace(/\/\* =+ CANVA-STYLE PHOTOS RAIL =+ \*\/[\s\S]*?(?=\/\* =+ SITE STYLES)/,'')
             .replace(/\/\* EDIT AFFORDANCES \*\/[\s\S]*$/,'');
 }
 
-renderUploads(); renderBgs(); render();
+render();
 </script>
 </body>
 </html>
