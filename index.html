@@ -3,45 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Grant Finder — Site Builder</title>
+<title>Grant Finder</title>
+<meta name="description" content="Ask a question in plain English and get matching federal grant opportunities, eligibility tips, and deadlines.">
+<meta property="og:title" content="Grant Finder">
+<meta property="og:description" content="Ask a question in plain English and get matching federal grant opportunities, eligibility tips, and deadlines.">
+<meta property="og:type" content="website">
 <style>
-  :root{--accent:#d97757;--accent2:#c2613f;--ink:#1f1e1d;--ink2:#2a2825;--muted:#6b6862;--line:#e8e4d9;--bg:#faf9f5;--card:#fff;--good:#16a34a;--bad:#e5484d;--warn:#b8852a;--radius:16px;--shadow:0 8px 30px rgba(40,33,24,.06);--bchrome:#1f1e1d;--serif:ui-serif,'Iowan Old Style',Georgia,'Times New Roman',serif}
+  :root{--accent:#d97757;--accent2:#c2613f;--ink:#1f1e1d;--ink2:#2a2825;--muted:#6b6862;--line:#e8e4d9;--bg:#faf9f5;--card:#fff;--good:#16a34a;--bad:#e5484d;--warn:#b8852a;--radius:16px;--shadow:0 8px 30px rgba(40,33,24,.06);--serif:ui-serif,'Iowan Old Style',Georgia,'Times New Roman',serif}
   *{box-sizing:border-box}
   body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
   /* Claude-style serif display headings — calm, simple, distinctive */
   h1.hero-h,.sec-head h2{font-family:var(--serif);font-weight:600;letter-spacing:-.5px}
 
-  /* ===== BUILDER CHROME ===== */
-  .toolbar{position:sticky;top:0;z-index:100;background:var(--bchrome);color:#dbe4f0;display:flex;align-items:center;gap:10px;padding:10px 16px;flex-wrap:wrap;border-bottom:1px solid #1f2b3d}
-  .toolbar .grp{display:flex;align-items:center;gap:8px}
-  .toolbar .sep{width:1px;height:26px;background:#2a3950}
-  .toolbar label{font-size:11px;color:#8aa0bd;font-weight:600}
-  .toolbar input[type=text]{background:#16223a;border:1px solid #2a3950;color:#fff;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;width:140px}
-  .toolbar input[type=color]{width:30px;height:30px;border:1px solid #2a3950;border-radius:7px;background:none;cursor:pointer;padding:0}
-  .btn{background:#22304a;border:1px solid #33465f;color:#dbe4f0;border-radius:9px;padding:8px 13px;font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
-  .btn:hover{background:#2c3d5c}
-  .btn.primary{background:var(--accent);color:#fff;border:none}
-  .btn.ghost{background:transparent}
-  .spacer{flex:1}
-  .addmenu{position:relative}
-  .addmenu .menu{position:absolute;top:42px;left:0;background:#16223a;border:1px solid #2a3950;border-radius:12px;padding:6px;display:none;min-width:200px;z-index:120;box-shadow:0 16px 40px rgba(0,0,0,.4)}
-  .addmenu.open .menu{display:block}
-  .addmenu .menu button{display:flex;gap:9px;width:100%;background:none;border:none;color:#dbe4f0;text-align:left;padding:9px 11px;border-radius:8px;cursor:pointer;font-size:13px}
-  .addmenu .menu button:hover{background:#22304a}
-  .hint{background:#10203a;color:#9fc3ef;font-size:12.5px;padding:8px 16px;display:flex;gap:8px;align-items:center;border-bottom:1px solid #1f2b3d}
-  body.previewing .toolbar,body.previewing .hint{display:none}
-  .setmodal-ov{position:fixed;inset:0;background:rgba(8,16,28,.55);z-index:130;display:none}
-  .setmodal-ov.show{display:block}
-  .setmodal{position:fixed;z-index:131;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,92vw);max-height:86vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.4);padding:26px;display:none;color:var(--ink)}
-  .setmodal.show{display:block}
-  .setmodal h3{margin:0 0 6px}
-  .setmodal label{display:block;font-size:12.5px;font-weight:700;color:#334155;margin:16px 0 5px}
-  .setmodal input,.setmodal textarea{width:100%;border:1px solid #e2e8f0;border-radius:9px;padding:10px 12px;font-size:13.5px;font-family:inherit;outline:none}
-  .setmodal textarea{min-height:78px;resize:vertical}
-  .setmodal .sdone{margin-top:18px;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:11px 20px;font-weight:800;cursor:pointer}
-  .setmodal .snote{font-size:11px;color:#94a3b8;margin-top:4px}
-
-  /* ===== SITE STYLES (shared with export) ===== */
+  /* ===== SITE STYLES ===== */
   .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
   a{color:inherit;text-decoration:none}
 
@@ -100,84 +74,22 @@
   .grant-card .grow{font-size:13px;color:var(--ink);margin:3px 0;display:flex;gap:8px;align-items:baseline}
   .grant-card .glabel{color:var(--muted);font-weight:700;min-width:84px;flex:0 0 auto}
   .grant-card a{color:var(--accent);font-weight:700;text-decoration:underline}
-
-  /* EDIT AFFORDANCES */
-  [contenteditable]{outline:none}
-  body:not(.previewing) [contenteditable]:hover{box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 40%,transparent);border-radius:4px}
-  body:not(.previewing) [contenteditable]:focus{box-shadow:0 0 0 2px var(--accent);border-radius:4px;background:#fff}
-  .block{position:relative}
-  body:not(.previewing) .block{outline:1px dashed transparent;transition:.15s}
-  body:not(.previewing) .block:hover{outline-color:color-mix(in srgb,var(--accent) 45%,transparent)}
-  .blocktools{position:absolute;top:8px;right:8px;z-index:30;display:none;gap:4px;background:var(--bchrome);border-radius:10px;padding:4px}
-  body:not(.previewing) .block:hover>.blocktools{display:flex}
-  .blocktools button{background:#22304a;border:none;color:#dbe4f0;width:30px;height:30px;border-radius:7px;cursor:pointer;font-size:14px}
-  .blocktools button:hover{background:var(--accent);color:#fff}
-  .blocktools .lbl{color:#8aa0bd;font-size:11px;display:flex;align-items:center;padding:0 6px;cursor:grab}
-  .empty-hint{max-width:520px;margin:60px auto;text-align:center;color:var(--muted);border:2px dashed var(--line);border-radius:16px;padding:40px}
-  /* In edit mode, stop the marquee and hide the duplicate row so logos can be clicked & edited */
-  body:not(.previewing) .logos{-webkit-mask-image:none;mask-image:none}
-  body:not(.previewing) .logos-track{animation:none;flex-wrap:wrap;width:auto;justify-content:center}
-  body:not(.previewing) .logo-item[aria-hidden]{display:none}
 </style>
 </head>
 <body>
 
-<!-- ===== TOOLBAR ===== -->
-<div class="toolbar">
-  <div class="grp"><span style="font-weight:800;color:#fff">⚡ Grant Finder Builder</span></div>
-  <div class="sep"></div>
-  <div class="grp"><label>Site</label><input type="text" id="tName" oninput="setName(this.value)" placeholder="My Site"></div>
-  <div class="grp"><label>Colors</label><input type="color" id="tAccent" oninput="setVar('accent',this.value)"><input type="color" id="tAccent2" oninput="setVar('accent2',this.value)"></div>
-  <div class="sep"></div>
-  <button class="btn ghost" onclick="openSettings()">⚙ Settings</button>
-  <div class="addmenu" id="addMenu">
-    <button class="btn" onclick="document.getElementById('addMenu').classList.toggle('open')">+ Add section ▾</button>
-    <div class="menu">
-      <button onclick="addBlock('hero')">✨ Hero + grant search</button>
-      <button onclick="addBlock('agencies')">🏛️ Agency logo scroll</button>
-    </div>
-  </div>
-  <div class="spacer"></div>
-  <div class="grp">
-    <button class="btn ghost" onclick="togglePreview()" id="prevBtn">👁 Preview</button>
-    <button class="btn" onclick="saveProject()">💾 Save</button>
-    <button class="btn" onclick="document.getElementById('loadFile').click()">📂 Load</button>
-    <input type="file" id="loadFile" accept=".json" style="display:none" onchange="loadProject(event)">
-    <button class="btn primary" onclick="exportSite()">⬇ Export site</button>
-  </div>
-</div>
-<div class="hint">👉 Click any text to edit it. Hover a section to move or delete it. Adjust colors in the toolbar, then <b>Export</b>.</div>
-
 <!-- ===== SITE ===== -->
-<div class="sitewrap">
-  <main id="canvas"></main>
-  <footer class="site"><div class="wrap"><span id="footName">My Site</span> · AI grant search <b style="color:var(--ink)">powered by Claude</b> · <a href="#" onclick="showPrivacy();return false" style="text-decoration:underline">Privacy</a></div></footer>
-</div>
+<main id="canvas"></main>
+<footer class="site"><div class="wrap"><span id="footName">Grant Finder</span> · AI grant search <b style="color:var(--ink)">powered by Claude</b> · <a href="#" onclick="showPrivacy();return false">Privacy</a></div></footer>
 
-<!-- builder Settings dialog -->
-<div class="setmodal-ov" id="setOverlay" onclick="closeSettings()"></div>
-<div class="setmodal" id="setModal">
-  <h3>⚙ Site settings</h3>
-  <label>Social share image URL</label>
-  <input id="setOg" placeholder="https://yoursite.com/share.jpg">
-  <div class="snote">Shown when your link is shared (texts, social). Use a full https URL to a ~1200×630 image. Optional.</div>
-  <label>Search instructions for Claude</label>
-  <textarea id="setSys" placeholder="e.g. You help applicants find U.S. federal grants. Be concise, accurate, and point to grants.gov where relevant."></textarea>
-  <div class="snote">Tells Claude how to answer grant questions on this site (its role, tone, and what it knows).</div>
-  <label>Privacy notice</label>
-  <textarea id="setPriv"></textarea>
-  <div class="snote">Plain-language only — not legal advice. Consider having a professional review it.</div>
-  <button class="sdone" onclick="saveSettings()">Done</button>
-</div>
-
-<!-- Privacy modal (also baked into exported sites) -->
+<!-- Privacy modal -->
 <div class="pmodal-ov" id="privOverlay" onclick="hidePrivacy()"></div>
 <div class="pmodal" id="privModal"><h3>Privacy</h3><p id="privBody"></p><button class="pclose" onclick="hidePrivacy()">Close</button></div>
 
 <script>
 /* ===================== MODEL ===================== */
 const SITE = {
-  name:'My AI Site', accent:'#d97757', accent2:'#c2613f', ogImage:'',
+  name:'Grant Finder', accent:'#d97757', accent2:'#c2613f',
   privacy:'We respect your privacy. Questions you send through our grant search are used only to answer you and improve our service — they are not sold. Our search is powered by Claude (Anthropic), which processes your questions to generate replies. Contact us anytime to request deletion of your information.',
   agent:{system:''},
   search:{placeholder:'Ask about federal grants — eligibility, deadlines, how to apply…', examples:[
@@ -207,41 +119,25 @@ const SITE = {
   ]
 };
 
-let EXPORTING=false;
-
 const $=id=>document.getElementById(id);
 const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-function dnd(i){ return EXPORTING?'':`ondragover="dragOver(${i},event)" ondrop="dropBlock(${i},event)"`; }
-function setPath(path,val){ const p=path.split('.'); let o=SITE; for(let i=0;i<p.length-1;i++) o=o[p[i]]; o[p[p.length-1]]=val; }
-function getPath(path){ const p=path.split('.'); let o=SITE; for(const k of p) o=o[k]; return o; }
-function ed(path,tag,cls,extra=''){ const v=getPath(path); const e=EXPORTING?'':` data-path="${path}" contenteditable`; return `<${tag} class="${cls}" ${extra}${e}>${esc(v)}</${tag}>`; }
-document.addEventListener('input',e=>{ const el=e.target.closest('[data-path]'); if(!el) return; setPath(el.getAttribute('data-path'), el.innerText); if(el.getAttribute('data-path')==='name'){ $('footName').textContent=SITE.name; } });
 
 /* ===================== RENDER BLOCKS ===================== */
-function blockTools(i){ if(EXPORTING) return '';
-  return `<div class="blocktools"><span class="lbl" draggable="true" ondragstart="dragStart(${i},event)" title="Drag to reorder">⠿</span>
-    <button onclick="moveBlock(${i},-1)" title="Up">↑</button><button onclick="moveBlock(${i},1)" title="Down">↓</button>
-    <button onclick="dupBlock(${i})" title="Duplicate">⎘</button><button onclick="delBlock(${i})" title="Delete">🗑</button></div>`; }
-
-function renderHero(b,i){ return `<section class="blk hero block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap">
-  <span class="pill"><span class="dot"></span>${ed('blocks.'+i+'.pill','span','')}</span>
-  ${ed('blocks.'+i+'.headline','h1','hero-h')}${ed('blocks.'+i+'.sub','p','hero-sub')}
+function renderHero(b){ return `<section class="blk hero"><div class="wrap">
+  <span class="pill"><span class="dot"></span>${esc(b.pill)}</span>
+  <h1 class="hero-h">${esc(b.headline)}</h1><p class="hero-sub">${esc(b.sub)}</p>
   <div class="searchwrap"><div class="searchbox"><span class="ai-ic">✨</span>
     <input type="text" id="aiSearch" placeholder="${esc(SITE.search.placeholder)}" onkeydown="if(event.key==='Enter')runSearch()"><button onclick="runSearch()">Search</button></div>
     <div class="chips">${SITE.search.examples.map(x=>`<span class="chip" onclick="fillSearch('${esc(x).replace(/'/g,"&#39;")}')">${esc(x)}</span>`).join('')}</div>
     <div class="results" id="searchResults"><div class="rhead">✨ AI answer <span class="claude-badge">Powered by Claude</span></div><div id="searchAns"></div></div>
   </div></div></section>`; }
-function logoItem(b,i,j,liveEdit){ const a=b.items[j]; const col=a.color||'var(--accent)';
-  const seal = liveEdit ? ed('blocks.'+i+'.items.'+j+'.short','span','logo-seal','style="background:'+col+'"')
-                        : `<span class="logo-seal" style="background:${col}">${esc(a.short||'')}</span>`;
-  const name = liveEdit ? ed('blocks.'+i+'.items.'+j+'.name','span','logo-name')
-                        : `<span class="logo-name">${esc(a.name||'')}</span>`;
-  return `<div class="logo-item"${liveEdit?'':' aria-hidden="true"'}>${seal}${name}</div>`; }
-function renderAgencies(b,i){ if(!b.items) b.items=JSON.parse(JSON.stringify(DEFAULTS.agencies.items));
-  const live=b.items.map((a,j)=>logoItem(b,i,j,true)).join('');
-  const dup=b.items.map((a,j)=>logoItem(b,i,j,false)).join('');
-  return `<section class="blk block logos-blk" style="background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap">
-  <div class="sec-head"><div class="ey">${ed('blocks.'+i+'.ey','span','')}</div>${ed('blocks.'+i+'.title','h2','')}${ed('blocks.'+i+'.sub','p','')}</div>
+function logoItem(a,hidden){ const col=a.color||'var(--accent)';
+  return `<div class="logo-item"${hidden?' aria-hidden="true"':''}><span class="logo-seal" style="background:${col}">${esc(a.short||'')}</span><span class="logo-name">${esc(a.name||'')}</span></div>`; }
+function renderAgencies(b){
+  const live=b.items.map(a=>logoItem(a,false)).join('');
+  const dup=b.items.map(a=>logoItem(a,true)).join('');
+  return `<section class="blk logos-blk" style="background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)"><div class="wrap">
+  <div class="sec-head"><div class="ey">${esc(b.ey)}</div><h2>${esc(b.title)}</h2><p>${esc(b.sub)}</p></div>
   </div>
   <div class="logos"><div class="logos-track">${live}${dup}</div></div></section>`; }
 const RENDER={hero:renderHero,agencies:renderAgencies};
@@ -250,40 +146,12 @@ function render(){
   document.documentElement.style.setProperty('--accent',SITE.accent);
   document.documentElement.style.setProperty('--accent2',SITE.accent2);
   $('footName').textContent=SITE.name;
-  $('tName').value=SITE.name; $('tAccent').value=SITE.accent; $('tAccent2').value=SITE.accent2;
-  $('canvas').innerHTML = SITE.blocks.length ? SITE.blocks.map((b,i)=>(RENDER[b.type]||(()=>''))(b,i)).join('') : `<div class="empty-hint">No sections yet. Use <b>+ Add section</b> above to start building.</div>`;
+  $('canvas').innerHTML = SITE.blocks.map(b=>(RENDER[b.type]||(()=>''))(b)).join('');
 }
-
-/* ===================== TOOLBAR ACTIONS ===================== */
-function setName(v){ SITE.name=v; $('footName').textContent=v; }
-function setVar(k,v){ SITE[k]=v; document.documentElement.style.setProperty('--'+k,v); }
-const DEFAULTS={
-  hero:{type:'hero',pill:'AI-powered',headline:'Find federal grants, fast.',sub:'Ask a question in plain English and get matching opportunities, eligibility tips, and deadlines.'},
-  agencies:{type:'agencies',ey:'Trusted sources',title:'Grants from every major federal agency',sub:'Open funding opportunities, pulled together from the agencies that matter to you.',items:[
-    {short:'NIH',name:'National Institutes of Health',color:'#20558a'},
-    {short:'NSF',name:'National Science Foundation',color:'#1a7a8c'},
-    {short:'DOE',name:'Department of Energy',color:'#0a6b3b'},
-    {short:'USDA',name:'U.S. Dept. of Agriculture',color:'#5a7d2a'},
-    {short:'DOD',name:'Department of Defense',color:'#2f4858'},
-    {short:'NASA',name:'NASA',color:'#0b3d91'},
-    {short:'ED',name:'Department of Education',color:'#7a3b8c'},
-    {short:'SBA',name:'Small Business Administration',color:'#1f6feb'},
-    {short:'EPA',name:'Environmental Protection Agency',color:'#13795b'},
-    {short:'HHS',name:'Health & Human Services',color:'#205493'}]}
-};
-function addBlock(type){ SITE.blocks.push(JSON.parse(JSON.stringify(DEFAULTS[type]))); document.getElementById('addMenu').classList.remove('open'); render(); window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}); }
-function delBlock(i){ if(confirm('Delete this section?')){ SITE.blocks.splice(i,1); render(); } }
-function dupBlock(i){ SITE.blocks.splice(i+1,0,JSON.parse(JSON.stringify(SITE.blocks[i]))); render(); }
-function moveBlock(i,dir){ const j=i+dir; if(j<0||j>=SITE.blocks.length) return; [SITE.blocks[i],SITE.blocks[j]]=[SITE.blocks[j],SITE.blocks[i]]; render(); }
-let dragIdx=null;
-function dragStart(i,e){ dragIdx=i; e.dataTransfer.effectAllowed='move'; }
-function dragOver(i,e){ if(dragIdx!==null) e.preventDefault(); }
-function dropBlock(i,e){ if(dragIdx===null||dragIdx===i) return; e.preventDefault(); const b=SITE.blocks.splice(dragIdx,1)[0]; SITE.blocks.splice(i,0,b); dragIdx=null; render(); }
 
 /* ===================== AI GRANT SEARCH ===================== */
 async function callAI(prompt){
-  // Calls Claude via your Netlify Function (/.netlify/functions/claude). Works once deployed with ANTHROPIC_API_KEY set.
-  // Returns the raw answer text; fmtAI() handles escaping + grant-card formatting.
+  // Calls Claude via the Netlify Function (/.netlify/functions/claude). Works once deployed with ANTHROPIC_API_KEY set.
   try{
     const r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({prompt,system:SITE.agent.system||''})});
     if(!r.ok) throw 0;
@@ -295,7 +163,7 @@ async function callAI(prompt){
   }
 }
 /* Formats an AI answer. Numbered entries (grants) become separated cards; everything else
-   renders as light markdown (bold, links). Shared verbatim with exported sites. */
+   renders as light markdown (bold, links). */
 function fmtAI(t){
   t=(t||'').trim(); if(!t) return '';
   function inline(s){ s=esc(s);
@@ -326,58 +194,9 @@ function fmtAI(t){
 function fillSearch(t){ const s=$('aiSearch'); if(s){ s.value=t; runSearch(); } }
 async function runSearch(){ const s=$('aiSearch'); if(!s) return; const q=s.value.trim(); if(!q) return; const box=$('searchResults'); box.classList.add('show'); $('searchAns').innerHTML='<span style="opacity:.6">✨ thinking…</span>'; $('searchAns').innerHTML=fmtAI(await callAI(q)); }
 
-/* ===================== PREVIEW / SAVE / LOAD ===================== */
-function togglePreview(){ document.body.classList.toggle('previewing'); $('prevBtn').textContent=document.body.classList.contains('previewing')?'✎ Edit':'👁 Preview'; }
-function openSettings(){ $('setOg').value=SITE.ogImage||''; $('setSys').value=SITE.agent.system||''; $('setPriv').value=SITE.privacy||''; $('setModal').classList.add('show'); $('setOverlay').classList.add('show'); }
-function closeSettings(){ $('setModal').classList.remove('show'); $('setOverlay').classList.remove('show'); }
-function saveSettings(){ SITE.ogImage=$('setOg').value.trim(); SITE.agent.system=$('setSys').value; SITE.privacy=$('setPriv').value; closeSettings(); }
+/* ===================== PRIVACY ===================== */
 function showPrivacy(){ $('privBody').textContent=SITE.privacy||''; $('privModal').classList.add('show'); $('privOverlay').classList.add('show'); }
 function hidePrivacy(){ $('privModal').classList.remove('show'); $('privOverlay').classList.remove('show'); }
-function faviconURI(){ const L=(SITE.name[0]||'A').toUpperCase(); const svg=`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='${SITE.accent}'/><text x='32' y='45' font-size='38' font-family='Arial,Helvetica,sans-serif' font-weight='bold' fill='white' text-anchor='middle'>${L}</text></svg>`; return 'data:image/svg+xml,'+encodeURIComponent(svg); }
-function download(name,content,type='text/plain'){ const b=new Blob([content],{type}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=name; a.click(); URL.revokeObjectURL(a.href); }
-function saveProject(){ download('grant-finder-project.json', JSON.stringify({site:SITE},null,2)); }
-function loadProject(ev){ const f=ev.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=()=>{ try{ const d=JSON.parse(r.result); const s=d.site||d; Object.keys(SITE).forEach(k=>delete SITE[k]); Object.assign(SITE,s); render(); }catch(e){ alert('Could not read that project file.'); } }; r.readAsText(f); ev.target.value=''; }
-
-/* ===================== EXPORT CLEAN index.html ===================== */
-function exportSite(){
-  const css=stripBuilderCss(document.querySelector('style').innerHTML);
-  EXPORTING=true;
-  const sectionsHTML=SITE.blocks.map((b,i)=>(RENDER[b.type]||(()=>''))(b,i)).join('');
-  EXPORTING=false;
-  const doc=`<!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${esc(SITE.name)}</title>
-<meta name="description" content="${esc((SITE.blocks.find(b=>b.type==='hero')||{}).sub||SITE.name)}">
-<link rel="icon" href="${faviconURI()}">
-<meta property="og:title" content="${esc(SITE.name)}">
-<meta property="og:description" content="${esc((SITE.blocks.find(b=>b.type==='hero')||{}).sub||SITE.name)}">
-<meta property="og:type" content="website">
-${SITE.ogImage?`<meta property="og:image" content="${esc(SITE.ogImage)}">`:''}
-<meta name="twitter:card" content="${SITE.ogImage?'summary_large_image':'summary'}">
-<style>:root{--accent:${SITE.accent};--accent2:${SITE.accent2};--ink:#1f1e1d;--ink2:#2a2825;--muted:#6b6862;--line:#e8e4d9;--bg:#faf9f5;--card:#fff;--good:#16a34a;--warn:#b8852a;--radius:16px;--shadow:0 8px 30px rgba(40,33,24,.06);--serif:ui-serif,'Iowan Old Style',Georgia,'Times New Roman',serif}
-${css}</style></head>
-<body>
-<main>${sectionsHTML}</main>
-<footer class="site"><div class="wrap">${esc(SITE.name)} · AI grant search <b style="color:var(--ink)">powered by Claude</b> · <a href="#" onclick="showPrivacy();return false">Privacy</a></div></footer>
-<div class="pmodal-ov" id="privOverlay" onclick="hidePrivacy()"></div>
-<div class="pmodal" id="privModal"><h3>Privacy</h3><p>${esc(SITE.privacy)}</p><button class="pclose" onclick="hidePrivacy()">Close</button></div>
-<script>
-const $=id=>document.getElementById(id);
-const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-var SYS=${JSON.stringify(SITE.agent.system||'')};
-function showPrivacy(){ document.getElementById('privModal').classList.add('show'); document.getElementById('privOverlay').classList.add('show'); }
-function hidePrivacy(){ document.getElementById('privModal').classList.remove('show'); document.getElementById('privOverlay').classList.remove('show'); }
-var fmtAI=${fmtAI.toString()};
-async function callAI(p){ try{ var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({prompt:p,system:SYS})}); if(!r.ok) throw 0; var d=await r.json(); return d.answer||''; }catch(e){ await new Promise(x=>setTimeout(x,500)); return 'Setup needed: add a Claude API key in Netlify to enable live answers. You asked: "'+p+'"'; } }
-function fillSearch(t){ var s=$('aiSearch'); if(s){s.value=t;runSearch();} }
-async function runSearch(){ var s=$('aiSearch'); if(!s)return; var q=s.value.trim(); if(!q)return; var b=$('searchResults'); b.classList.add('show'); $('searchAns').innerHTML='thinking…'; $('searchAns').innerHTML=fmtAI(await callAI(q)); }
-<\/script></body></html>`;
-  download('index.html', doc, 'text/html');
-}
-function stripBuilderCss(css){
-  return css.replace(/\/\* =+ BUILDER CHROME =+ \*\/[\s\S]*?(?=\/\* =+ SITE STYLES)/,'')
-            .replace(/\/\* EDIT AFFORDANCES \*\/[\s\S]*$/,'');
-}
 
 render();
 </script>
