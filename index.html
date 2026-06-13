@@ -64,6 +64,8 @@
   .logo-item{display:grid;place-items:center;flex:0 0 auto;text-decoration:none;transition:transform .18s ease}
   .logo-item:hover{transform:translateY(-3px)}
   .logo-seal{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:17px;letter-spacing:.4px;flex:0 0 auto;background:var(--accent);box-shadow:var(--shadow)}
+  /* Real agency logo image — shown in a white circular badge so mixed shapes sit consistently in the strip */
+  .logo-img{width:64px;height:64px;border-radius:50%;background:#fff;object-fit:contain;padding:7px;flex:0 0 auto;box-shadow:var(--shadow)}
   @keyframes logoscroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
   @media(prefers-reduced-motion:reduce){.logos-track{animation:none;flex-wrap:wrap;width:auto;justify-content:center}}
 
@@ -114,8 +116,9 @@ const SITE = {
              {short:'DOD',name:'Department of Defense',color:'#2f4858',url:'https://www.defense.gov'},
              {short:'NASA',name:'NASA',color:'#0b3d91',url:'https://www.nasa.gov'},
              {short:'ED',name:'Department of Education',color:'#7a3b8c',url:'https://www.ed.gov/grants-and-programs'},
-             {short:'SBA',name:'Small Business Administration',color:'#1f6feb',url:'https://www.sba.gov/funding-programs/grants'},
-             {short:'EPA',name:'Environmental Protection Agency',color:'#13795b',url:'https://www.epa.gov/grants'},
+             {short:'DOC',name:'U.S. Department of Commerce',img:'/assets/logos/doc-commerce.jpeg',url:'https://www.commerce.gov/work-with-us/grants-and-cooperative-agreements'},
+             {short:'SBA',name:'Small Business Administration',img:'/assets/logos/sba.jpeg',url:'https://www.sba.gov/funding-programs/grants'},
+             {short:'EPA',name:'Environmental Protection Agency',img:'/assets/logos/epa.jpeg',url:'https://www.epa.gov/grants'},
              {short:'HHS',name:'Health & Human Services',color:'#205493',url:'https://www.hhs.gov/grants'}]}
   ]
 };
@@ -133,7 +136,10 @@ function renderHero(b){ return `<section class="blk hero"><div class="wrap">
     <div class="results" id="searchResults"><div class="rhead">✨ AI answer <span class="claude-badge">Powered by Claude</span></div><div id="searchAns"></div></div>
   </div></div></section>`; }
 function logoItem(a,hidden){ const col=a.color||'var(--accent)'; const url=a.url||'#';
-  return `<a class="logo-item" href="${esc(url)}" target="_blank" rel="noopener" title="${esc(a.name||'')}" aria-label="${esc(a.name||'')}"${hidden?' aria-hidden="true" tabindex="-1"':''}><span class="logo-seal" style="background:${col}">${esc(a.short||'')}</span></a>`; }
+  const mark=a.img
+    ? `<img class="logo-img" src="${esc(a.img)}" alt="${esc(a.name||'')}" loading="lazy">`
+    : `<span class="logo-seal" style="background:${col}">${esc(a.short||'')}</span>`;
+  return `<a class="logo-item" href="${esc(url)}" target="_blank" rel="noopener" title="${esc(a.name||'')}" aria-label="${esc(a.name||'')}"${hidden?' aria-hidden="true" tabindex="-1"':''}>${mark}</a>`; }
 function renderAgencies(b){
   const live=b.items.map(a=>logoItem(a,false)).join('');
   const dup=b.items.map(a=>logoItem(a,true)).join('');
