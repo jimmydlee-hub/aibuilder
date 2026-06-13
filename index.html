@@ -155,6 +155,26 @@
   footer.site a{text-decoration:underline}
   footer.site{border-top:1px solid var(--line);padding:30px 0;color:var(--muted);font-size:13.5px;text-align:center}
 
+  /* ===== AGENCY LOGO MARQUEE (Netlify-style scroll) ===== */
+  .logos-blk{padding:46px 0}
+  .logos{overflow:hidden;position:relative;padding:6px 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
+  .logos-track{display:flex;gap:34px;width:max-content;animation:logoscroll 40s linear infinite}
+  .logos:hover .logos-track{animation-play-state:paused}
+  .logo-item{display:flex;align-items:center;gap:12px;flex:0 0 auto;padding:11px 20px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+  .logo-seal{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:13px;letter-spacing:.4px;flex:0 0 auto;background:var(--accent)}
+  .logo-name{font-size:14px;font-weight:700;color:var(--ink);white-space:nowrap}
+  @keyframes logoscroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @media(prefers-reduced-motion:reduce){.logos-track{animation:none;flex-wrap:wrap;width:auto;justify-content:center}}
+
+  /* ===== AI GRANT RESULT CARDS ===== */
+  .grant-intro{margin:0 0 12px;color:var(--muted);font-size:13.5px}
+  .grant-list{display:flex;flex-direction:column;gap:12px}
+  .grant-card{border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:14px 16px;background:var(--bg)}
+  .grant-card .gtitle{font-weight:800;font-size:15px;color:var(--ink);margin:0 0 8px;line-height:1.4}
+  .grant-card .grow{font-size:13px;color:var(--ink);margin:3px 0;display:flex;gap:8px;align-items:baseline}
+  .grant-card .glabel{color:var(--muted);font-weight:700;min-width:84px;flex:0 0 auto}
+  .grant-card a{color:var(--accent);font-weight:700;text-decoration:underline}
+
   .agent-fab{position:fixed;right:20px;bottom:20px;z-index:60;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none;border-radius:999px;padding:13px 18px;font-weight:800;cursor:pointer;box-shadow:0 12px 36px color-mix(in srgb,var(--accent) 45%,transparent);display:flex;gap:8px}
   .agent-panel{position:fixed;right:20px;bottom:80px;z-index:60;width:340px;max-width:calc(100vw - 40px);height:460px;max-height:70vh;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 24px 70px rgba(10,30,60,.25);display:none;flex-direction:column;overflow:hidden}
   .agent-panel.show{display:flex}
@@ -183,6 +203,10 @@
   .blocktools button:hover{background:var(--accent);color:#04121f}
   .blocktools .lbl{color:#8aa0bd;font-size:11px;display:flex;align-items:center;padding:0 6px;cursor:grab}
   .empty-hint{max-width:520px;margin:60px auto;text-align:center;color:var(--muted);border:2px dashed var(--line);border-radius:16px;padding:40px}
+  /* In edit mode, stop the marquee and hide the duplicate row so logos can be clicked & edited */
+  body:not(.previewing) .logos{-webkit-mask-image:none;mask-image:none}
+  body:not(.previewing) .logos-track{animation:none;flex-wrap:wrap;width:auto;justify-content:center}
+  body:not(.previewing) .logo-item[aria-hidden]{display:none}
 </style>
 </head>
 <body class="panel-open">
@@ -202,6 +226,7 @@
     <div class="menu">
       <button onclick="addBlock('hero')">✨ Hero + AI search</button>
       <button onclick="addBlock('gallery')">🖼️ Picture gallery</button>
+      <button onclick="addBlock('agencies')">🏛️ Agency logo scroll</button>
       <button onclick="addBlock('image')">🏞️ Single big image</button>
       <button onclick="addBlock('unique')">⭐ Unique feature</button>
       <button onclick="addBlock('how')">🔢 Three columns</button>
@@ -290,13 +315,34 @@ const SITE = {
   name:'My AI Site', accent:'#3aa0ff', accent2:'#6ee7ff', ogImage:'',
   privacy:'We respect your privacy. Messages you send through our contact form or AI assistant are used only to respond to you and improve our service — they are not sold. Our AI assistant is powered by Claude (Anthropic), which processes your questions to generate replies. Contact us anytime to request deletion of your information.',
   agent:{name:'Aria', emoji:'🤖', system:'', greeting:'Hi! I\'m here to help. Ask me anything.'},
-  search:{placeholder:'Ask anything…', examples:['Show me an example','How does this work?','Find what I need']},
+  search:{placeholder:'Ask about federal grants — eligibility, deadlines, how to apply…', examples:[
+    'I\'ve never applied for a federal grant — where do I start?',
+    'How do I register on SAM.gov and Grants.gov?',
+    'What is a UEI number and do I need one?',
+    'Which grants is my small business eligible for?',
+    'What\'s the difference between SBIR and STTR?',
+    'Which agencies fund first-time applicants?',
+    'What documents do I need before I apply?',
+    'Show me grants closing in the next 90 days',
+    'How long does the application process take?',
+    'Are there grants that don\'t require matching funds?']},
   blocks:[
     {type:'hero', pill:'AI-powered', headline:'Your headline goes here.', sub:'A short, punchy subhead that explains what this site does in one breath.'},
     {type:'gallery', ey:'Explore', title:'Big, beautiful visuals', sub:'Drag your photos from the left panel onto these tiles.',
       items:[{title:'First',caption:'Caption here',img:'',grad:'linear-gradient(135deg,#dbeafe,#93c5fd)'},
              {title:'Second',caption:'Caption here',img:'',grad:'linear-gradient(135deg,#dcfce7,#86efac)'},
              {title:'Third',caption:'Caption here',img:'',grad:'linear-gradient(135deg,#ede9fe,#c4b5fd)'}]},
+    {type:'agencies', ey:'Trusted sources', title:'We track grants from every major federal agency', sub:'Open funding opportunities, pulled together from the agencies that matter to you.',
+      items:[{short:'NIH',name:'National Institutes of Health',color:'#20558a'},
+             {short:'NSF',name:'National Science Foundation',color:'#1a7a8c'},
+             {short:'DOE',name:'Department of Energy',color:'#0a6b3b'},
+             {short:'USDA',name:'U.S. Dept. of Agriculture',color:'#5a7d2a'},
+             {short:'DOD',name:'Department of Defense',color:'#2f4858'},
+             {short:'NASA',name:'NASA',color:'#0b3d91'},
+             {short:'ED',name:'Department of Education',color:'#7a3b8c'},
+             {short:'SBA',name:'Small Business Administration',color:'#1f6feb'},
+             {short:'EPA',name:'Environmental Protection Agency',color:'#13795b'},
+             {short:'HHS',name:'Health & Human Services',color:'#205493'}]},
     {type:'unique', badge:'Only here', title:'Your unique hook', emoji:'⭐', image:'',
       desc:'Describe the one thing that sets this site apart from everyone else.',
       points:['First benefit','Second benefit','Third benefit'], cta:'Learn more'},
@@ -395,7 +441,20 @@ function renderContact(b,i){
     <button class="cf-btn" type="submit">${ed('blocks.'+i+'.button','span','')}</button>
   </form></div></section>`; }
 function renderCta(b,i){ return `<section class="blk block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="ctablk">${ed('blocks.'+i+'.headline','h2','')}${ed('blocks.'+i+'.sub','p','')}<button class="cbtn">${ed('blocks.'+i+'.button','span','')}</button></div></section>`; }
-const RENDER={hero:renderHero,gallery:renderGallery,image:renderImage,unique:renderUnique,how:renderHow,testimonials:renderTestimonials,contact:renderContact,cta:renderCta};
+function logoItem(b,i,j,liveEdit){ const a=b.items[j]; const col=a.color||'var(--accent)';
+  const seal = liveEdit ? ed('blocks.'+i+'.items.'+j+'.short','span','logo-seal','style="background:'+col+'"')
+                        : `<span class="logo-seal" style="background:${col}">${esc(a.short||'')}</span>`;
+  const name = liveEdit ? ed('blocks.'+i+'.items.'+j+'.name','span','logo-name')
+                        : `<span class="logo-name">${esc(a.name||'')}</span>`;
+  return `<div class="logo-item"${liveEdit?'':' aria-hidden="true"'}>${seal}${name}</div>`; }
+function renderAgencies(b,i){ if(!b.items) b.items=JSON.parse(JSON.stringify(DEFAULTS.agencies.items));
+  const live=b.items.map((a,j)=>logoItem(b,i,j,true)).join('');
+  const dup=b.items.map((a,j)=>logoItem(b,i,j,false)).join('');
+  return `<section class="blk block logos-blk" style="background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap">
+  <div class="sec-head"><div class="ey">${ed('blocks.'+i+'.ey','span','')}</div>${ed('blocks.'+i+'.title','h2','')}${ed('blocks.'+i+'.sub','p','')}</div>
+  </div>
+  <div class="logos"><div class="logos-track">${live}${dup}</div></div></section>`; }
+const RENDER={hero:renderHero,gallery:renderGallery,image:renderImage,unique:renderUnique,how:renderHow,testimonials:renderTestimonials,contact:renderContact,cta:renderCta,agencies:renderAgencies};
 
 function render(){
   document.documentElement.style.setProperty('--accent',SITE.accent);
@@ -438,6 +497,17 @@ function setAgentName(v){ SITE.agent.name=v; $('agentName').textContent=v; $('ag
 const DEFAULTS={
   hero:{type:'hero',pill:'New',headline:'A new headline.',sub:'A short subhead about this section.'},
   gallery:{type:'gallery',ey:'Explore',title:'Section title',sub:'Section subhead.',items:[{title:'First',caption:'Caption',img:'',grad:BGS[0]},{title:'Second',caption:'Caption',img:'',grad:BGS[1]},{title:'Third',caption:'Caption',img:'',grad:BGS[6]}]},
+  agencies:{type:'agencies',ey:'Trusted sources',title:'Grants from every major federal agency',sub:'Open funding opportunities, pulled together from the agencies that matter to you.',items:[
+    {short:'NIH',name:'National Institutes of Health',color:'#20558a'},
+    {short:'NSF',name:'National Science Foundation',color:'#1a7a8c'},
+    {short:'DOE',name:'Department of Energy',color:'#0a6b3b'},
+    {short:'USDA',name:'U.S. Dept. of Agriculture',color:'#5a7d2a'},
+    {short:'DOD',name:'Department of Defense',color:'#2f4858'},
+    {short:'NASA',name:'NASA',color:'#0b3d91'},
+    {short:'ED',name:'Department of Education',color:'#7a3b8c'},
+    {short:'SBA',name:'Small Business Administration',color:'#1f6feb'},
+    {short:'EPA',name:'Environmental Protection Agency',color:'#13795b'},
+    {short:'HHS',name:'Health & Human Services',color:'#205493'}]},
   image:{type:'image',src:'',grad:BGS[0],caption:'Add a caption (optional)'},
   unique:{type:'unique',badge:'Only here',title:'Unique feature',emoji:'⭐',image:'',desc:'What makes this different.',points:['Benefit one','Benefit two','Benefit three'],cta:'Learn more'},
   how:{type:'how',ey:'How it works',title:'Three columns',items:[{emoji:'✨',title:'One',desc:'Describe it.'},{emoji:'🤖',title:'Two',desc:'Describe it.'},{emoji:'🖼️',title:'Three',desc:'Describe it.'}]},
@@ -460,20 +530,50 @@ function dropBlock(i,e){ if(dragIdx===null||dragIdx===i) return; e.preventDefaul
 /* ===================== AI SEARCH + AGENT (demo) ===================== */
 async function callAI(prompt){
   // Calls Claude via your Netlify Function (/.netlify/functions/claude). Works once deployed with ANTHROPIC_API_KEY set.
+  // Returns the raw answer text; fmtAI() handles escaping + grant-card formatting.
   try{
     const r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({prompt,system:SITE.agent.system||''})});
     if(!r.ok) throw 0;
     const d=await r.json();
-    return esc(d.answer||'').replace(/\n/g,'<br>');
+    return d.answer||'';
   }catch(e){
     await new Promise(r=>setTimeout(r,500));
-    return 'Demo mode — Claude answers here once this site is deployed to Netlify with your API key. You asked: "<b>'+esc(prompt)+'</b>"';
+    return 'Demo mode — Claude answers here once this site is deployed to Netlify with your API key. You asked: "'+prompt+'"';
   }
 }
+/* Formats an AI answer. Numbered entries (grants) become separated cards; everything else
+   renders as light markdown (bold, links). Shared verbatim with exported sites. */
+function fmtAI(t){
+  t=(t||'').trim(); if(!t) return '';
+  function inline(s){ s=esc(s);
+    s=s.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+    s=s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+    s=s.replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g,'$1<a href="$2" target="_blank" rel="noopener">$2</a>');
+    return s; }
+  var lines=t.split(/\r?\n/), entries=[], cur=null, intro=[];
+  for(var k=0;k<lines.length;k++){ var ln=lines[k];
+    var m=ln.match(/^\s*(\d+)[.)]\s+(.*)$/);
+    if(m){ if(cur) entries.push(cur); cur={title:m[2],rows:[]}; }
+    else if(cur){ var b=ln.match(/^\s*[-*•]\s+(.*)$/); if(b) cur.rows.push(b[1]); else if(ln.trim()) cur.rows.push(ln.trim()); }
+    else if(ln.trim()) intro.push(ln.trim()); }
+  if(cur) entries.push(cur);
+  if(!entries.length) return '<div>'+lines.map(function(l){return l.trim()?inline(l):'';}).join('<br>')+'</div>';
+  var html='';
+  if(intro.length) html+='<p class="grant-intro">'+inline(intro.join(' '))+'</p>';
+  html+='<div class="grant-list">';
+  for(var e=0;e<entries.length;e++){ var en=entries[e];
+    html+='<div class="grant-card"><div class="gtitle">'+inline(en.title)+'</div>';
+    for(var ri=0;ri<en.rows.length;ri++){ var row=en.rows[ri];
+      var lm=row.match(/^\*{0,2}([^:*\/\[\]()]{2,40}?)\*{0,2}:\s+(.+)$/);
+      if(lm) html+='<div class="grow"><span class="glabel">'+inline(lm[1])+'</span><span>'+inline(lm[2])+'</span></div>';
+      else html+='<div class="grow"><span>'+inline(row)+'</span></div>'; }
+    html+='</div>'; }
+  html+='</div>'; return html;
+}
 function fillSearch(t){ const s=$('aiSearch'); if(s){ s.value=t; runSearch(); } }
-async function runSearch(){ const s=$('aiSearch'); if(!s) return; const q=s.value.trim(); if(!q) return; const box=$('searchResults'); box.classList.add('show'); $('searchAns').innerHTML='<span style="opacity:.6">✨ thinking…</span>'; $('searchAns').innerHTML=await callAI(q); }
+async function runSearch(){ const s=$('aiSearch'); if(!s) return; const q=s.value.trim(); if(!q) return; const box=$('searchResults'); box.classList.add('show'); $('searchAns').innerHTML='<span style="opacity:.6">✨ thinking…</span>'; $('searchAns').innerHTML=fmtAI(await callAI(q)); }
 function toggleAgent(){ $('agentPanel').classList.toggle('show'); }
-async function sendAgent(){ const inp=$('agentInput'),t=inp.value.trim(); if(!t)return; const m=$('agentMsgs'); m.insertAdjacentHTML('beforeend',`<div class="msg me">${esc(t)}</div>`); inp.value=''; m.insertAdjacentHTML('beforeend',`<div class="msg bot" id="typing">…</div>`); m.scrollTop=m.scrollHeight; const r=await callAI(t); $('typing').remove(); m.insertAdjacentHTML('beforeend',`<div class="msg bot">${r}</div>`); m.scrollTop=m.scrollHeight; }
+async function sendAgent(){ const inp=$('agentInput'),t=inp.value.trim(); if(!t)return; const m=$('agentMsgs'); m.insertAdjacentHTML('beforeend',`<div class="msg me">${esc(t)}</div>`); inp.value=''; m.insertAdjacentHTML('beforeend',`<div class="msg bot" id="typing">…</div>`); m.scrollTop=m.scrollHeight; const r=fmtAI(await callAI(t)); $('typing').remove(); m.insertAdjacentHTML('beforeend',`<div class="msg bot">${r}</div>`); m.scrollTop=m.scrollHeight; }
 
 /* ===================== PREVIEW / SAVE / LOAD ===================== */
 function togglePreview(){ document.body.classList.toggle('previewing'); $('prevBtn').textContent=document.body.classList.contains('previewing')?'✎ Edit':'👁 Preview'; }
@@ -522,11 +622,12 @@ const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&g
 var SYS=${JSON.stringify(SITE.agent.system||'')};
 function showPrivacy(){ document.getElementById('privModal').classList.add('show'); document.getElementById('privOverlay').classList.add('show'); }
 function hidePrivacy(){ document.getElementById('privModal').classList.remove('show'); document.getElementById('privOverlay').classList.remove('show'); }
-async function callAI(p){ try{ var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({prompt:p,system:SYS})}); if(!r.ok) throw 0; var d=await r.json(); return esc(d.answer||'').replace(/\\n/g,'<br>'); }catch(e){ await new Promise(x=>setTimeout(x,500)); return 'Setup needed: add a Claude API key in Netlify to enable live answers. You asked: "<b>'+esc(p)+'</b>"'; } }
+var fmtAI=${fmtAI.toString()};
+async function callAI(p){ try{ var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({prompt:p,system:SYS})}); if(!r.ok) throw 0; var d=await r.json(); return d.answer||''; }catch(e){ await new Promise(x=>setTimeout(x,500)); return 'Setup needed: add a Claude API key in Netlify to enable live answers. You asked: "'+p+'"'; } }
 function fillSearch(t){ var s=$('aiSearch'); if(s){s.value=t;runSearch();} }
-async function runSearch(){ var s=$('aiSearch'); if(!s)return; var q=s.value.trim(); if(!q)return; var b=$('searchResults'); b.classList.add('show'); $('searchAns').innerHTML='thinking…'; $('searchAns').innerHTML=await callAI(q); }
+async function runSearch(){ var s=$('aiSearch'); if(!s)return; var q=s.value.trim(); if(!q)return; var b=$('searchResults'); b.classList.add('show'); $('searchAns').innerHTML='thinking…'; $('searchAns').innerHTML=fmtAI(await callAI(q)); }
 function toggleAgent(){ $('agentPanel').classList.toggle('show'); }
-async function sendAgent(){ var i=$('agentInput'),t=i.value.trim(); if(!t)return; var m=$('agentMsgs'); m.insertAdjacentHTML('beforeend','<div class="msg me">'+esc(t)+'</div>'); i.value=''; var r=await callAI(t); m.insertAdjacentHTML('beforeend','<div class="msg bot">'+r+'</div>'); m.scrollTop=m.scrollHeight; }
+async function sendAgent(){ var i=$('agentInput'),t=i.value.trim(); if(!t)return; var m=$('agentMsgs'); m.insertAdjacentHTML('beforeend','<div class="msg me">'+esc(t)+'</div>'); i.value=''; var r=fmtAI(await callAI(t)); m.insertAdjacentHTML('beforeend','<div class="msg bot">'+r+'</div>'); m.scrollTop=m.scrollHeight; }
 <\/script></body></html>`;
   download('index.html', doc, 'text/html');
 }
