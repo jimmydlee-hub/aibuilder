@@ -1,542 +1,431 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Website — Drag &amp; Drop Builder</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Grants.gov Assistant — Find federal grants with Claude</title>
+<meta name="description" content="A friendly, Claude-powered assistant that helps you find U.S. federal grants on grants.gov: synopsis, eligibility, award amounts, deadlines, a document checklist, and where to apply." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
 <style>
-  :root{--accent:#3aa0ff;--accent2:#6ee7ff;--ink:#0f1622;--ink2:#1b2737;--muted:#64748b;--line:#e6ebf2;--bg:#f7f9fc;--card:#fff;--good:#16a34a;--bad:#e5484d;--warn:#d9a400;--radius:18px;--shadow:0 10px 40px rgba(20,40,80,.08);--bchrome:#0e1726;--rail:268px}
+  :root{
+    --bg:#faf9f5;
+    --bg-warm:#f5f3ec;
+    --panel:#ffffff;
+    --user:#efece2;
+    --ink:#262420;
+    --ink-soft:#6f6b62;
+    --ink-faint:#9c978c;
+    --line:#e7e3d8;
+    --line-strong:#dcd7c9;
+    --accent:#c45f3c;
+    --accent-deep:#a94d2e;
+    --accent-tint:#f4e9e2;
+    --good:#3f7d52;
+    --radius:24px;
+    --maxw:760px;
+    --serif:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Spline Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
   *{box-sizing:border-box}
-  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+  html,body{height:100%}
+  body{
+    margin:0;font-family:var(--sans);background:var(--bg);color:var(--ink);
+    line-height:1.6;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;
+  }
+  /* subtle paper grain */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+    background-image:radial-gradient(circle at 1px 1px,rgba(120,110,90,.05) 1px,transparent 0);
+    background-size:22px 22px;
+  }
 
-  /* ===== BUILDER CHROME ===== */
-  .toolbar{position:sticky;top:0;z-index:100;background:var(--bchrome);color:#dbe4f0;display:flex;align-items:center;gap:10px;padding:10px 16px;flex-wrap:wrap;border-bottom:1px solid #1f2b3d}
-  .toolbar .grp{display:flex;align-items:center;gap:8px}
-  .toolbar .sep{width:1px;height:26px;background:#2a3950}
-  .toolbar label{font-size:11px;color:#8aa0bd;font-weight:600}
-  .toolbar input[type=text]{background:#16223a;border:1px solid #2a3950;color:#fff;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;width:140px}
-  .toolbar input[type=color]{width:30px;height:30px;border:1px solid #2a3950;border-radius:7px;background:none;cursor:pointer;padding:0}
-  .btn{background:#22304a;border:1px solid #33465f;color:#dbe4f0;border-radius:9px;padding:8px 13px;font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
-  .btn:hover{background:#2c3d5c}
-  .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none}
-  .btn.ghost{background:transparent}
-  .spacer{flex:1}
-  .addmenu{position:relative}
-  .addmenu .menu{position:absolute;top:42px;left:0;background:#16223a;border:1px solid #2a3950;border-radius:12px;padding:6px;display:none;min-width:200px;z-index:120;box-shadow:0 16px 40px rgba(0,0,0,.4)}
-  .addmenu.open .menu{display:block}
-  .addmenu .menu button{display:flex;gap:9px;width:100%;background:none;border:none;color:#dbe4f0;text-align:left;padding:9px 11px;border-radius:8px;cursor:pointer;font-size:13px}
-  .addmenu .menu button:hover{background:#22304a}
-  .hint{background:#10203a;color:#9fc3ef;font-size:12.5px;padding:8px 16px;display:flex;gap:8px;align-items:center;border-bottom:1px solid #1f2b3d}
-  body.previewing .toolbar,body.previewing .hint,body.previewing .photos-rail{display:none}
-  .setmodal-ov{position:fixed;inset:0;background:rgba(8,16,28,.55);z-index:130;display:none}
-  .setmodal-ov.show{display:block}
-  .setmodal{position:fixed;z-index:131;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,92vw);max-height:86vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.4);padding:26px;display:none;color:var(--ink)}
-  .setmodal.show{display:block}
-  .setmodal h3{margin:0 0 6px}
-  .setmodal label{display:block;font-size:12.5px;font-weight:700;color:#334155;margin:16px 0 5px}
-  .setmodal input,.setmodal textarea{width:100%;border:1px solid #e2e8f0;border-radius:9px;padding:10px 12px;font-size:13.5px;font-family:inherit;outline:none}
-  .setmodal textarea{min-height:78px;resize:vertical}
-  .setmodal .sdone{margin-top:18px;background:var(--accent);color:#04121f;border:none;border-radius:10px;padding:11px 20px;font-weight:800;cursor:pointer}
-  .setmodal .snote{font-size:11px;color:#94a3b8;margin-top:4px}
+  /* ===== Header ===== */
+  header{
+    position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:12px;
+    padding:14px 22px;background:rgba(250,249,245,.82);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex;align-items:center;gap:11px;font-weight:600;letter-spacing:-.01em}
+  .brand .mark{width:30px;height:30px;flex:none;color:var(--accent)}
+  .brand .name{font-size:16.5px}
+  .brand .name b{font-family:var(--serif);font-weight:600}
+  .tag{
+    font-size:11.5px;color:var(--ink-soft);border:1px solid var(--line-strong);
+    padding:3px 9px;border-radius:999px;background:var(--panel);white-space:nowrap;
+  }
+  header .spacer{flex:1}
+  .newchat{
+    font-family:var(--sans);font-size:13.5px;font-weight:500;color:var(--ink);cursor:pointer;
+    background:var(--panel);border:1px solid var(--line-strong);border-radius:10px;
+    padding:8px 14px;display:inline-flex;align-items:center;gap:7px;transition:.16s;
+  }
+  .newchat:hover{background:var(--bg-warm);border-color:var(--accent)}
+  .newchat svg{width:15px;height:15px}
 
-  /* ===== CANVA-STYLE PHOTOS RAIL ===== */
-  .photos-rail{position:fixed;left:0;top:0;bottom:0;width:var(--rail);background:#0c1422;color:#dbe4f0;z-index:90;overflow-y:auto;border-right:1px solid #1f2b3d;padding:14px 14px 40px;padding-top:96px}
-  body:not(.panel-open) .photos-rail{display:none}
-  .pr-head{font-size:15px;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;margin-bottom:12px}
-  .pr-section{margin-bottom:20px}
-  .pr-title{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:#7e93b3;margin-bottom:8px}
-  .pr-upload{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none;border-radius:10px;padding:11px;font-weight:800;font-size:13px;cursor:pointer}
-  .pr-drop{margin-top:8px;border:2px dashed #2a3950;border-radius:10px;padding:14px;text-align:center;font-size:12px;color:#7e93b3;transition:.15s}
-  .pr-drop.over{border-color:var(--accent);background:rgba(58,160,255,.12);color:#cfe6ff}
-  .pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-  .pr-grid img,.bgsw{width:100%;height:62px;object-fit:cover;border-radius:8px;cursor:grab;border:2px solid transparent;background-size:cover}
-  .pr-grid img.sel,.bgsw.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
-  .pr-empty{font-size:12px;color:#5d6f8c;grid-column:1/-1;text-align:center;padding:10px 0}
-  .pr-search{width:100%;background:#16223a;border:1px solid #2a3950;color:#fff;border-radius:8px;padding:8px 10px;font-size:12.5px;outline:none;margin-bottom:6px}
-  .pr-go{background:#22304a;border:1px solid #33465f;color:#dbe4f0;border-radius:8px;padding:8px 12px;font-weight:700;font-size:12.5px;cursor:pointer}
-  .pr-note{font-size:11px;color:#7e93b3;margin-bottom:6px;line-height:1.4}
-  .pr-tip{font-size:11.5px;color:#7e93b3;background:#101c30;border-radius:10px;padding:10px;line-height:1.5}
-  body.panel-open:not(.previewing) .sitewrap{margin-left:var(--rail)}
+  /* ===== Main / scroll area ===== */
+  main{flex:1;position:relative;z-index:1;overflow-y:auto;scroll-behavior:smooth}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
 
-  /* ===== SITE STYLES (shared with export) ===== */
-  .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
-  a{color:inherit;text-decoration:none}
-  nav.site{position:sticky;top:0;z-index:40;background:rgba(247,249,252,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-  body:not(.previewing) nav.site{position:static}
-  nav.site .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.4px}
-  .brand .logo{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#fff;font-weight:900}
-  .navlinks{display:flex;gap:22px;font-size:14px;color:var(--muted);font-weight:600}
-  .navcta{background:var(--ink);color:#fff;border:none;padding:10px 16px;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer}
-  @media(max-width:860px){.navlinks{display:none}}
+  /* ===== Welcome (empty) state ===== */
+  .welcome{
+    min-height:calc(100vh - 62px - 150px);display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;padding:40px 22px 10px;
+  }
+  .welcome .bigmark{width:54px;height:54px;color:var(--accent);margin-bottom:22px;animation:rise .7s ease both}
+  .welcome h1{
+    font-family:var(--serif);font-weight:500;font-size:clamp(28px,5vw,40px);
+    line-height:1.12;letter-spacing:-.02em;margin:0 0 14px;animation:rise .7s .05s ease both;
+  }
+  .welcome h1 .accent{color:var(--accent);font-style:italic}
+  .welcome p.sub{
+    margin:0 auto 30px;max-width:520px;color:var(--ink-soft);font-size:15.5px;
+    animation:rise .7s .1s ease both;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
-  section.blk{padding:56px 0;position:relative}
-  .hero{text-align:center;padding:64px 0 56px;position:relative;overflow:hidden}
-  .hero::before{content:"";position:absolute;inset:0;z-index:0;background:radial-gradient(60% 50% at 50% 0%, color-mix(in srgb,var(--accent) 20%,transparent), transparent 70%),radial-gradient(40% 40% at 85% 15%, color-mix(in srgb,var(--accent2) 22%,transparent), transparent 70%)}
-  .hero .wrap{position:relative;z-index:1}
-  .pill{display:inline-flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:12.5px;font-weight:600;color:var(--muted);box-shadow:var(--shadow);margin-bottom:20px}
-  .pill .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
-  h1.hero-h{font-size:clamp(32px,6vw,56px);line-height:1.05;letter-spacing:-1.4px;font-weight:800;margin:0 0 14px}
-  .hero-sub{font-size:18px;color:var(--muted);max-width:600px;margin:0 auto 30px}
-  .searchwrap{max-width:700px;margin:0 auto}
-  .searchbox{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:9px 9px 9px 18px;box-shadow:0 16px 50px rgba(20,40,80,.13)}
-  .searchbox:focus-within{border-color:var(--accent)}
-  .searchbox .ai-ic{font-size:20px}
-  .searchbox input{flex:1;border:none;outline:none;font-size:16px;background:transparent;padding:8px 0}
-  .searchbox button{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none;border-radius:13px;padding:12px 20px;font-weight:800;font-size:15px;cursor:pointer}
-  .chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px}
-  .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 13px;font-size:13px;color:var(--muted);cursor:pointer;font-weight:600}
-  .results{max-width:700px;margin:16px auto 0;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;box-shadow:var(--shadow);display:none}
-  .results.show{display:block}
-  .results .rhead{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;gap:8px;align-items:center}
-  .demo-tag{font-size:10.5px;color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 40%,transparent);border-radius:6px;padding:1px 6px;margin-left:auto}
-  .claude-badge{font-size:10.5px;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);border-radius:6px;padding:1px 7px;margin-left:auto;font-weight:700}
-  .agent-credit{text-align:center;font-size:11px;color:var(--muted);padding:6px;border-top:1px solid var(--line);background:var(--bg)}
-  .agent-credit b{color:var(--ink)}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:660px;animation:rise .7s .18s ease both}
+  .chip{
+    font-family:var(--sans);font-size:13.5px;color:var(--ink);cursor:pointer;text-align:left;
+    background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:12px 15px;
+    display:flex;align-items:center;gap:10px;transition:.16s;max-width:320px;
+  }
+  .chip:hover{border-color:var(--accent);background:var(--bg-warm);transform:translateY(-1px)}
+  .chip svg{width:16px;height:16px;color:var(--accent);flex:none}
 
-  .sec-head{text-align:center;max-width:620px;margin:0 auto 34px}
-  .sec-head .ey{font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent)}
-  .sec-head h2{font-size:clamp(25px,4vw,36px);letter-spacing:-1px;margin:9px 0 8px}
-  .sec-head p{color:var(--muted);font-size:16px;margin:0}
+  /* ===== Conversation ===== */
+  .thread{padding:30px 0 16px;display:none;flex-direction:column;gap:26px}
+  .msg{display:flex;gap:14px;align-items:flex-start;animation:rise .4s ease both}
+  .avatar{
+    width:30px;height:30px;border-radius:8px;flex:none;display:grid;place-items:center;
+    font-size:12px;font-weight:600;margin-top:2px;
+  }
+  .msg.user .avatar{background:var(--user);color:var(--ink-soft)}
+  .msg.assistant .avatar{background:var(--accent-tint);color:var(--accent)}
+  .msg.assistant .avatar svg{width:18px;height:18px}
+  .bubble{flex:1;min-width:0;padding-top:2px}
+  .msg.user .bubble{
+    background:var(--user);border-radius:6px 16px 16px 16px;padding:12px 16px;
+    align-self:flex-start;max-width:100%;white-space:pre-wrap;
+  }
 
-  .gallery{display:grid;grid-template-columns:2fr 1fr 1fr;gap:16px}
-  @media(max-width:820px){.gallery{grid-template-columns:1fr 1fr}}
-  @media(max-width:540px){.gallery{grid-template-columns:1fr}}
-  .gcard{position:relative;border-radius:var(--radius);overflow:hidden;min-height:240px;display:flex;align-items:flex-end;box-shadow:var(--shadow);color:#fff;background-size:cover;background-position:center;border:1px solid var(--line)}
-  .gcard.big{min-height:330px}
-  .gcard .ov{position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(8,16,28,.78));z-index:1}
-  .gcard .gc-body{position:relative;z-index:2;padding:20px}
-  .gcard .gc-body h3{margin:0 0 4px;font-size:19px}
-  .gcard .gc-body p{margin:0;font-size:13px;opacity:.92}
-  .dropimg{position:absolute;inset:0;z-index:3;display:none;align-items:center;justify-content:center;color:#fff;font-size:12.5px;font-weight:700;background:rgba(8,16,28,.5);border:2px dashed rgba(255,255,255,.6);border-radius:var(--radius);cursor:pointer;text-align:center;padding:10px}
-  body:not(.previewing) .gcard:hover .dropimg{display:flex}
-  .gcard.dragover .dropimg{display:flex;background:rgba(58,160,255,.6)}
-  .imgblock{min-height:420px!important}
+  /* status pills shown during tool calls */
+  .status{
+    display:inline-flex;align-items:center;gap:9px;font-size:13px;color:var(--ink-soft);
+    background:var(--bg-warm);border:1px solid var(--line);border-radius:999px;
+    padding:6px 13px;margin:2px 0;
+  }
+  .status .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 1.1s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
 
-  .unique-card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);display:grid;grid-template-columns:1.1fr .9fr;overflow:hidden}
-  @media(max-width:820px){.unique-card{grid-template-columns:1fr}}
-  .u-left{padding:38px}
-  .u-left .badge{display:inline-block;background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--accent);font-weight:800;font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:6px 12px;border-radius:999px;margin-bottom:12px}
-  .u-left h2{font-size:28px;letter-spacing:-.8px;margin:0 0 10px}
-  .u-left p{color:var(--muted);font-size:15.5px;margin:0 0 16px}
-  .u-left ul{list-style:none;padding:0;margin:0 0 20px}
-  .u-left li{display:flex;gap:9px;padding:6px 0;font-size:14.5px}
-  .u-left li::before{content:"✦";color:var(--accent);font-weight:900}
-  .u-left .ubtn{background:var(--ink);color:#fff;border:none;padding:12px 22px;border-radius:11px;font-weight:700;cursor:pointer}
-  .u-right{position:relative;background:linear-gradient(150deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#fff;min-height:280px;overflow:hidden;background-size:cover;background-position:center}
-  .u-right .em{font-size:70px}
+  .caret{display:inline-block;width:9px;height:18px;background:var(--accent);border-radius:2px;
+    vertical-align:-3px;margin-left:1px;animation:blink 1s step-end infinite}
+  @keyframes blink{50%{opacity:0}}
 
-  .ctablk{text-align:center;background:linear-gradient(135deg,var(--ink),var(--ink2));color:#fff;border-radius:24px;padding:54px 24px;margin:0 22px}
-  .ctablk h2{font-size:clamp(26px,4vw,40px);letter-spacing:-1px;margin:0 0 10px}
-  .ctablk p{font-size:17px;opacity:.85;max-width:480px;margin:0 auto 22px}
-  .ctablk .cbtn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none;padding:14px 28px;border-radius:13px;font-weight:800;font-size:16px;cursor:pointer}
+  /* ===== Markdown content ===== */
+  .md{font-size:15.5px;color:var(--ink)}
+  .md > *:first-child{margin-top:0}
+  .md > *:last-child{margin-bottom:0}
+  .md h1,.md h2,.md h3{font-family:var(--serif);font-weight:600;line-height:1.25;letter-spacing:-.01em}
+  .md h2{font-size:21px;margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .md h3{font-size:16.5px;margin:22px 0 8px;color:var(--accent-deep)}
+  .md h1{font-size:24px;margin:20px 0 10px}
+  .md p{margin:10px 0}
+  .md ul,.md ol{margin:10px 0;padding-left:22px}
+  .md li{margin:5px 0}
+  .md li::marker{color:var(--accent)}
+  .md a{color:var(--accent-deep);text-decoration:underline;text-underline-offset:2px;font-weight:500}
+  .md a:hover{color:var(--accent)}
+  .md strong{font-weight:600}
+  .md code{background:var(--bg-warm);border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-size:.9em;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .md pre{background:var(--bg-warm);border:1px solid var(--line);border-radius:12px;padding:14px 16px;overflow:auto}
+  .md pre code{background:none;border:none;padding:0}
+  .md blockquote{border-left:3px solid var(--accent);margin:12px 0;padding:2px 0 2px 16px;color:var(--ink-soft)}
+  .md hr{border:none;border-top:1px solid var(--line);margin:20px 0}
+  .md table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px}
+  .md th,.md td{border:1px solid var(--line);padding:8px 11px;text-align:left}
+  .md th{background:var(--bg-warm)}
+  /* task-list checkboxes */
+  .md ul:has(input[type=checkbox]){list-style:none;padding-left:4px}
+  .md li:has(input[type=checkbox]){display:flex;align-items:flex-start;gap:10px;padding:3px 0}
+  .md input[type=checkbox]{
+    appearance:none;-webkit-appearance:none;width:18px;height:18px;margin-top:2px;flex:none;
+    border:1.5px solid var(--line-strong);border-radius:5px;background:var(--panel);
+    position:relative;cursor:pointer;transition:.15s;
+  }
+  .md input[type=checkbox]:hover{border-color:var(--accent)}
+  .md input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
+  .md input[type=checkbox]:checked::after{
+    content:"";position:absolute;left:5px;top:1.5px;width:5px;height:9px;
+    border:solid #fff;border-width:0 2px 2px 0;transform:rotate(43deg);
+  }
 
-  .cols3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
-  @media(max-width:820px){.cols3{grid-template-columns:1fr}}
-  .howcard{background:linear-gradient(160deg,#fff,color-mix(in srgb,var(--accent) 7%,#fff));border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:var(--shadow)}
-  .howcard .he{font-size:30px;margin-bottom:8px}
-  .howcard h3{margin:0 0 6px;font-size:19px;letter-spacing:-.3px}
-  .howcard p{margin:0;color:var(--muted);font-size:14.5px}
-  .tcard{background:var(--bg);border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:var(--shadow)}
-  .tcard .stars{color:#f5b301;font-size:15px;letter-spacing:2px;margin-bottom:10px}
-  .tcard .tq{font-size:15.5px;color:var(--ink);margin:0 0 14px;line-height:1.55}
-  .tcard .tby{font-size:13.5px;color:var(--muted)} .tcard .tby b{color:var(--ink)} .tcard .tby span{color:var(--muted)}
-  .contactform{display:flex;flex-direction:column;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;box-shadow:var(--shadow)}
-  .contactform .cf{border:1px solid var(--line);border-radius:11px;padding:12px 14px;font-size:15px;font-family:inherit;outline:none;background:var(--bg)}
-  .contactform .cf:focus{border-color:var(--accent);background:#fff}
-  .contactform .cf-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none;border-radius:12px;padding:14px;font-weight:800;font-size:15px;cursor:pointer}
-  .pmodal-ov{position:fixed;inset:0;background:rgba(8,16,28,.5);z-index:80;display:none}
-  .pmodal-ov.show{display:block}
-  .pmodal{position:fixed;z-index:81;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,92vw);max-height:80vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 30px 80px rgba(10,30,60,.3);padding:28px;display:none}
-  .pmodal.show{display:block}
-  .pmodal h3{margin:0 0 12px}
-  .pmodal p{color:var(--muted);font-size:14px;line-height:1.6;white-space:pre-wrap;margin:0}
-  .pmodal .pclose{margin-top:16px;background:var(--ink);color:#fff;border:none;border-radius:10px;padding:10px 18px;font-weight:700;cursor:pointer}
-  footer.site a{text-decoration:underline}
-  footer.site{border-top:1px solid var(--line);padding:30px 0;color:var(--muted);font-size:13.5px;text-align:center}
+  /* ===== Composer ===== */
+  .composer-zone{
+    position:sticky;bottom:0;z-index:5;background:linear-gradient(180deg,transparent,var(--bg) 26%);
+    padding:8px 0 14px;
+  }
+  .composer{
+    max-width:var(--maxw);margin:0 auto;padding:0 22px;
+  }
+  .inputbar{
+    background:var(--panel);border:1px solid var(--line-strong);border-radius:var(--radius);
+    box-shadow:0 6px 24px rgba(60,50,30,.06);padding:10px 10px 10px 18px;
+    display:flex;align-items:flex-end;gap:10px;transition:border-color .16s,box-shadow .16s;
+  }
+  .inputbar:focus-within{border-color:var(--accent);box-shadow:0 6px 28px rgba(196,95,60,.14)}
+  textarea#input{
+    flex:1;border:none;outline:none;resize:none;background:none;font-family:var(--sans);
+    font-size:15.5px;color:var(--ink);line-height:1.5;max-height:200px;padding:7px 0;
+  }
+  textarea#input::placeholder{color:var(--ink-faint)}
+  #send{
+    flex:none;width:38px;height:38px;border-radius:11px;border:none;cursor:pointer;
+    background:var(--accent);color:#fff;display:grid;place-items:center;transition:.16s;
+  }
+  #send:hover:not(:disabled){background:var(--accent-deep)}
+  #send:disabled{background:var(--line-strong);cursor:not-allowed;color:var(--ink-faint)}
+  #send svg{width:19px;height:19px}
+  .composer .foot{
+    text-align:center;color:var(--ink-faint);font-size:11.5px;margin:9px 0 0;
+  }
+  .composer .foot a{color:var(--ink-soft)}
+  .err{
+    max-width:var(--maxw);margin:0 auto 8px;color:var(--accent-deep);background:var(--accent-tint);
+    border:1px solid #e8cfc2;border-radius:12px;padding:10px 14px;font-size:13.5px;display:none;
+  }
 
-  .agent-fab{position:fixed;right:20px;bottom:20px;z-index:60;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none;border-radius:999px;padding:13px 18px;font-weight:800;cursor:pointer;box-shadow:0 12px 36px color-mix(in srgb,var(--accent) 45%,transparent);display:flex;gap:8px}
-  .agent-panel{position:fixed;right:20px;bottom:80px;z-index:60;width:340px;max-width:calc(100vw - 40px);height:460px;max-height:70vh;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 24px 70px rgba(10,30,60,.25);display:none;flex-direction:column;overflow:hidden}
-  .agent-panel.show{display:flex}
-  .agent-head{padding:13px 15px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
-  .agent-head .av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;font-size:17px}
-  .agent-head b{font-size:14px}.agent-head .on{font-size:11.5px;color:var(--good)}
-  .agent-head .x{margin-left:auto;background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer}
-  .agent-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:9px;background:var(--bg)}
-  .msg{max-width:82%;padding:9px 12px;border-radius:13px;font-size:13.5px}
-  .msg.bot{background:var(--card);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px}
-  .msg.me{background:var(--ink);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
-  .agent-input{display:flex;gap:7px;padding:11px;border-top:1px solid var(--line)}
-  .agent-input input{flex:1;border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:13.5px;outline:none}
-  .agent-input button{background:var(--accent);color:#04121f;border:none;border-radius:10px;padding:0 15px;font-weight:800;cursor:pointer}
-
-  /* EDIT AFFORDANCES */
-  [contenteditable]{outline:none}
-  body:not(.previewing) [contenteditable]:hover{box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 40%,transparent);border-radius:4px}
-  body:not(.previewing) [contenteditable]:focus{box-shadow:0 0 0 2px var(--accent);border-radius:4px;background:#fff}
-  .block{position:relative}
-  body:not(.previewing) .block{outline:1px dashed transparent;transition:.15s}
-  body:not(.previewing) .block:hover{outline-color:color-mix(in srgb,var(--accent) 45%,transparent)}
-  .blocktools{position:absolute;top:8px;right:8px;z-index:30;display:none;gap:4px;background:var(--bchrome);border-radius:10px;padding:4px}
-  body:not(.previewing) .block:hover>.blocktools{display:flex}
-  .blocktools button{background:#22304a;border:none;color:#dbe4f0;width:30px;height:30px;border-radius:7px;cursor:pointer;font-size:14px}
-  .blocktools button:hover{background:var(--accent);color:#04121f}
-  .blocktools .lbl{color:#8aa0bd;font-size:11px;display:flex;align-items:center;padding:0 6px;cursor:grab}
-  .empty-hint{max-width:520px;margin:60px auto;text-align:center;color:var(--muted);border:2px dashed var(--line);border-radius:16px;padding:40px}
+  @media(max-width:600px){
+    .welcome{min-height:calc(100vh - 62px - 140px)}
+    .chip{max-width:100%}
+    header .tag{display:none}
+  }
 </style>
 </head>
-<body class="panel-open">
+<body>
+  <header>
+    <div class="brand">
+      <span class="mark" id="markSlot"></span>
+      <span class="name">Grants.gov <b>Assistant</b></span>
+    </div>
+    <span class="spacer"></span>
+    <span class="tag">Powered by Claude · live grants.gov data</span>
+    <button class="newchat" id="newChat" title="Start a new conversation">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      New
+    </button>
+  </header>
 
-<!-- ===== TOOLBAR ===== -->
-<div class="toolbar">
-  <div class="grp"><span style="font-weight:800;color:#fff">⚡ AI Website Builder</span></div>
-  <div class="sep"></div>
-  <div class="grp"><label>Site</label><input type="text" id="tName" oninput="setName(this.value)" placeholder="My Site"></div>
-  <div class="grp"><label>Colors</label><input type="color" id="tAccent" oninput="setVar('accent',this.value)"><input type="color" id="tAccent2" oninput="setVar('accent2',this.value)"></div>
-  <div class="grp"><label>Agent</label><input type="text" id="tAgent" oninput="setAgentName(this.value)" placeholder="Agent" style="width:84px"></div>
-  <div class="sep"></div>
-  <button class="btn ghost" onclick="document.body.classList.toggle('panel-open')">🖼 Photos</button>
-  <button class="btn ghost" onclick="openSettings()">⚙ Settings</button>
-  <div class="addmenu" id="addMenu">
-    <button class="btn" onclick="document.getElementById('addMenu').classList.toggle('open')">+ Add section ▾</button>
-    <div class="menu">
-      <button onclick="addBlock('hero')">✨ Hero + AI search</button>
-      <button onclick="addBlock('gallery')">🖼️ Picture gallery</button>
-      <button onclick="addBlock('image')">🏞️ Single big image</button>
-      <button onclick="addBlock('unique')">⭐ Unique feature</button>
-      <button onclick="addBlock('how')">🔢 Three columns</button>
-      <button onclick="addBlock('testimonials')">💬 Testimonials</button>
-      <button onclick="addBlock('contact')">✉️ Contact form</button>
-      <button onclick="addBlock('cta')">📣 Call to action</button>
+  <main id="main">
+    <div class="wrap">
+      <!-- Welcome -->
+      <section class="welcome" id="welcome">
+        <span class="bigmark" id="bigMarkSlot"></span>
+        <h1>Find the right federal grant,<br><span class="accent">without the paperwork maze.</span></h1>
+        <p class="sub">Ask about any topic and the assistant searches grants.gov live, then walks you through the synopsis, who qualifies, award amounts, deadlines, a document checklist, and exactly where to apply.</p>
+        <div class="chips" id="chips"></div>
+      </section>
+
+      <!-- Conversation -->
+      <section class="thread" id="thread"></section>
+    </div>
+  </main>
+
+  <div class="composer-zone">
+    <div class="err" id="err"></div>
+    <div class="composer">
+      <div class="inputbar">
+        <textarea id="input" rows="1" placeholder="Ask about grants — e.g. &ldquo;clean energy grants for small businesses&rdquo;&hellip;"></textarea>
+        <button id="send" title="Send" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+        </button>
+      </div>
+      <p class="foot">The assistant can make mistakes. Verify deadlines and requirements in the official announcement on <a href="https://www.grants.gov" target="_blank" rel="noopener">grants.gov</a>.</p>
     </div>
   </div>
-  <div class="spacer"></div>
-  <div class="grp">
-    <button class="btn ghost" onclick="togglePreview()" id="prevBtn">👁 Preview</button>
-    <button class="btn" onclick="saveProject()">💾 Save</button>
-    <button class="btn" onclick="document.getElementById('loadFile').click()">📂 Load</button>
-    <input type="file" id="loadFile" accept=".json" style="display:none" onchange="loadProject(event)">
-    <button class="btn primary" onclick="exportSite()">⬇ Export site</button>
-  </div>
-</div>
-<div class="hint">👉 Add photos in the left panel, then <b>drag a photo onto any picture area</b> (or click a photo, then click where you want it). Click text to edit. Hover a section to move/delete. Then <b>Export</b>.</div>
 
-<!-- ===== PHOTOS RAIL (Canva-style) ===== -->
-<aside class="photos-rail">
-  <div class="pr-head">🖼 Photos</div>
-  <div class="pr-section">
-    <div class="pr-title">Your uploads</div>
-    <button class="pr-upload" onclick="document.getElementById('imgUpload').click()">⬆ Upload images</button>
-    <input type="file" id="imgUpload" accept="image/*" multiple style="display:none" onchange="handleUpload(event)">
-    <div class="pr-drop" id="prDrop">…or drag image files here</div>
-    <div class="pr-grid" id="uploadGrid"></div>
-  </div>
-  <div class="pr-section">
-    <div class="pr-title">Backgrounds</div>
-    <div class="pr-grid" id="bgGrid"></div>
-  </div>
-  <div class="pr-section">
-    <div class="pr-title">Search stock photos</div>
-    <div class="pr-note">Optional. Paste a free Unsplash access key (unsplash.com/developers) to search millions of photos.</div>
-    <input class="pr-search" id="stockKey" placeholder="Unsplash access key (optional)">
-    <div style="display:flex;gap:6px"><input class="pr-search" id="stockQ" style="margin-bottom:0" placeholder="search e.g. mountains" onkeydown="if(event.key==='Enter')searchStock()"><button class="pr-go" onclick="searchStock()">Go</button></div>
-    <div class="pr-grid" id="stockGrid"></div>
-  </div>
-  <div class="pr-tip">💡 Drag a photo onto any picture area, or <b>click a photo to select it</b>, then click where you want it placed.</div>
-</aside>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.11/dist/purify.min.js"></script>
+  <script>
+  (function(){
+    "use strict";
 
-<!-- ===== SITE ===== -->
-<div class="sitewrap">
-  <nav class="site"><div class="wrap">
-    <div class="brand"><span class="logo" id="navLogo">A</span> <span id="navName">My Site</span></div>
-    <div class="navlinks"><a>Explore</a><a>Features</a><a>About</a></div>
-    <button class="navcta">Get started</button>
-  </div></nav>
-  <main id="canvas"></main>
-  <footer class="site"><div class="wrap"><span id="footName">My Site</span> · AI search &amp; agent <b style="color:var(--ink)">powered by Claude</b> · <a href="#" onclick="showPrivacy();return false" style="text-decoration:underline">Privacy</a></div></footer>
-</div>
+    // --- Claude-style sunburst mark ---
+    function sunburst(){
+      const N=12, parts=[];
+      for(let i=0;i<N;i++){
+        const a=(i*360/N);
+        parts.push('<rect x="11" y="1" width="2" height="9" rx="1" transform="rotate('+a+' 12 12)"/>');
+      }
+      return '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">'+parts.join("")+'</svg>';
+    }
+    document.getElementById("markSlot").innerHTML = sunburst();
+    document.getElementById("bigMarkSlot").innerHTML = sunburst();
 
-<!-- builder Settings dialog -->
-<div class="setmodal-ov" id="setOverlay" onclick="closeSettings()"></div>
-<div class="setmodal" id="setModal">
-  <h3>⚙ Site settings</h3>
-  <label>Social share image URL</label>
-  <input id="setOg" placeholder="https://yoursite.com/share.jpg">
-  <div class="snote">Shown when your link is shared (texts, social). Use a full https URL to a ~1200×630 image. Optional.</div>
-  <label>Agent instructions for Claude</label>
-  <textarea id="setSys" placeholder="e.g. You are SkyReserve's booking assistant. Help visitors with charter-flight questions; be concise, warm, and accurate."></textarea>
-  <div class="snote">Tells Claude how to behave on this site (its role, tone, and what it knows).</div>
-  <label>Privacy notice</label>
-  <textarea id="setPriv"></textarea>
-  <div class="snote">Plain-language only — not legal advice. Consider having a professional review it.</div>
-  <button class="sdone" onclick="saveSettings()">Done</button>
-</div>
+    const SUGGESTIONS = [
+      {t:"Grants for rural broadband infrastructure", icon:"signal"},
+      {t:"STEM education grants for universities", icon:"book"},
+      {t:"Small business clean energy funding", icon:"leaf"},
+      {t:"Grants for community health centers", icon:"heart"},
+    ];
+    const ICONS = {
+      signal:'<path d="M2 20h.01M7 20v-4M12 20v-8M17 20V8M22 4v16"/>',
+      book:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+      leaf:'<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/>',
+      heart:'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>'
+    };
 
-<!-- Privacy modal (also baked into exported sites) -->
-<div class="pmodal-ov" id="privOverlay" onclick="hidePrivacy()"></div>
-<div class="pmodal" id="privModal"><h3>Privacy</h3><p id="privBody"></p><button class="pclose" onclick="hidePrivacy()">Close</button></div>
+    const chipsEl = document.getElementById("chips");
+    SUGGESTIONS.forEach(function(s){
+      const b=document.createElement("button");
+      b.className="chip";
+      b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+ICONS[s.icon]+'</svg><span>'+s.t+'</span>';
+      b.onclick=function(){ input.value=s.t; autosize(); send(); };
+      chipsEl.appendChild(b);
+    });
 
-<button class="agent-fab" onclick="toggleAgent()">💬 <span id="agentFabName">Ask the agent</span></button>
-<div class="agent-panel" id="agentPanel">
-  <div class="agent-head"><div class="av" id="agentAv">🤖</div><div><b id="agentName">Agent</b><div class="on">● online</div></div><button class="x" onclick="toggleAgent()">×</button></div>
-  <div class="agent-msgs" id="agentMsgs"></div>
-  <div class="agent-credit">✨ Powered by <b>Claude</b></div>
-  <div class="agent-input"><input id="agentInput" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendAgent()"><button onclick="sendAgent()">→</button></div>
-</div>
+    marked.setOptions({ gfm:true, breaks:true });
 
-<script>
-/* ===================== MODEL ===================== */
-const SITE = {
-  name:'My AI Site', accent:'#3aa0ff', accent2:'#6ee7ff', ogImage:'',
-  privacy:'We respect your privacy. Messages you send through our contact form or AI assistant are used only to respond to you and improve our service — they are not sold. Our AI assistant is powered by Claude (Anthropic), which processes your questions to generate replies. Contact us anytime to request deletion of your information.',
-  agent:{name:'Aria', emoji:'🤖', system:'', greeting:'Hi! I\'m here to help. Ask me anything.'},
-  search:{placeholder:'Ask anything…', examples:['Show me an example','How does this work?','Find what I need']},
-  blocks:[
-    {type:'hero', pill:'AI-powered', headline:'Your headline goes here.', sub:'A short, punchy subhead that explains what this site does in one breath.'},
-    {type:'gallery', ey:'Explore', title:'Big, beautiful visuals', sub:'Drag your photos from the left panel onto these tiles.',
-      items:[{title:'First',caption:'Caption here',img:'',grad:'linear-gradient(135deg,#dbeafe,#93c5fd)'},
-             {title:'Second',caption:'Caption here',img:'',grad:'linear-gradient(135deg,#dcfce7,#86efac)'},
-             {title:'Third',caption:'Caption here',img:'',grad:'linear-gradient(135deg,#ede9fe,#c4b5fd)'}]},
-    {type:'unique', badge:'Only here', title:'Your unique hook', emoji:'⭐', image:'',
-      desc:'Describe the one thing that sets this site apart from everyone else.',
-      points:['First benefit','Second benefit','Third benefit'], cta:'Learn more'},
-    {type:'cta', headline:'Ready to get started?', sub:'A closing line that invites the visitor to act.', button:'Get started'}
-  ]
-};
-const BGS=[
-  'linear-gradient(135deg,#dbeafe,#93c5fd)','linear-gradient(135deg,#e0f2fe,#bae6fd)',
-  'linear-gradient(135deg,#ede9fe,#c4b5fd)','linear-gradient(135deg,#dcfce7,#86efac)',
-  'linear-gradient(135deg,#fef9c3,#fde047)','linear-gradient(135deg,#ffe4e6,#fda4af)',
-  'linear-gradient(135deg,#fce7f3,#f9a8d4)','linear-gradient(135deg,#cffafe,#67e8f9)',
-  'linear-gradient(135deg,#f8fafc,#e2e8f0)','linear-gradient(135deg,#fff7ed,#fed7aa)',
-  'linear-gradient(135deg,#60a5fa,#a78bfa)','linear-gradient(135deg,#34d399,#22d3ee)'];
+    const main=document.getElementById("main");
+    const thread=document.getElementById("thread");
+    const welcome=document.getElementById("welcome");
+    const input=document.getElementById("input");
+    const sendBtn=document.getElementById("send");
+    const errEl=document.getElementById("err");
 
-let uploads=[];        // data-URL strings of user images
-let selectedImg=null;  // {val, grad} picked in the panel for click-to-place
-let EXPORTING=false;
+    const history=[]; // {role, content}
+    let busy=false;
 
-const $=id=>document.getElementById(id);
-const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-function dnd(i){ return EXPORTING?'':`ondragover="dragOver(${i},event)" ondrop="dropBlock(${i},event)"`; }
-function setPath(path,val){ const p=path.split('.'); let o=SITE; for(let i=0;i<p.length-1;i++) o=o[p[i]]; o[p[p.length-1]]=val; }
-function getPath(path){ const p=path.split('.'); let o=SITE; for(const k of p) o=o[k]; return o; }
-function ed(path,tag,cls,extra=''){ const v=getPath(path); const e=EXPORTING?'':` data-path="${path}" contenteditable`; return `<${tag} class="${cls}" ${extra}${e}>${esc(v)}</${tag}>`; }
-document.addEventListener('input',e=>{ const el=e.target.closest('[data-path]'); if(!el) return; setPath(el.getAttribute('data-path'), el.innerText); if(el.getAttribute('data-path')==='name'){ $('navName').textContent=SITE.name; $('footName').textContent=SITE.name; } });
+    function autosize(){
+      input.style.height="auto";
+      input.style.height=Math.min(input.scrollHeight,200)+"px";
+      sendBtn.disabled = busy || input.value.trim()==="";
+    }
+    input.addEventListener("input",autosize);
+    input.addEventListener("keydown",function(e){
+      if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); send(); }
+    });
+    sendBtn.addEventListener("click",send);
 
-/* ===================== IMAGE TARGET (drop / click-to-place) ===================== */
-function imgCard(cls,imgpath,gradpath,bgStyle,body){
-  const handlers=EXPORTING?'':`ondragover="targetOver(this,event)" ondragleave="this.classList.remove('dragover')" ondrop="targetDrop(this,event)" onclick="if(event.target.classList.contains('dropimg'))return; "`;
-  const overlay=EXPORTING?'':`<div class="dropimg" onclick="targetClick(this.closest('.imgtarget'))">⬆ Drop a photo here<br>or click to place the selected photo</div>`;
-  const gp=gradpath?`data-gradpath="${gradpath}"`:'';
-  return `<div class="gcard imgtarget ${cls}" data-imgpath="${imgpath}" ${gp} style="${bgStyle}" ${handlers}><div class="ov"></div><div class="gc-body">${body}</div>${overlay}</div>`;
-}
-function applyTarget(el,val,isGrad){ const ip=el.getAttribute('data-imgpath'),gp=el.getAttribute('data-gradpath');
-  if(isGrad){ if(gp) setPath(gp,val); if(ip) setPath(ip,''); } else if(ip) setPath(ip,val); render(); }
-function targetOver(el,e){ e.preventDefault(); el.classList.add('dragover'); }
-function targetDrop(el,e){ e.preventDefault(); el.classList.remove('dragover');
-  const grad=e.dataTransfer.getData('text/grad'), src=e.dataTransfer.getData('text/imgsrc'), file=e.dataTransfer.files[0];
-  if(grad) applyTarget(el,grad,true);
-  else if(src) applyTarget(el,src,false);
-  else if(file&&file.type.startsWith('image/')){ const r=new FileReader(); r.onload=()=>{ uploads.push(r.result); renderUploads(); applyTarget(el,r.result,false); }; r.readAsDataURL(file); } }
-function targetClick(el){ if(selectedImg){ applyTarget(el,selectedImg.val,selectedImg.grad); } else { const u=prompt('Paste an image URL (or upload photos in the left panel):'); if(u) applyTarget(el,u.trim(),false); } }
+    document.getElementById("newChat").addEventListener("click",function(){
+      if(busy) return;
+      history.length=0;
+      thread.innerHTML="";
+      thread.style.display="none";
+      welcome.style.display="flex";
+      errEl.style.display="none";
+      input.value=""; autosize(); input.focus();
+    });
 
-/* ===================== RENDER BLOCKS ===================== */
-function blockTools(i){ if(EXPORTING) return '';
-  return `<div class="blocktools"><span class="lbl" draggable="true" ondragstart="dragStart(${i},event)" title="Drag to reorder">⠿</span>
-    <button onclick="moveBlock(${i},-1)" title="Up">↑</button><button onclick="moveBlock(${i},1)" title="Down">↓</button>
-    <button onclick="dupBlock(${i})" title="Duplicate">⎘</button><button onclick="delBlock(${i})" title="Delete">🗑</button></div>`; }
+    function scrollDown(){ main.scrollTop=main.scrollHeight; }
 
-function renderHero(b,i){ return `<section class="blk hero block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap">
-  <span class="pill"><span class="dot"></span>${ed('blocks.'+i+'.pill','span','')}</span>
-  ${ed('blocks.'+i+'.headline','h1','hero-h')}${ed('blocks.'+i+'.sub','p','hero-sub')}
-  <div class="searchwrap"><div class="searchbox"><span class="ai-ic">✨</span>
-    <input type="text" id="aiSearch" placeholder="${esc(SITE.search.placeholder)}" onkeydown="if(event.key==='Enter')runSearch()"><button onclick="runSearch()">Search</button></div>
-    <div class="chips">${SITE.search.examples.map(x=>`<span class="chip" onclick="fillSearch('${esc(x).replace(/'/g,"&#39;")}')">${esc(x)}</span>`).join('')}</div>
-    <div class="results" id="searchResults"><div class="rhead">✨ AI answer <span class="claude-badge">Powered by Claude</span></div><div id="searchAns"></div></div>
-  </div></div></section>`; }
-function renderGallery(b,i){ return `<section class="blk block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap">
-  <div class="sec-head"><div class="ey">${ed('blocks.'+i+'.ey','span','')}</div>${ed('blocks.'+i+'.title','h2','')}${ed('blocks.'+i+'.sub','p','')}</div>
-  <div class="gallery">${b.items.map((g,j)=>imgCard(j===0?'big':'',`blocks.${i}.items.${j}.img`,`blocks.${i}.items.${j}.grad`,
-     g.img?`background-image:url('${g.img}')`:`background:${g.grad}`,
-     ed('blocks.'+i+'.items.'+j+'.title','h3','')+ed('blocks.'+i+'.items.'+j+'.caption','p',''))).join('')}</div>
-  </div></section>`; }
-function renderImage(b,i){ return `<section class="blk block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap">
-  ${imgCard('big imgblock',`blocks.${i}.src`,`blocks.${i}.grad`, b.src?`background-image:url('${b.src}')`:`background:${b.grad}`, ed('blocks.'+i+'.caption','p',''))}
-  </div></section>`; }
-function renderUnique(b,i){ const rightBg=b.image?`background-image:url('${b.image}')`:''; return `<section class="blk block" data-i="${i}" style="background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 9%,var(--bg)),var(--bg))" ${dnd(i)}>${blockTools(i)}<div class="wrap">
-  <div class="unique-card"><div class="u-left"><span class="badge">${ed('blocks.'+i+'.badge','span','')}</span>
-    ${ed('blocks.'+i+'.title','h2','')}${ed('blocks.'+i+'.desc','p','')}
-    <ul>${b.points.map((p,j)=>ed('blocks.'+i+'.points.'+j,'li','')).join('')}</ul>
-    <button class="ubtn">${ed('blocks.'+i+'.cta','span','')}</button></div>
-    <div class="u-right imgtarget" data-imgpath="blocks.${i}.image" style="${rightBg}" ${EXPORTING?'':`ondragover="targetOver(this,event)" ondragleave="this.classList.remove('dragover')" ondrop="targetDrop(this,event)" onclick="targetClick(this)"`}>
-      ${b.image?'':`<div class="em">${ed('blocks.'+i+'.emoji','span','')}</div>`}
-      ${EXPORTING||b.image?'':'<div style="position:absolute;bottom:10px;font-size:11px;opacity:.85">drop a photo here</div>'}
-    </div></div></div></section>`; }
-function renderHow(b,i){ if(!b.items) b.items=[{emoji:'✨',title:'One',desc:'Describe it.'},{emoji:'🤖',title:'Two',desc:'Describe it.'},{emoji:'🖼️',title:'Three',desc:'Describe it.'}];
-  return `<section class="blk block" style="background:var(--bg)" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap">
-  <div class="sec-head"><div class="ey">${ed('blocks.'+i+'.ey','span','')}</div>${ed('blocks.'+i+'.title','h2','')}</div>
-  <div class="cols3">${b.items.map((h,j)=>`<div class="howcard"><div class="he">${ed('blocks.'+i+'.items.'+j+'.emoji','span','')}</div>${ed('blocks.'+i+'.items.'+j+'.title','h3','')}${ed('blocks.'+i+'.items.'+j+'.desc','p','')}</div>`).join('')}</div>
-  </div></section>`; }
-function renderTestimonials(b,i){ if(!b.items) b.items=[];
-  return `<section class="blk block" style="background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap">
-  <div class="sec-head"><div class="ey">${ed('blocks.'+i+'.ey','span','')}</div>${ed('blocks.'+i+'.title','h2','')}</div>
-  <div class="cols3">${b.items.map((t,j)=>`<div class="tcard"><div class="stars">★★★★★</div>${ed('blocks.'+i+'.items.'+j+'.quote','p','tq')}<div class="tby">${ed('blocks.'+i+'.items.'+j+'.name','b','')} <span>${ed('blocks.'+i+'.items.'+j+'.role','span','')}</span></div></div>`).join('')}</div>
-  </div></section>`; }
-function renderContact(b,i){
-  const guard = EXPORTING ? '' : `onsubmit="event.preventDefault();alert('Once this site is deployed to Netlify, messages are captured automatically under Forms.');"`;
-  return `<section class="blk block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap" style="max-width:640px">
-  <div class="sec-head"><div class="ey">${ed('blocks.'+i+'.ey','span','')}</div>${ed('blocks.'+i+'.title','h2','')}${ed('blocks.'+i+'.sub','p','')}</div>
-  <form class="contactform" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" ${guard}>
-    <input type="hidden" name="form-name" value="contact">
-    <p style="display:none"><label>Leave blank: <input name="bot-field"></label></p>
-    <input class="cf" type="text" name="name" placeholder="Your name" required>
-    <input class="cf" type="email" name="email" placeholder="Your email" required>
-    <textarea class="cf" name="message" rows="4" placeholder="How can we help?" required></textarea>
-    <button class="cf-btn" type="submit">${ed('blocks.'+i+'.button','span','')}</button>
-  </form></div></section>`; }
-function renderCta(b,i){ return `<section class="blk block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="ctablk">${ed('blocks.'+i+'.headline','h2','')}${ed('blocks.'+i+'.sub','p','')}<button class="cbtn">${ed('blocks.'+i+'.button','span','')}</button></div></section>`; }
-const RENDER={hero:renderHero,gallery:renderGallery,image:renderImage,unique:renderUnique,how:renderHow,testimonials:renderTestimonials,contact:renderContact,cta:renderCta};
+    function addUserMsg(text){
+      const el=document.createElement("div");
+      el.className="msg user";
+      el.innerHTML='<div class="avatar">You</div><div class="bubble"></div>';
+      el.querySelector(".bubble").textContent=text;
+      thread.appendChild(el);
+    }
 
-function render(){
-  document.documentElement.style.setProperty('--accent',SITE.accent);
-  document.documentElement.style.setProperty('--accent2',SITE.accent2);
-  $('navName').textContent=SITE.name; $('footName').textContent=SITE.name; $('navLogo').textContent=(SITE.name[0]||'A').toUpperCase();
-  $('agentName').textContent=SITE.agent.name; $('agentAv').textContent=SITE.agent.emoji; $('agentFabName').textContent='Ask '+SITE.agent.name;
-  $('agentMsgs').innerHTML=`<div class="msg bot">${esc(SITE.agent.greeting)}</div>`;
-  $('tName').value=SITE.name; $('tAgent').value=SITE.agent.name; $('tAccent').value=SITE.accent; $('tAccent2').value=SITE.accent2;
-  $('canvas').innerHTML = SITE.blocks.length ? SITE.blocks.map((b,i)=>(RENDER[b.type]||(()=>''))(b,i)).join('') : `<div class="empty-hint">No sections yet. Use <b>+ Add section</b> above to start building.</div>`;
-}
+    function addAssistantMsg(){
+      const el=document.createElement("div");
+      el.className="msg assistant";
+      el.innerHTML='<div class="avatar">'+sunburst()+'</div>'+
+        '<div class="bubble"><div class="statuswrap"></div><div class="md"></div></div>';
+      thread.appendChild(el);
+      return {
+        root: el,
+        statuswrap: el.querySelector(".statuswrap"),
+        md: el.querySelector(".md"),
+      };
+    }
 
-/* ===================== PHOTOS PANEL ===================== */
-function handleUpload(ev){ [...ev.target.files].forEach(f=>{ if(f.type.startsWith('image/')){ const r=new FileReader(); r.onload=()=>{ uploads.push(r.result); renderUploads(); }; r.readAsDataURL(f); } }); ev.target.value=''; }
-function renderUploads(){ const g=$('uploadGrid'); g.innerHTML = uploads.length ? uploads.map((s,k)=>`<img src="${s}" draggable="true" ondragstart="dragImg(event,'imgsrc',${k})" onclick="selectImg('imgsrc',${k},this)">`).join('') : '<div class="pr-empty">No uploads yet — add some above.</div>'; }
-function renderBgs(){ $('bgGrid').innerHTML = BGS.map((b,k)=>`<div class="bgsw" style="background:${b}" draggable="true" ondragstart="dragImg(event,'grad',${k})" onclick="selectImg('grad',${k},this)"></div>`).join(''); }
-function srcOf(kind,k){ return kind==='grad'?BGS[k]:(kind==='stock'?stockResults[k]:uploads[k]); }
-function dragImg(e,kind,k){ const val=srcOf(kind,k); e.dataTransfer.setData(kind==='grad'?'text/grad':'text/imgsrc', val); e.dataTransfer.effectAllowed='copy'; }
-function selectImg(kind,k,el){ selectedImg={val:srcOf(kind,k), grad:kind==='grad'}; document.querySelectorAll('.photos-rail img.sel,.photos-rail .bgsw.sel').forEach(x=>x.classList.remove('sel')); el.classList.add('sel'); }
+    function render(md, text, streaming){
+      const html = DOMPurify.sanitize(marked.parse(text||""), {ADD_ATTR:["target"]});
+      md.innerHTML = html + (streaming ? '<span class="caret"></span>' : '');
+    }
 
-let stockResults=[];
-async function searchStock(){ const key=$('stockKey').value.trim(), q=$('stockQ').value.trim();
-  if(!key){ alert('To search stock photos, paste a free Unsplash access key (get one at unsplash.com/developers). Or just use Upload — that always works.'); return; }
-  if(!q) return; const g=$('stockGrid'); g.innerHTML='<div class="pr-note">Searching…</div>';
-  try{ const r=await fetch(`https://api.unsplash.com/search/photos?per_page=12&query=${encodeURIComponent(q)}&client_id=${encodeURIComponent(key)}`);
-    const d=await r.json(); stockResults=(d.results||[]).map(p=>p.urls.regular);
-    g.innerHTML = stockResults.length ? stockResults.map((s,k)=>`<img src="${s}" draggable="true" ondragstart="dragImg(event,'stock',${k})" onclick="selectImg('stock',${k},this)">`).join('') : '<div class="pr-empty">No results.</div>';
-  }catch(e){ g.innerHTML='<div class="pr-empty">Search failed — check the key / connection.</div>'; } }
+    async function send(){
+      const text=input.value.trim();
+      if(!text||busy) return;
+      busy=true; errEl.style.display="none";
+      welcome.style.display="none";
+      thread.style.display="flex";
 
-/* panel drop zone */
-(function(){ const d=$('prDrop'); if(!d) return;
-  d.addEventListener('dragover',e=>{e.preventDefault();d.classList.add('over');});
-  d.addEventListener('dragleave',()=>d.classList.remove('over'));
-  d.addEventListener('drop',e=>{e.preventDefault();d.classList.remove('over'); [...e.dataTransfer.files].forEach(f=>{ if(f.type.startsWith('image/')){ const r=new FileReader(); r.onload=()=>{uploads.push(r.result);renderUploads();}; r.readAsDataURL(f);} }); });
-})();
+      input.value=""; autosize();
+      sendBtn.disabled=true;
 
-/* ===================== TOOLBAR ACTIONS ===================== */
-function setName(v){ SITE.name=v; $('navName').textContent=v; $('footName').textContent=v; $('navLogo').textContent=(v[0]||'A').toUpperCase(); }
-function setVar(k,v){ SITE[k]=v; document.documentElement.style.setProperty('--'+k,v); }
-function setAgentName(v){ SITE.agent.name=v; $('agentName').textContent=v; $('agentFabName').textContent='Ask '+v; }
-const DEFAULTS={
-  hero:{type:'hero',pill:'New',headline:'A new headline.',sub:'A short subhead about this section.'},
-  gallery:{type:'gallery',ey:'Explore',title:'Section title',sub:'Section subhead.',items:[{title:'First',caption:'Caption',img:'',grad:BGS[0]},{title:'Second',caption:'Caption',img:'',grad:BGS[1]},{title:'Third',caption:'Caption',img:'',grad:BGS[6]}]},
-  image:{type:'image',src:'',grad:BGS[0],caption:'Add a caption (optional)'},
-  unique:{type:'unique',badge:'Only here',title:'Unique feature',emoji:'⭐',image:'',desc:'What makes this different.',points:['Benefit one','Benefit two','Benefit three'],cta:'Learn more'},
-  how:{type:'how',ey:'How it works',title:'Three columns',items:[{emoji:'✨',title:'One',desc:'Describe it.'},{emoji:'🤖',title:'Two',desc:'Describe it.'},{emoji:'🖼️',title:'Three',desc:'Describe it.'}]},
-  testimonials:{type:'testimonials',ey:'Loved by',title:'What people are saying',items:[
-    {quote:'This is exactly what I was looking for — simple and effective.',name:'Alex P.',role:'Customer'},
-    {quote:'Fast, friendly, and it just works. Highly recommend.',name:'Jordan M.',role:'Member'},
-    {quote:'The best experience I\'ve had. I tell everyone about it.',name:'Sam R.',role:'Partner'}]},
-  contact:{type:'contact',ey:'Get in touch',title:'Contact us',sub:'Send us a note and we\'ll get back to you soon.',button:'Send message'},
-  cta:{type:'cta',headline:'Ready to start?',sub:'A closing invitation.',button:'Get started'}
-};
-function addBlock(type){ SITE.blocks.push(JSON.parse(JSON.stringify(DEFAULTS[type]))); document.getElementById('addMenu').classList.remove('open'); render(); window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}); }
-function delBlock(i){ if(confirm('Delete this section?')){ SITE.blocks.splice(i,1); render(); } }
-function dupBlock(i){ SITE.blocks.splice(i+1,0,JSON.parse(JSON.stringify(SITE.blocks[i]))); render(); }
-function moveBlock(i,dir){ const j=i+dir; if(j<0||j>=SITE.blocks.length) return; [SITE.blocks[i],SITE.blocks[j]]=[SITE.blocks[j],SITE.blocks[i]]; render(); }
-let dragIdx=null;
-function dragStart(i,e){ dragIdx=i; e.dataTransfer.effectAllowed='move'; }
-function dragOver(i,e){ if(dragIdx!==null) e.preventDefault(); }
-function dropBlock(i,e){ if(dragIdx===null||dragIdx===i) return; e.preventDefault(); const b=SITE.blocks.splice(dragIdx,1)[0]; SITE.blocks.splice(i,0,b); dragIdx=null; render(); }
+      addUserMsg(text);
+      history.push({role:"user",content:text});
+      scrollDown();
 
-/* ===================== AI SEARCH + AGENT (demo) ===================== */
-async function callAI(prompt){
-  // Calls Claude via your Netlify Function (/.netlify/functions/claude). Works once deployed with ANTHROPIC_API_KEY set.
-  try{
-    const r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({prompt,system:SITE.agent.system||''})});
-    if(!r.ok) throw 0;
-    const d=await r.json();
-    return esc(d.answer||'').replace(/\n/g,'<br>');
-  }catch(e){
-    await new Promise(r=>setTimeout(r,500));
-    return 'Demo mode — Claude answers here once this site is deployed to Netlify with your API key. You asked: "<b>'+esc(prompt)+'</b>"';
-  }
-}
-function fillSearch(t){ const s=$('aiSearch'); if(s){ s.value=t; runSearch(); } }
-async function runSearch(){ const s=$('aiSearch'); if(!s) return; const q=s.value.trim(); if(!q) return; const box=$('searchResults'); box.classList.add('show'); $('searchAns').innerHTML='<span style="opacity:.6">✨ thinking…</span>'; $('searchAns').innerHTML=await callAI(q); }
-function toggleAgent(){ $('agentPanel').classList.toggle('show'); }
-async function sendAgent(){ const inp=$('agentInput'),t=inp.value.trim(); if(!t)return; const m=$('agentMsgs'); m.insertAdjacentHTML('beforeend',`<div class="msg me">${esc(t)}</div>`); inp.value=''; m.insertAdjacentHTML('beforeend',`<div class="msg bot" id="typing">…</div>`); m.scrollTop=m.scrollHeight; const r=await callAI(t); $('typing').remove(); m.insertAdjacentHTML('beforeend',`<div class="msg bot">${r}</div>`); m.scrollTop=m.scrollHeight; }
+      const slots=addAssistantMsg();
+      let answer="";
+      let statusEl=null;
+      const setStatus=function(t){
+        if(!statusEl){
+          statusEl=document.createElement("div");
+          statusEl.className="status";
+          slots.statuswrap.appendChild(statusEl);
+        }
+        statusEl.innerHTML='<span class="dot"></span><span class="stxt"></span>';
+        statusEl.querySelector(".stxt").textContent=t;
+      };
+      const clearStatus=function(){ if(statusEl){ statusEl.remove(); statusEl=null; } };
 
-/* ===================== PREVIEW / SAVE / LOAD ===================== */
-function togglePreview(){ document.body.classList.toggle('previewing'); $('prevBtn').textContent=document.body.classList.contains('previewing')?'✎ Edit':'👁 Preview'; }
-function openSettings(){ $('setOg').value=SITE.ogImage||''; $('setSys').value=SITE.agent.system||''; $('setPriv').value=SITE.privacy||''; $('setModal').classList.add('show'); $('setOverlay').classList.add('show'); }
-function closeSettings(){ $('setModal').classList.remove('show'); $('setOverlay').classList.remove('show'); }
-function saveSettings(){ SITE.ogImage=$('setOg').value.trim(); SITE.agent.system=$('setSys').value; SITE.privacy=$('setPriv').value; closeSettings(); }
-function showPrivacy(){ $('privBody').textContent=SITE.privacy||''; $('privModal').classList.add('show'); $('privOverlay').classList.add('show'); }
-function hidePrivacy(){ $('privModal').classList.remove('show'); $('privOverlay').classList.remove('show'); }
-function faviconURI(){ const L=(SITE.name[0]||'A').toUpperCase(); const svg=`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='${SITE.accent}'/><text x='32' y='45' font-size='38' font-family='Arial,Helvetica,sans-serif' font-weight='bold' fill='white' text-anchor='middle'>${L}</text></svg>`; return 'data:image/svg+xml,'+encodeURIComponent(svg); }
-function download(name,content,type='text/plain'){ const b=new Blob([content],{type}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=name; a.click(); URL.revokeObjectURL(a.href); }
-function saveProject(){ download('ai-website-project.json', JSON.stringify({site:SITE,uploads},null,2)); }
-function loadProject(ev){ const f=ev.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=()=>{ try{ const d=JSON.parse(r.result); const s=d.site||d; Object.keys(SITE).forEach(k=>delete SITE[k]); Object.assign(SITE,s); uploads=d.uploads||[]; renderUploads(); render(); }catch(e){ alert('Could not read that project file.'); } }; r.readAsText(f); ev.target.value=''; }
+      try{
+        const res=await fetch("/api/chat",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({messages:history})
+        });
+        if(!res.ok||!res.body) throw new Error("Request failed ("+res.status+")");
 
-/* ===================== EXPORT CLEAN index.html ===================== */
-function exportSite(){
-  const css=stripBuilderCss(document.querySelector('style').innerHTML);
-  EXPORTING=true;
-  const sectionsHTML=SITE.blocks.map((b,i)=>(RENDER[b.type]||(()=>''))(b,i)).join('');
-  EXPORTING=false;
-  const doc=`<!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${esc(SITE.name)}</title>
-<meta name="description" content="${esc((SITE.blocks.find(b=>b.type==='hero')||{}).sub||SITE.name)}">
-<link rel="icon" href="${faviconURI()}">
-<meta property="og:title" content="${esc(SITE.name)}">
-<meta property="og:description" content="${esc((SITE.blocks.find(b=>b.type==='hero')||{}).sub||SITE.name)}">
-<meta property="og:type" content="website">
-${SITE.ogImage?`<meta property="og:image" content="${esc(SITE.ogImage)}">`:''}
-<meta name="twitter:card" content="${SITE.ogImage?'summary_large_image':'summary'}">
-<style>:root{--accent:${SITE.accent};--accent2:${SITE.accent2};--ink:#0f1622;--ink2:#1b2737;--muted:#64748b;--line:#e6ebf2;--bg:#f7f9fc;--card:#fff;--good:#16a34a;--warn:#d9a400;--radius:18px;--shadow:0 10px 40px rgba(20,40,80,.08)}
-${css}</style></head>
-<body>
-<nav class="site"><div class="wrap"><div class="brand"><span class="logo">${(SITE.name[0]||'A').toUpperCase()}</span> <span>${esc(SITE.name)}</span></div><div class="navlinks"><a>Explore</a><a>Features</a><a>About</a></div><button class="navcta">Get started</button></div></nav>
-<main>${sectionsHTML}</main>
-<footer class="site"><div class="wrap">${esc(SITE.name)} · AI search &amp; agent <b style="color:var(--ink)">powered by Claude</b> · <a href="#" onclick="showPrivacy();return false">Privacy</a></div></footer>
-<button class="agent-fab" onclick="toggleAgent()">💬 Ask ${esc(SITE.agent.name)}</button>
-<div class="agent-panel" id="agentPanel"><div class="agent-head"><div class="av">${SITE.agent.emoji}</div><div><b>${esc(SITE.agent.name)}</b><div class="on">● online</div></div><button class="x" onclick="toggleAgent()">×</button></div>
-<div class="agent-msgs" id="agentMsgs"><div class="msg bot">${esc(SITE.agent.greeting)}</div></div>
-<div class="agent-credit">✨ Powered by <b>Claude</b></div>
-<div class="agent-input"><input id="agentInput" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendAgent()"><button onclick="sendAgent()">→</button></div></div>
-<div class="pmodal-ov" id="privOverlay" onclick="hidePrivacy()"></div>
-<div class="pmodal" id="privModal"><h3>Privacy</h3><p>${esc(SITE.privacy)}</p><button class="pclose" onclick="hidePrivacy()">Close</button></div>
-<script>
-const $=id=>document.getElementById(id);
-const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-var SYS=${JSON.stringify(SITE.agent.system||'')};
-function showPrivacy(){ document.getElementById('privModal').classList.add('show'); document.getElementById('privOverlay').classList.add('show'); }
-function hidePrivacy(){ document.getElementById('privModal').classList.remove('show'); document.getElementById('privOverlay').classList.remove('show'); }
-async function callAI(p){ try{ var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({prompt:p,system:SYS})}); if(!r.ok) throw 0; var d=await r.json(); return esc(d.answer||'').replace(/\\n/g,'<br>'); }catch(e){ await new Promise(x=>setTimeout(x,500)); return 'Setup needed: add a Claude API key in Netlify to enable live answers. You asked: "<b>'+esc(p)+'</b>"'; } }
-function fillSearch(t){ var s=$('aiSearch'); if(s){s.value=t;runSearch();} }
-async function runSearch(){ var s=$('aiSearch'); if(!s)return; var q=s.value.trim(); if(!q)return; var b=$('searchResults'); b.classList.add('show'); $('searchAns').innerHTML='thinking…'; $('searchAns').innerHTML=await callAI(q); }
-function toggleAgent(){ $('agentPanel').classList.toggle('show'); }
-async function sendAgent(){ var i=$('agentInput'),t=i.value.trim(); if(!t)return; var m=$('agentMsgs'); m.insertAdjacentHTML('beforeend','<div class="msg me">'+esc(t)+'</div>'); i.value=''; var r=await callAI(t); m.insertAdjacentHTML('beforeend','<div class="msg bot">'+r+'</div>'); m.scrollTop=m.scrollHeight; }
-<\/script></body></html>`;
-  download('index.html', doc, 'text/html');
-}
-function stripBuilderCss(css){
-  return css.replace(/\/\* =+ BUILDER CHROME =+ \*\/[\s\S]*?(?=\/\* =+ SITE STYLES)/,'')
-            .replace(/\/\* =+ CANVA-STYLE PHOTOS RAIL =+ \*\/[\s\S]*?(?=\/\* =+ SITE STYLES)/,'')
-            .replace(/\/\* EDIT AFFORDANCES \*\/[\s\S]*$/,'');
-}
+        const reader=res.body.getReader();
+        const dec=new TextDecoder();
+        let buf="";
+        while(true){
+          const r=await reader.read();
+          if(r.done) break;
+          buf+=dec.decode(r.value,{stream:true});
+          let nl;
+          while((nl=buf.indexOf("\n"))>=0){
+            const line=buf.slice(0,nl).trim();
+            buf=buf.slice(nl+1);
+            if(!line) continue;
+            let evt; try{ evt=JSON.parse(line); }catch(_){ continue; }
+            if(evt.type==="status"){ setStatus(evt.text); scrollDown(); }
+            else if(evt.type==="text"){
+              clearStatus();
+              answer+=evt.text;
+              render(slots.md, answer, true);
+              scrollDown();
+            }
+            else if(evt.type==="error"){
+              throw new Error(evt.text);
+            }
+          }
+        }
+        clearStatus();
+        render(slots.md, answer || "_No response received._", false);
+        history.push({role:"assistant",content:answer});
+      }catch(e){
+        clearStatus();
+        if(!answer){ slots.root.remove(); }
+        else { render(slots.md, answer, false); history.push({role:"assistant",content:answer}); }
+        errEl.textContent = (e&&e.message) ? e.message : "Something went wrong. Please try again.";
+        errEl.style.display="block";
+      }finally{
+        busy=false;
+        autosize();
+        input.focus();
+        scrollDown();
+      }
+    }
 
-renderUploads(); renderBgs(); render();
-</script>
+    input.focus();
+  })();
+  </script>
 </body>
 </html>
