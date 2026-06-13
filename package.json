@@ -1,0 +1,13 @@
+{
+  "name": "grants-gov-assistant",
+  "version": "1.0.0",
+  "description": "A Claude-powered assistant that answers questions about U.S. federal grants using live grants.gov data.",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.40.1"
+  },
+  "devDependencies": {
+    "@netlify/functions": "^3.0.0"
+  }
+}
