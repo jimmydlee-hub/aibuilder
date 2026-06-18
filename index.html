@@ -3,540 +3,923 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Website — Drag &amp; Drop Builder</title>
+<title>NXAVERSE — AI-built websites for small businesses</title>
+<meta name="description" content="NXAVERSE pairs an AI build agent with a real team to launch a professional website for your small business in days — booking, ordering, quotes, SEO and an AI assistant built in. Any business, not just restaurants.">
+<meta property="og:title" content="NXAVERSE — AI-built websites for small businesses">
+<meta property="og:description" content="Describe your business and watch our AI agent draft your site. Then the NXAVERSE team builds it for real — live in days.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.nxaverse.org/">
+<link rel="canonical" href="https://www.nxaverse.org/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%2314131c'/%3E%3Cpath d='M20 44V20l24 24V20' fill='none' stroke='%237c5cff' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,500&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{--accent:#3aa0ff;--accent2:#6ee7ff;--ink:#0f1622;--ink2:#1b2737;--muted:#64748b;--line:#e6ebf2;--bg:#f7f9fc;--card:#fff;--good:#16a34a;--bad:#e5484d;--warn:#d9a400;--radius:18px;--shadow:0 10px 40px rgba(20,40,80,.08);--bchrome:#0e1726;--rail:268px}
+  :root{
+    --paper:#f6f4ef; --paper2:#efece4; --card:#fffdf9;
+    --ink:#14131c; --ink2:#2f2c3d; --muted:#6a6678;
+    --violet:#6c4cf2; --violet-d:#5736e0; --violet-soft:#efeaff;
+    --mint:#10b487; --amber:#f3a738;
+    --line:#e7e3d8; --line2:#ddd7c8;
+    --shadow:0 22px 60px -26px rgba(30,22,60,.42);
+    --shadow-sm:0 8px 26px -14px rgba(30,22,60,.4);
+    --maxw:1180px;
+  }
   *{box-sizing:border-box}
-  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
-
-  /* ===== BUILDER CHROME ===== */
-  .toolbar{position:sticky;top:0;z-index:100;background:var(--bchrome);color:#dbe4f0;display:flex;align-items:center;gap:10px;padding:10px 16px;flex-wrap:wrap;border-bottom:1px solid #1f2b3d}
-  .toolbar .grp{display:flex;align-items:center;gap:8px}
-  .toolbar .sep{width:1px;height:26px;background:#2a3950}
-  .toolbar label{font-size:11px;color:#8aa0bd;font-weight:600}
-  .toolbar input[type=text]{background:#16223a;border:1px solid #2a3950;color:#fff;border-radius:8px;padding:7px 10px;font-size:13px;outline:none;width:140px}
-  .toolbar input[type=color]{width:30px;height:30px;border:1px solid #2a3950;border-radius:7px;background:none;cursor:pointer;padding:0}
-  .btn{background:#22304a;border:1px solid #33465f;color:#dbe4f0;border-radius:9px;padding:8px 13px;font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
-  .btn:hover{background:#2c3d5c}
-  .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none}
-  .btn.ghost{background:transparent}
-  .spacer{flex:1}
-  .addmenu{position:relative}
-  .addmenu .menu{position:absolute;top:42px;left:0;background:#16223a;border:1px solid #2a3950;border-radius:12px;padding:6px;display:none;min-width:200px;z-index:120;box-shadow:0 16px 40px rgba(0,0,0,.4)}
-  .addmenu.open .menu{display:block}
-  .addmenu .menu button{display:flex;gap:9px;width:100%;background:none;border:none;color:#dbe4f0;text-align:left;padding:9px 11px;border-radius:8px;cursor:pointer;font-size:13px}
-  .addmenu .menu button:hover{background:#22304a}
-  .hint{background:#10203a;color:#9fc3ef;font-size:12.5px;padding:8px 16px;display:flex;gap:8px;align-items:center;border-bottom:1px solid #1f2b3d}
-  body.previewing .toolbar,body.previewing .hint,body.previewing .photos-rail{display:none}
-  .setmodal-ov{position:fixed;inset:0;background:rgba(8,16,28,.55);z-index:130;display:none}
-  .setmodal-ov.show{display:block}
-  .setmodal{position:fixed;z-index:131;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,92vw);max-height:86vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.4);padding:26px;display:none;color:var(--ink)}
-  .setmodal.show{display:block}
-  .setmodal h3{margin:0 0 6px}
-  .setmodal label{display:block;font-size:12.5px;font-weight:700;color:#334155;margin:16px 0 5px}
-  .setmodal input,.setmodal textarea{width:100%;border:1px solid #e2e8f0;border-radius:9px;padding:10px 12px;font-size:13.5px;font-family:inherit;outline:none}
-  .setmodal textarea{min-height:78px;resize:vertical}
-  .setmodal .sdone{margin-top:18px;background:var(--accent);color:#04121f;border:none;border-radius:10px;padding:11px 20px;font-weight:800;cursor:pointer}
-  .setmodal .snote{font-size:11px;color:#94a3b8;margin-top:4px}
-
-  /* ===== CANVA-STYLE PHOTOS RAIL ===== */
-  .photos-rail{position:fixed;left:0;top:0;bottom:0;width:var(--rail);background:#0c1422;color:#dbe4f0;z-index:90;overflow-y:auto;border-right:1px solid #1f2b3d;padding:14px 14px 40px;padding-top:96px}
-  body:not(.panel-open) .photos-rail{display:none}
-  .pr-head{font-size:15px;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;margin-bottom:12px}
-  .pr-section{margin-bottom:20px}
-  .pr-title{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:#7e93b3;margin-bottom:8px}
-  .pr-upload{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none;border-radius:10px;padding:11px;font-weight:800;font-size:13px;cursor:pointer}
-  .pr-drop{margin-top:8px;border:2px dashed #2a3950;border-radius:10px;padding:14px;text-align:center;font-size:12px;color:#7e93b3;transition:.15s}
-  .pr-drop.over{border-color:var(--accent);background:rgba(58,160,255,.12);color:#cfe6ff}
-  .pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-  .pr-grid img,.bgsw{width:100%;height:62px;object-fit:cover;border-radius:8px;cursor:grab;border:2px solid transparent;background-size:cover}
-  .pr-grid img.sel,.bgsw.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
-  .pr-empty{font-size:12px;color:#5d6f8c;grid-column:1/-1;text-align:center;padding:10px 0}
-  .pr-search{width:100%;background:#16223a;border:1px solid #2a3950;color:#fff;border-radius:8px;padding:8px 10px;font-size:12.5px;outline:none;margin-bottom:6px}
-  .pr-go{background:#22304a;border:1px solid #33465f;color:#dbe4f0;border-radius:8px;padding:8px 12px;font-weight:700;font-size:12.5px;cursor:pointer}
-  .pr-note{font-size:11px;color:#7e93b3;margin-bottom:6px;line-height:1.4}
-  .pr-tip{font-size:11.5px;color:#7e93b3;background:#101c30;border-radius:10px;padding:10px;line-height:1.5}
-  body.panel-open:not(.previewing) .sitewrap{margin-left:var(--rail)}
-
-  /* ===== SITE STYLES (shared with export) ===== */
-  .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Hanken Grotesk",-apple-system,system-ui,sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  h1,h2,h3{font-family:"Fraunces",Georgia,serif;font-weight:600;line-height:1.05;letter-spacing:-.018em;margin:0}
+  p{margin:0}
   a{color:inherit;text-decoration:none}
-  nav.site{position:sticky;top:0;z-index:40;background:rgba(247,249,252,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-  body:not(.previewing) nav.site{position:static}
-  nav.site .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.4px}
-  .brand .logo{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#fff;font-weight:900}
-  .navlinks{display:flex;gap:22px;font-size:14px;color:var(--muted);font-weight:600}
-  .navcta{background:var(--ink);color:#fff;border:none;padding:10px 16px;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer}
-  @media(max-width:860px){.navlinks{display:none}}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px}
+  .accent{color:var(--violet)}
+  .serif-i{font-style:italic;font-weight:500}
 
-  section.blk{padding:56px 0;position:relative}
-  .hero{text-align:center;padding:64px 0 56px;position:relative;overflow:hidden}
-  .hero::before{content:"";position:absolute;inset:0;z-index:0;background:radial-gradient(60% 50% at 50% 0%, color-mix(in srgb,var(--accent) 20%,transparent), transparent 70%),radial-gradient(40% 40% at 85% 15%, color-mix(in srgb,var(--accent2) 22%,transparent), transparent 70%)}
-  .hero .wrap{position:relative;z-index:1}
-  .pill{display:inline-flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:12.5px;font-weight:600;color:var(--muted);box-shadow:var(--shadow);margin-bottom:20px}
-  .pill .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
-  h1.hero-h{font-size:clamp(32px,6vw,56px);line-height:1.05;letter-spacing:-1.4px;font-weight:800;margin:0 0 14px}
-  .hero-sub{font-size:18px;color:var(--muted);max-width:600px;margin:0 auto 30px}
-  .searchwrap{max-width:700px;margin:0 auto}
-  .searchbox{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:9px 9px 9px 18px;box-shadow:0 16px 50px rgba(20,40,80,.13)}
-  .searchbox:focus-within{border-color:var(--accent)}
-  .searchbox .ai-ic{font-size:20px}
-  .searchbox input{flex:1;border:none;outline:none;font-size:16px;background:transparent;padding:8px 0}
-  .searchbox button{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none;border-radius:13px;padding:12px 20px;font-weight:800;font-size:15px;cursor:pointer}
-  .chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px}
-  .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 13px;font-size:13px;color:var(--muted);cursor:pointer;font-weight:600}
-  .results{max-width:700px;margin:16px auto 0;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;box-shadow:var(--shadow);display:none}
-  .results.show{display:block}
-  .results .rhead{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;gap:8px;align-items:center}
-  .demo-tag{font-size:10.5px;color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 40%,transparent);border-radius:6px;padding:1px 6px;margin-left:auto}
-  .claude-badge{font-size:10.5px;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);border-radius:6px;padding:1px 7px;margin-left:auto;font-weight:700}
-  .agent-credit{text-align:center;font-size:11px;color:var(--muted);padding:6px;border-top:1px solid var(--line);background:var(--bg)}
-  .agent-credit b{color:var(--ink)}
+  /* ---------- announcement ---------- */
+  .topbar{background:var(--ink);color:#e9e6f5;font-size:13px;text-align:center;padding:8px 16px;letter-spacing:.01em}
+  .topbar b{color:#fff}
+  .topbar .sf{color:#b7a4ff;font-weight:700}
 
-  .sec-head{text-align:center;max-width:620px;margin:0 auto 34px}
-  .sec-head .ey{font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent)}
-  .sec-head h2{font-size:clamp(25px,4vw,36px);letter-spacing:-1px;margin:9px 0 8px}
-  .sec-head p{color:var(--muted);font-size:16px;margin:0}
+  /* ---------- nav ---------- */
+  nav.site{position:sticky;top:0;z-index:50;background:rgba(246,244,239,.82);backdrop-filter:saturate(140%) blur(14px);border-bottom:1px solid var(--line)}
+  nav.site .wrap{display:flex;align-items:center;gap:30px;height:70px}
+  .brand{display:flex;align-items:center;gap:11px;font-family:"Fraunces",serif;font-weight:700;font-size:22px;letter-spacing:-.01em}
+  .brand .mk{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:var(--ink)}
+  .brand .mk svg{display:block}
+  .navlinks{display:flex;gap:26px;margin-left:14px;font-size:14.5px;font-weight:600;color:var(--ink2)}
+  .navlinks a{position:relative;padding:4px 0;transition:color .15s}
+  .navlinks a:hover{color:var(--violet)}
+  .navlinks a::after{content:"";position:absolute;left:0;right:100%;bottom:-3px;height:2px;background:var(--violet);transition:right .22s ease}
+  .navlinks a:hover::after{right:0}
+  .nav-right{margin-left:auto;display:flex;align-items:center;gap:18px}
+  .nav-login{font-size:14.5px;font-weight:700;color:var(--ink2)}
+  .nav-login:hover{color:var(--violet)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:inherit;font-weight:700;cursor:pointer;border:none;transition:transform .12s ease,box-shadow .2s ease,background .2s ease}
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:var(--violet);color:#fff;border-radius:13px;padding:13px 22px;font-size:15px;box-shadow:0 12px 26px -12px rgba(108,76,242,.85)}
+  .btn-primary:hover{background:var(--violet-d);box-shadow:0 16px 30px -12px rgba(108,76,242,.95)}
+  .btn-ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line2);border-radius:13px;padding:12px 20px;font-size:15px}
+  .btn-ghost:hover{border-color:var(--ink);background:rgba(20,19,28,.04)}
+  .btn-lg{padding:16px 28px;font-size:16.5px;border-radius:15px}
+  .nav-toggle{display:none;background:none;border:none;cursor:pointer;margin-left:auto;color:var(--ink)}
 
-  .gallery{display:grid;grid-template-columns:2fr 1fr 1fr;gap:16px}
-  @media(max-width:820px){.gallery{grid-template-columns:1fr 1fr}}
-  @media(max-width:540px){.gallery{grid-template-columns:1fr}}
-  .gcard{position:relative;border-radius:var(--radius);overflow:hidden;min-height:240px;display:flex;align-items:flex-end;box-shadow:var(--shadow);color:#fff;background-size:cover;background-position:center;border:1px solid var(--line)}
-  .gcard.big{min-height:330px}
-  .gcard .ov{position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(8,16,28,.78));z-index:1}
-  .gcard .gc-body{position:relative;z-index:2;padding:20px}
-  .gcard .gc-body h3{margin:0 0 4px;font-size:19px}
-  .gcard .gc-body p{margin:0;font-size:13px;opacity:.92}
-  .dropimg{position:absolute;inset:0;z-index:3;display:none;align-items:center;justify-content:center;color:#fff;font-size:12.5px;font-weight:700;background:rgba(8,16,28,.5);border:2px dashed rgba(255,255,255,.6);border-radius:var(--radius);cursor:pointer;text-align:center;padding:10px}
-  body:not(.previewing) .gcard:hover .dropimg{display:flex}
-  .gcard.dragover .dropimg{display:flex;background:rgba(58,160,255,.6)}
-  .imgblock{min-height:420px!important}
+  /* ---------- hero ---------- */
+  .hero{position:relative;padding:72px 0 40px;overflow:hidden}
+  .hero::before{content:"";position:absolute;top:-220px;right:-180px;width:620px;height:620px;border-radius:50%;
+    background:radial-gradient(circle at 30% 30%,rgba(124,92,255,.28),transparent 62%);z-index:0;filter:blur(8px)}
+  .hero::after{content:"";position:absolute;bottom:-260px;left:-160px;width:540px;height:540px;border-radius:50%;
+    background:radial-gradient(circle at 50% 50%,rgba(16,180,135,.15),transparent 65%);z-index:0}
+  .hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:1.04fr .96fr;gap:54px;align-items:center}
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--violet-d);
+    background:var(--violet-soft);border:1px solid rgba(108,76,242,.22);padding:7px 13px;border-radius:999px;margin-bottom:22px}
+  .eyebrow .d{width:6px;height:6px;border-radius:50%;background:var(--violet);box-shadow:0 0 0 3px rgba(108,76,242,.2)}
+  h1.hero-h{font-size:clamp(40px,5.6vw,66px);font-weight:600}
+  h1.hero-h .u{position:relative;white-space:nowrap}
+  h1.hero-h .u::after{content:"";position:absolute;left:-2px;right:-2px;bottom:.08em;height:.36em;background:rgba(124,92,255,.32);z-index:-1;transform:rotate(-1.2deg)}
+  .hero-sub{font-size:19px;color:var(--ink2);max-width:530px;margin:26px 0 32px}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap}
+  .hero-proof{display:flex;align-items:center;gap:14px;margin-top:30px;font-size:14px;color:var(--muted)}
+  .avatars{display:flex}
+  .avatars span{width:34px;height:34px;border-radius:50%;border:2.5px solid var(--paper);margin-left:-10px;display:grid;place-items:center;
+    font-family:"Fraunces",serif;font-weight:700;font-size:14px;color:#fff}
+  .avatars span:first-child{margin-left:0}
+  .hero-proof b{color:var(--ink)}
+  .stars{color:var(--amber);letter-spacing:1px}
 
-  .unique-card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);display:grid;grid-template-columns:1.1fr .9fr;overflow:hidden}
-  @media(max-width:820px){.unique-card{grid-template-columns:1fr}}
-  .u-left{padding:38px}
-  .u-left .badge{display:inline-block;background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--accent);font-weight:800;font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:6px 12px;border-radius:999px;margin-bottom:12px}
-  .u-left h2{font-size:28px;letter-spacing:-.8px;margin:0 0 10px}
-  .u-left p{color:var(--muted);font-size:15.5px;margin:0 0 16px}
-  .u-left ul{list-style:none;padding:0;margin:0 0 20px}
-  .u-left li{display:flex;gap:9px;padding:6px 0;font-size:14.5px}
-  .u-left li::before{content:"✦";color:var(--accent);font-weight:900}
-  .u-left .ubtn{background:var(--ink);color:#fff;border:none;padding:12px 22px;border-radius:11px;font-weight:700;cursor:pointer}
-  .u-right{position:relative;background:linear-gradient(150deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#fff;min-height:280px;overflow:hidden;background-size:cover;background-position:center}
-  .u-right .em{font-size:70px}
+  /* hero chat mock */
+  .device{position:relative}
+  .chatmock{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
+  .chatmock .cm-top{display:flex;align-items:center;gap:11px;padding:14px 16px;border-bottom:1px solid var(--line);background:var(--paper)}
+  .cm-ava{width:34px;height:34px;border-radius:10px;background:var(--ink);display:grid;place-items:center;flex-shrink:0}
+  .cm-top .nm{font-weight:700;font-size:14.5px}
+  .cm-top .st{font-size:11.5px;color:var(--mint);font-weight:600;display:flex;align-items:center;gap:6px}
+  .cm-top .st::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 3px rgba(16,180,135,.2)}
+  .cm-body{padding:18px 16px;display:flex;flex-direction:column;gap:12px}
+  .bub{max-width:84%;padding:11px 14px;border-radius:14px;font-size:13.5px;line-height:1.5}
+  .bub.user{align-self:flex-end;background:var(--violet);color:#fff;border-bottom-right-radius:5px}
+  .bub.bot{align-self:flex-start;background:var(--paper);border:1px solid var(--line);border-bottom-left-radius:5px;color:var(--ink2)}
+  .bub.bot b{color:var(--ink)}
+  .bub .pill{display:inline-block;font-size:11px;font-weight:700;color:var(--violet-d);background:var(--violet-soft);border-radius:6px;padding:2px 7px;margin:3px 4px 0 0}
+  .floatcard{position:absolute;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:13px 16px;display:flex;gap:11px;align-items:center}
+  .floatcard .ic{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;flex-shrink:0}
+  .floatcard .big{font-family:"Fraunces",serif;font-weight:700;font-size:20px;line-height:1}
+  .floatcard .lbl{font-size:11.5px;color:var(--muted);font-weight:600}
+  .fc-1{bottom:-22px;left:-26px;animation:bob 5s ease-in-out infinite}
+  .fc-2{top:30px;right:-30px;animation:bob 5.6s ease-in-out infinite .8s}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 
-  .ctablk{text-align:center;background:linear-gradient(135deg,var(--ink),var(--ink2));color:#fff;border-radius:24px;padding:54px 24px;margin:0 22px}
-  .ctablk h2{font-size:clamp(26px,4vw,40px);letter-spacing:-1px;margin:0 0 10px}
-  .ctablk p{font-size:17px;opacity:.85;max-width:480px;margin:0 auto 22px}
-  .ctablk .cbtn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none;padding:14px 28px;border-radius:13px;font-weight:800;font-size:16px;cursor:pointer}
+  /* ---------- trust ---------- */
+  .trust{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--card);padding:22px 0}
+  .trust .wrap{display:flex;align-items:center;gap:30px;flex-wrap:wrap;justify-content:center}
+  .trust .lab{font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .trust .logos{display:flex;gap:14px 26px;flex-wrap:wrap;align-items:center;justify-content:center}
+  .trust .logos span{font-family:"Fraunces",serif;font-weight:600;font-size:18px;color:var(--ink2);opacity:.66;display:inline-flex;align-items:center;gap:8px}
+  .trust .logos span svg{opacity:.8}
 
-  .cols3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
-  @media(max-width:820px){.cols3{grid-template-columns:1fr}}
-  .howcard{background:linear-gradient(160deg,#fff,color-mix(in srgb,var(--accent) 7%,#fff));border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:var(--shadow)}
-  .howcard .he{font-size:30px;margin-bottom:8px}
-  .howcard h3{margin:0 0 6px;font-size:19px;letter-spacing:-.3px}
-  .howcard p{margin:0;color:var(--muted);font-size:14.5px}
-  .tcard{background:var(--bg);border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:var(--shadow)}
-  .tcard .stars{color:#f5b301;font-size:15px;letter-spacing:2px;margin-bottom:10px}
-  .tcard .tq{font-size:15.5px;color:var(--ink);margin:0 0 14px;line-height:1.55}
-  .tcard .tby{font-size:13.5px;color:var(--muted)} .tcard .tby b{color:var(--ink)} .tcard .tby span{color:var(--muted)}
-  .contactform{display:flex;flex-direction:column;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;box-shadow:var(--shadow)}
-  .contactform .cf{border:1px solid var(--line);border-radius:11px;padding:12px 14px;font-size:15px;font-family:inherit;outline:none;background:var(--bg)}
-  .contactform .cf:focus{border-color:var(--accent);background:#fff}
-  .contactform .cf-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none;border-radius:12px;padding:14px;font-weight:800;font-size:15px;cursor:pointer}
-  .pmodal-ov{position:fixed;inset:0;background:rgba(8,16,28,.5);z-index:80;display:none}
-  .pmodal-ov.show{display:block}
-  .pmodal{position:fixed;z-index:81;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,92vw);max-height:80vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 30px 80px rgba(10,30,60,.3);padding:28px;display:none}
-  .pmodal.show{display:block}
-  .pmodal h3{margin:0 0 12px}
-  .pmodal p{color:var(--muted);font-size:14px;line-height:1.6;white-space:pre-wrap;margin:0}
-  .pmodal .pclose{margin-top:16px;background:var(--ink);color:#fff;border:none;border-radius:10px;padding:10px 18px;font-weight:700;cursor:pointer}
-  footer.site a{text-decoration:underline}
-  footer.site{border-top:1px solid var(--line);padding:30px 0;color:var(--muted);font-size:13.5px;text-align:center}
+  /* ---------- section scaffold ---------- */
+  section.blk{padding:88px 0;position:relative}
+  .sec-head{max-width:640px;margin-bottom:48px}
+  .sec-head.ctr{margin-left:auto;margin-right:auto;text-align:center}
+  .kicker{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--violet-d);margin-bottom:14px}
+  .sec-head h2{font-size:clamp(30px,4.4vw,48px)}
+  .sec-head p{color:var(--ink2);font-size:18px;margin-top:16px}
 
-  .agent-fab{position:fixed;right:20px;bottom:20px;z-index:60;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04121f;border:none;border-radius:999px;padding:13px 18px;font-weight:800;cursor:pointer;box-shadow:0 12px 36px color-mix(in srgb,var(--accent) 45%,transparent);display:flex;gap:8px}
-  .agent-panel{position:fixed;right:20px;bottom:80px;z-index:60;width:340px;max-width:calc(100vw - 40px);height:460px;max-height:70vh;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 24px 70px rgba(10,30,60,.25);display:none;flex-direction:column;overflow:hidden}
-  .agent-panel.show{display:flex}
-  .agent-head{padding:13px 15px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
-  .agent-head .av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;font-size:17px}
-  .agent-head b{font-size:14px}.agent-head .on{font-size:11.5px;color:var(--good)}
-  .agent-head .x{margin-left:auto;background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer}
-  .agent-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:9px;background:var(--bg)}
-  .msg{max-width:82%;padding:9px 12px;border-radius:13px;font-size:13.5px}
-  .msg.bot{background:var(--card);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px}
-  .msg.me{background:var(--ink);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
-  .agent-input{display:flex;gap:7px;padding:11px;border-top:1px solid var(--line)}
-  .agent-input input{flex:1;border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:13.5px;outline:none}
-  .agent-input button{background:var(--accent);color:#04121f;border:none;border-radius:10px;padding:0 15px;font-weight:800;cursor:pointer}
+  /* ---------- value props ---------- */
+  .props{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  .prop{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:30px 28px;transition:transform .2s ease,box-shadow .2s ease,border-color .2s}
+  .prop:hover{transform:translateY(-5px);box-shadow:var(--shadow);border-color:var(--line2)}
+  .prop .ck{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;margin-bottom:18px;background:var(--violet-soft)}
+  .prop h3{font-size:22px;margin-bottom:9px}
+  .prop p{color:var(--muted);font-size:15px}
 
-  /* EDIT AFFORDANCES */
-  [contenteditable]{outline:none}
-  body:not(.previewing) [contenteditable]:hover{box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 40%,transparent);border-radius:4px}
-  body:not(.previewing) [contenteditable]:focus{box-shadow:0 0 0 2px var(--accent);border-radius:4px;background:#fff}
-  .block{position:relative}
-  body:not(.previewing) .block{outline:1px dashed transparent;transition:.15s}
-  body:not(.previewing) .block:hover{outline-color:color-mix(in srgb,var(--accent) 45%,transparent)}
-  .blocktools{position:absolute;top:8px;right:8px;z-index:30;display:none;gap:4px;background:var(--bchrome);border-radius:10px;padding:4px}
-  body:not(.previewing) .block:hover>.blocktools{display:flex}
-  .blocktools button{background:#22304a;border:none;color:#dbe4f0;width:30px;height:30px;border-radius:7px;cursor:pointer;font-size:14px}
-  .blocktools button:hover{background:var(--accent);color:#04121f}
-  .blocktools .lbl{color:#8aa0bd;font-size:11px;display:flex;align-items:center;padding:0 6px;cursor:grab}
-  .empty-hint{max-width:520px;margin:60px auto;text-align:center;color:var(--muted);border:2px dashed var(--line);border-radius:16px;padding:40px}
+  /* ---------- live agent ---------- */
+  .agent{background:var(--ink);color:#eceaf6;position:relative;overflow:hidden}
+  .agent::before{content:"";position:absolute;top:-160px;left:-120px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(124,92,255,.30),transparent 62%)}
+  .agent::after{content:"";position:absolute;bottom:-200px;right:-120px;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(16,180,135,.16),transparent 64%)}
+  .agent .wrap{position:relative;z-index:1}
+  .agent .kicker{color:#b7a4ff}
+  .agent .sec-head h2{color:#fff}
+  .agent .sec-head p{color:#c8c4dc}
+  .chat{max-width:760px;margin:0 auto;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:24px;overflow:hidden;backdrop-filter:blur(6px)}
+  .chat-head{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03)}
+  .chat-head .cm-ava{background:linear-gradient(135deg,var(--violet),#9d83ff)}
+  .chat-head .nm{font-weight:700;font-size:15px;color:#fff}
+  .chat-head .st{font-size:11.5px;color:#7ee6c0;font-weight:600;display:flex;align-items:center;gap:6px}
+  .chat-head .st::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 3px rgba(16,180,135,.25)}
+  .chat-log{padding:22px 20px;display:flex;flex-direction:column;gap:14px;max-height:440px;overflow-y:auto;scroll-behavior:smooth}
+  .msg{max-width:86%;padding:13px 16px;border-radius:16px;font-size:14.5px;line-height:1.6;white-space:pre-wrap;word-wrap:break-word}
+  .msg.user{align-self:flex-end;background:var(--violet);color:#fff;border-bottom-right-radius:5px}
+  .msg.bot{align-self:flex-start;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:#e7e4f2;border-bottom-left-radius:5px}
+  .msg.bot strong{color:#fff}
+  .msg .typing{display:inline-flex;gap:4px;align-items:center;height:14px}
+  .msg .typing i{width:7px;height:7px;border-radius:50%;background:#b7a4ff;animation:blink 1.2s infinite both}
+  .msg .typing i:nth-child(2){animation-delay:.2s}
+  .msg .typing i:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+  .chips{display:flex;gap:9px;flex-wrap:wrap;padding:0 20px 14px}
+  .chip{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#dcd8ee;font-family:inherit;font-size:13px;font-weight:600;padding:8px 14px;border-radius:999px;cursor:pointer;transition:background .15s,border-color .15s,transform .1s}
+  .chip:hover{background:rgba(124,92,255,.25);border-color:rgba(124,92,255,.5)}
+  .chip:active{transform:scale(.96)}
+  .chat-input{display:flex;gap:10px;padding:16px 18px;border-top:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03)}
+  .chat-input input{flex:1;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.14);border-radius:13px;padding:13px 16px;color:#fff;font-family:inherit;font-size:15px;outline:none;transition:border-color .15s}
+  .chat-input input::placeholder{color:#9c97b5}
+  .chat-input input:focus{border-color:var(--violet)}
+  .chat-send{background:var(--violet);color:#fff;border:none;border-radius:13px;padding:0 18px;cursor:pointer;display:grid;place-items:center;transition:background .15s}
+  .chat-send:hover{background:#7c5cff}
+  .chat-send:disabled{opacity:.5;cursor:not-allowed}
+  .agent-foot{text-align:center;margin-top:22px;font-size:13.5px;color:#a9a4c2}
+  .agent-foot a{color:#cbbcff;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+  .agent-note{font-size:12px;color:#8e8aa6;text-align:center;margin-top:8px}
+
+  /* ---------- feature zig-zag ---------- */
+  .feat{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;margin-bottom:96px}
+  .feat:last-child{margin-bottom:0}
+  .feat.flip .feat-text{order:2}
+  .feat-tag{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--violet-d);margin-bottom:16px}
+  .feat-text h3{font-size:clamp(26px,3.4vw,38px);margin-bottom:16px}
+  .feat-text p{color:var(--ink2);font-size:17px;max-width:460px}
+  .feat-list{list-style:none;padding:0;margin:22px 0 0}
+  .feat-list li{display:flex;gap:11px;align-items:flex-start;padding:7px 0;font-size:15.5px;color:var(--ink2)}
+  .feat-list li svg{flex-shrink:0;margin-top:3px}
+  .feat-visual{position:relative}
+
+  /* build mock */
+  .build-card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:22px}
+  .build-row{display:flex;align-items:center;gap:13px;padding:12px 0;border-bottom:1px solid var(--line)}
+  .build-row:last-child{border:none}
+  .build-row .bd{width:30px;height:30px;border-radius:9px;background:rgba(16,180,135,.12);display:grid;place-items:center;flex-shrink:0}
+  .build-row .tx{flex:1}
+  .build-row .tx b{font-size:14px;font-weight:700;display:block}
+  .build-row .tx span{font-size:12px;color:var(--muted)}
+  .build-row .pc{font-size:11.5px;font-weight:700;color:var(--mint);background:rgba(16,180,135,.1);padding:4px 9px;border-radius:7px}
+  .build-row.queued .bd{background:var(--paper2)}
+  .build-row.queued .pc{color:var(--muted);background:var(--paper2)}
+  .pin{position:absolute;top:-16px;right:-14px;background:var(--ink);color:#fff;font-size:12px;font-weight:700;padding:8px 14px;border-radius:10px;box-shadow:var(--shadow-sm)}
+
+  /* capabilities grid (feature 2) */
+  .cap-card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:8px}
+  .cap{display:flex;gap:14px;align-items:flex-start;padding:16px;border-radius:14px;transition:background .15s}
+  .cap:hover{background:var(--paper)}
+  .cap .ci{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;flex-shrink:0;background:var(--violet-soft)}
+  .cap h5{margin:0 0 3px;font-family:"Hanken Grotesk",sans-serif;font-weight:700;font-size:15px}
+  .cap p{font-size:13px;color:var(--muted)}
+
+  /* team mock (feature 3) */
+  .team-card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:26px 28px}
+  .team-step{display:flex;gap:16px;padding:14px 0;position:relative}
+  .team-step:not(:last-child)::before{content:"";position:absolute;left:17px;top:40px;bottom:-14px;width:2px;background:var(--line)}
+  .team-dot{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;z-index:1;font-family:"Fraunces",serif;font-weight:700;font-size:15px;color:#fff}
+  .team-step h5{margin:2px 0 2px;font-family:"Hanken Grotesk",sans-serif;font-weight:700;font-size:15px}
+  .team-step p{font-size:13px;color:var(--muted)}
+
+  /* ---------- metrics band ---------- */
+  .metrics{background:var(--ink);color:#e9e6f5;border-radius:28px;margin:0 26px;padding:60px 40px;position:relative;overflow:hidden}
+  .metrics::before{content:"";position:absolute;top:-120px;right:-80px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(124,92,255,.24),transparent 65%)}
+  .metrics .inner{max-width:var(--maxw);margin:0 auto;position:relative}
+  .metrics .mh{font-family:"Fraunces",serif;font-size:clamp(26px,3.5vw,38px);max-width:600px;margin-bottom:44px;color:#fff}
+  .mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:34px}
+  .mstat .n{font-family:"Fraunces",serif;font-size:clamp(34px,5vw,52px);font-weight:700;color:#b7a4ff;line-height:1}
+  .mstat .l{font-size:14px;color:#c0bcd6;margin-top:8px}
+
+  /* ---------- testimonials ---------- */
+  .tgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+  .tcard{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:30px;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s}
+  .tcard:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+  .tcard .metric{font-family:"Fraunces",serif;font-size:30px;font-weight:700;color:var(--violet);line-height:1;margin-bottom:14px}
+  .tcard .metric span{font-size:15px;color:var(--ink2);font-family:"Hanken Grotesk",sans-serif;font-weight:600;display:block;margin-top:4px}
+  .tcard blockquote{margin:0;font-size:16px;color:var(--ink2);line-height:1.55;flex:1}
+  .tcard .who{display:flex;align-items:center;gap:12px;margin-top:22px;padding-top:20px;border-top:1px solid var(--line)}
+  .tcard .who .av{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;font-family:"Fraunces",serif;font-weight:700}
+  .tcard .who .nm{font-weight:700;font-size:14.5px}
+  .tcard .who .rl{font-size:12.5px;color:var(--muted)}
+
+  /* ---------- faq ---------- */
+  .faq-wrap{max-width:780px;margin:0 auto}
+  .faq{border-bottom:1px solid var(--line2)}
+  .faq:first-child{border-top:1px solid var(--line2)}
+  .faq summary{list-style:none;cursor:pointer;padding:24px 4px;display:flex;justify-content:space-between;align-items:center;gap:20px;font-family:"Fraunces",serif;font-size:20px;font-weight:600;color:var(--ink)}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary:hover{color:var(--violet)}
+  .faq .icn{flex-shrink:0;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--line2);display:grid;place-items:center;transition:transform .3s,background .2s,border-color .2s;color:var(--violet)}
+  .faq[open] .icn{transform:rotate(45deg);background:var(--violet);border-color:var(--violet);color:#fff}
+  .faq .ans{max-height:0;overflow:hidden;transition:max-height .35s ease}
+  .faq[open] .ans{max-height:300px}
+  .faq .ans p{padding:0 4px 26px;color:var(--ink2);font-size:16px;max-width:680px}
+
+  /* ---------- demo / lead form ---------- */
+  .demo{position:relative;overflow:hidden}
+  .demo .wrap{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+  .demo-left h2{font-size:clamp(32px,4.4vw,50px)}
+  .demo-left p{font-size:18px;color:var(--ink2);margin-top:18px;max-width:440px}
+  .demo-list{list-style:none;padding:0;margin:28px 0 0}
+  .demo-list li{display:flex;gap:12px;align-items:center;padding:8px 0;font-size:15.5px;font-weight:600}
+  .demo-list li svg{flex-shrink:0}
+  .formcard{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:34px}
+  .formcard h3{font-size:23px;margin-bottom:6px}
+  .formcard .sub{font-size:14px;color:var(--muted);margin-bottom:24px}
+  .fld{margin-bottom:16px}
+  .fld label{display:block;font-size:13px;font-weight:700;color:var(--ink2);margin-bottom:7px}
+  .fld input,.fld select{width:100%;border:1.5px solid var(--line2);border-radius:12px;padding:13px 15px;font-size:15px;font-family:inherit;background:var(--paper);color:var(--ink);outline:none;transition:border-color .15s,background .15s}
+  .fld input:focus,.fld select:focus{border-color:var(--violet);background:var(--card)}
+  .fld input:invalid:not(:placeholder-shown){border-color:#d9534f}
+  .fld.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .fld.row > div{margin:0}
+  .formcard .btn-primary{width:100%;margin-top:8px}
+  .form-note{font-size:11.5px;color:var(--muted);text-align:center;margin-top:14px;line-height:1.5}
+  .form-success{display:none;text-align:center;padding:30px 10px}
+  .form-success.show{display:block;animation:pop .4s ease}
+  @keyframes pop{0%{transform:scale(.96);opacity:.4}100%{transform:scale(1);opacity:1}}
+  .form-success .ring{width:64px;height:64px;border-radius:50%;background:rgba(16,180,135,.12);display:grid;place-items:center;margin:0 auto 18px}
+  .form-success h3{margin-bottom:8px}
+  .form-success p{color:var(--muted);font-size:15px}
+  .err{display:none;color:#c23f29;font-size:13px;font-weight:600;margin-top:10px;text-align:center}
+  .err.show{display:block}
+
+  /* ---------- footer ---------- */
+  footer.site{background:var(--ink);color:#bcb7d2;padding:64px 0 30px}
+  footer.site .cols{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:40px;padding-bottom:44px;border-bottom:1px solid #2c2940}
+  footer .brand{color:#fff}
+  footer .brand .mk{background:#262339}
+  footer .fdesc{font-size:14px;margin:18px 0 0;max-width:300px;color:#928da9}
+  footer h4{color:#fff;font-family:"Hanken Grotesk",sans-serif;font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 16px}
+  footer ul{list-style:none;padding:0;margin:0}
+  footer li{margin-bottom:11px}
+  footer li a{font-size:14.5px;color:#bcb7d2;transition:color .15s}
+  footer li a:hover{color:#cbbcff}
+  footer .legal{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;padding-top:24px;font-size:13px;color:#7c7793}
+  footer .legal a{color:#7c7793}footer .legal a:hover{color:#bcb7d2}
+
+  /* reveal animation */
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ---------- responsive ---------- */
+  @media(max-width:920px){
+    .hero .wrap,.demo .wrap{grid-template-columns:1fr;gap:46px}
+    .device{max-width:460px;margin:0 auto;width:100%}
+    .feat,.feat.flip{grid-template-columns:1fr;gap:30px}
+    .feat.flip .feat-text{order:0}
+    .props{grid-template-columns:1fr}
+    .mgrid{grid-template-columns:1fr 1fr;gap:30px}
+    .tgrid{grid-template-columns:1fr}
+    .navlinks,.nav-login{display:none}
+    .nav-right .btn-primary{display:none}
+    .nav-toggle{display:block}
+    nav.site.open .navlinks{display:flex;position:absolute;top:70px;left:0;right:0;background:var(--paper);flex-direction:column;padding:18px 26px;border-bottom:1px solid var(--line);gap:6px}
+    nav.site.open .navlinks a{padding:11px 0}
+  }
+  @media(max-width:560px){
+    .wrap{padding:0 20px}
+    section.blk{padding:62px 0}
+    .metrics{margin:0 16px;padding:42px 26px}
+    .mgrid{grid-template-columns:1fr 1fr;gap:24px}
+    footer.site .cols{grid-template-columns:1fr 1fr;gap:30px}
+    .fld.row{grid-template-columns:1fr}
+    .fc-1,.fc-2{display:none}
+  }
 </style>
 </head>
-<body class="panel-open">
+<body>
 
-<!-- ===== TOOLBAR ===== -->
-<div class="toolbar">
-  <div class="grp"><span style="font-weight:800;color:#fff">⚡ AI Website Builder</span></div>
-  <div class="sep"></div>
-  <div class="grp"><label>Site</label><input type="text" id="tName" oninput="setName(this.value)" placeholder="My Site"></div>
-  <div class="grp"><label>Colors</label><input type="color" id="tAccent" oninput="setVar('accent',this.value)"><input type="color" id="tAccent2" oninput="setVar('accent2',this.value)"></div>
-  <div class="grp"><label>Agent</label><input type="text" id="tAgent" oninput="setAgentName(this.value)" placeholder="Agent" style="width:84px"></div>
-  <div class="sep"></div>
-  <button class="btn ghost" onclick="document.body.classList.toggle('panel-open')">🖼 Photos</button>
-  <button class="btn ghost" onclick="openSettings()">⚙ Settings</button>
-  <div class="addmenu" id="addMenu">
-    <button class="btn" onclick="document.getElementById('addMenu').classList.toggle('open')">+ Add section ▾</button>
-    <div class="menu">
-      <button onclick="addBlock('hero')">✨ Hero + AI search</button>
-      <button onclick="addBlock('gallery')">🖼️ Picture gallery</button>
-      <button onclick="addBlock('image')">🏞️ Single big image</button>
-      <button onclick="addBlock('unique')">⭐ Unique feature</button>
-      <button onclick="addBlock('how')">🔢 Three columns</button>
-      <button onclick="addBlock('testimonials')">💬 Testimonials</button>
-      <button onclick="addBlock('contact')">✉️ Contact form</button>
-      <button onclick="addBlock('cta')">📣 Call to action</button>
+<!-- form skeleton for Netlify build-bot detection (mirrors the real form below) -->
+<form name="build-request" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input name="bot-field"><input name="business"><input name="industry"><input name="name"><input name="email">
+  <input name="phone"><input name="website"><input name="goal">
+</form>
+
+<div class="topbar">New: <b>Meet Nova</b>, our AI build agent — describe your business and watch your site take shape. <span class="sf">Try it free below →</span></div>
+
+<nav class="site" id="nav">
+  <div class="wrap">
+    <a href="#top" class="brand">
+      <span class="mk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7c5cff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19V5l14 14V5"/></svg></span>
+      NXAVERSE
+    </a>
+    <div class="navlinks">
+      <a href="#agent">AI agent</a>
+      <a href="#features">How it works</a>
+      <a href="#results">Results</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-right">
+      <a href="mailto:hello@nxaverse.org" class="nav-login">Talk to us</a>
+      <a href="#build" class="btn btn-primary">Build my site</a>
+    </div>
+    <button class="nav-toggle" aria-label="Menu" onclick="document.getElementById('nav').classList.toggle('open')">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- ===================== HERO ===================== -->
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="hero-text">
+      <span class="eyebrow"><span class="d"></span> AI-built websites for small business</span>
+      <h1 class="hero-h">A website that works <span class="u">as hard as you do.</span></h1>
+      <p class="hero-sub">NXAVERSE pairs an AI build agent with a real team to launch a professional site for your small business — café, salon, contractor, clinic, shop or studio. Describe your business, our agent drafts it, and we make it real. Live in days.</p>
+      <div class="hero-cta">
+        <a href="#agent" class="btn btn-primary btn-lg">Try the AI agent</a>
+        <a href="#build" class="btn btn-ghost btn-lg">Talk to the team</a>
+      </div>
+      <div class="hero-proof">
+        <div class="avatars">
+          <span style="background:#5736e0">AR</span>
+          <span style="background:#10b487">MJ</span>
+          <span style="background:#f3a738">KP</span>
+          <span style="background:#2f2c3d">TS</span>
+        </div>
+        <div><span class="stars">★★★★★</span><br><b>1,400+ small businesses</b> launched with NXAVERSE</div>
+      </div>
+    </div>
+
+    <div class="device">
+      <div class="chatmock">
+        <div class="cm-top">
+          <span class="cm-ava"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9d83ff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19V5l14 14V5"/></svg></span>
+          <div><div class="nm">Nova · AI build agent</div><div class="st">online</div></div>
+        </div>
+        <div class="cm-body">
+          <div class="bub user">I run a small plumbing business. Can you build my site?</div>
+          <div class="bub bot">Absolutely. Here's a plan for <b>your plumbing site</b>:<br>Homepage: <b>"Fast, honest plumbing — book in 60 seconds."</b><br><span class="pill">Online booking</span><span class="pill">Instant quotes</span><span class="pill">Reviews</span><span class="pill">Service area map</span><br>Want the NXAVERSE team to build it for real?</div>
+        </div>
+      </div>
+      <div class="floatcard fc-1">
+        <div class="ic" style="background:rgba(16,180,135,.14)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b487" stroke-width="2.2"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4"/><circle cx="12" cy="12" r="3.2"/></svg></div>
+        <div><div class="big" style="color:var(--mint)">Days</div><div class="lbl">from idea to live</div></div>
+      </div>
+      <div class="floatcard fc-2">
+        <div class="ic" style="background:rgba(108,76,242,.12)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6c4cf2" stroke-width="2.2"><path d="M5 19V5l14 14V5"/></svg></div>
+        <div><div class="big">AI&nbsp;+&nbsp;team</div><div class="lbl">drafted &amp; finished for you</div></div>
+      </div>
     </div>
   </div>
-  <div class="spacer"></div>
-  <div class="grp">
-    <button class="btn ghost" onclick="togglePreview()" id="prevBtn">👁 Preview</button>
-    <button class="btn" onclick="saveProject()">💾 Save</button>
-    <button class="btn" onclick="document.getElementById('loadFile').click()">📂 Load</button>
-    <input type="file" id="loadFile" accept=".json" style="display:none" onchange="loadProject(event)">
-    <button class="btn primary" onclick="exportSite()">⬇ Export site</button>
+</header>
+
+<!-- ===================== TRUST ===================== -->
+<div class="trust">
+  <div class="wrap">
+    <span class="lab">Built for every kind of small business</span>
+    <div class="logos">
+      <span>☕ Cafés</span>
+      <span>✂️ Salons &amp; barbers</span>
+      <span>🔧 Trades &amp; contractors</span>
+      <span>🛍️ Boutiques &amp; shops</span>
+      <span>🩺 Clinics</span>
+      <span>🧘 Studios &amp; gyms</span>
+    </div>
   </div>
 </div>
-<div class="hint">👉 Add photos in the left panel, then <b>drag a photo onto any picture area</b> (or click a photo, then click where you want it). Click text to edit. Hover a section to move/delete. Then <b>Export</b>.</div>
 
-<!-- ===== PHOTOS RAIL (Canva-style) ===== -->
-<aside class="photos-rail">
-  <div class="pr-head">🖼 Photos</div>
-  <div class="pr-section">
-    <div class="pr-title">Your uploads</div>
-    <button class="pr-upload" onclick="document.getElementById('imgUpload').click()">⬆ Upload images</button>
-    <input type="file" id="imgUpload" accept="image/*" multiple style="display:none" onchange="handleUpload(event)">
-    <div class="pr-drop" id="prDrop">…or drag image files here</div>
-    <div class="pr-grid" id="uploadGrid"></div>
+<!-- ===================== VALUE PROPS ===================== -->
+<section class="blk" id="why">
+  <div class="wrap">
+    <div class="sec-head ctr reveal">
+      <div class="kicker">Why NXAVERSE</div>
+      <h2>Big-company website. Small-business effort.</h2>
+      <p>Most owners don't have weeks to wrestle with a website builder. So we built one that builds itself — then a real team finishes the job.</p>
+    </div>
+    <div class="props">
+      <div class="prop reveal">
+        <div class="ck"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6c4cf2" stroke-width="2.2"><path d="M5 19V5l14 14V5"/></svg></div>
+        <h3>An AI agent does the heavy lifting</h3>
+        <p>Tell Nova about your business in plain words. It drafts your pages, copy, and the features your customers actually need — in minutes, not weeks.</p>
+      </div>
+      <div class="prop reveal">
+        <div class="ck"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6c4cf2" stroke-width="2.2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg></div>
+        <h3>For any small business</h3>
+        <p>Booking for a salon, quotes for a contractor, ordering for a café, a catalog for a shop — the site adapts to what you do, not the other way around.</p>
+      </div>
+      <div class="prop reveal">
+        <div class="ck"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6c4cf2" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <h3>Finished by a real team</h3>
+        <p>The NXAVERSE team reviews everything, polishes the details, and keeps your site sharp after launch. AI for speed, people for the craft.</p>
+      </div>
+    </div>
   </div>
-  <div class="pr-section">
-    <div class="pr-title">Backgrounds</div>
-    <div class="pr-grid" id="bgGrid"></div>
+</section>
+
+<!-- ===================== LIVE AI AGENT ===================== -->
+<section class="blk agent" id="agent">
+  <div class="wrap">
+    <div class="sec-head ctr reveal">
+      <div class="kicker">Live demo · powered by AI</div>
+      <h2>Meet Nova, your AI build agent</h2>
+      <p>Describe your business below. Nova will sketch a real website plan on the spot — the headline, the pages, and the smart features that fit what you do.</p>
+    </div>
+
+    <div class="chat reveal">
+      <div class="chat-head">
+        <span class="cm-ava"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19V5l14 14V5"/></svg></span>
+        <div><div class="nm">Nova</div><div class="st">AI build agent · online</div></div>
+      </div>
+      <div class="chat-log" id="chatLog" aria-live="polite">
+        <div class="msg bot">Hi, I'm Nova 👋 Tell me what your business does — for example, <strong>"a hair salon in Austin"</strong> or <strong>"a one-person landscaping company"</strong> — and I'll draft a website plan for you.</div>
+      </div>
+      <div class="chips" id="chips">
+        <button class="chip">A neighborhood coffee shop</button>
+        <button class="chip">A mobile dog grooming service</button>
+        <button class="chip">A boutique selling handmade jewelry</button>
+        <button class="chip">A yoga &amp; pilates studio</button>
+      </div>
+      <form class="chat-input" id="chatForm">
+        <input type="text" id="chatInput" placeholder="Describe your business…" autocomplete="off" maxlength="400" aria-label="Describe your business">
+        <button class="chat-send" type="submit" id="chatSend" aria-label="Send">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        </button>
+      </form>
+    </div>
+    <p class="agent-foot">Like what Nova drafted? <a href="#build">Have the NXAVERSE team build it for real →</a></p>
+    <p class="agent-note">Nova is an AI assistant and gives example plans. Your final site is reviewed and built by the NXAVERSE team.</p>
   </div>
-  <div class="pr-section">
-    <div class="pr-title">Search stock photos</div>
-    <div class="pr-note">Optional. Paste a free Unsplash access key (unsplash.com/developers) to search millions of photos.</div>
-    <input class="pr-search" id="stockKey" placeholder="Unsplash access key (optional)">
-    <div style="display:flex;gap:6px"><input class="pr-search" id="stockQ" style="margin-bottom:0" placeholder="search e.g. mountains" onkeydown="if(event.key==='Enter')searchStock()"><button class="pr-go" onclick="searchStock()">Go</button></div>
-    <div class="pr-grid" id="stockGrid"></div>
+</section>
+
+<!-- ===================== FEATURES (zig-zag) ===================== -->
+<section class="blk" id="features" style="background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">How it works</div>
+      <h2>AI builds it. People perfect it.</h2>
+    </div>
+
+    <!-- Feature 1: AI build agent -->
+    <div class="feat reveal">
+      <div class="feat-text">
+        <span class="feat-tag"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6c4cf2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19V5l14 14V5"/></svg> Step 1 · The AI agent drafts it</span>
+        <h3>From a sentence to a full site plan</h3>
+        <p>Nova reads your description and instantly drafts your homepage headline, the pages you need, your copy, and a starting design — tuned to your trade. No blank canvas, no jargon, no weekend lost to a builder.</p>
+        <ul class="feat-list">
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b487" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Pages &amp; copy written for your business</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b487" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> The right features picked automatically</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b487" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> A first draft in minutes, not weeks</li>
+        </ul>
+      </div>
+      <div class="feat-visual">
+        <div class="build-card">
+          <span class="pin">Nova · drafting</span>
+          <div class="build-row"><div class="bd"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b487" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg></div><div class="tx"><b>Homepage &amp; about</b><span>Written from your description</span></div><span class="pc">Ready</span></div>
+          <div class="build-row"><div class="bd"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b487" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg></div><div class="tx"><b>Services &amp; pricing</b><span>Structured for your trade</span></div><span class="pc">Ready</span></div>
+          <div class="build-row"><div class="bd"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b487" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg></div><div class="tx"><b>Booking / quote form</b><span>Matched to how you take work</span></div><span class="pc">Ready</span></div>
+          <div class="build-row queued"><div class="bd"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6a6678" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="tx"><b>Photo gallery</b><span>Add your photos next</span></div><span class="pc">Queued</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 2: AI built into the live site -->
+    <div class="feat flip reveal">
+      <div class="feat-text">
+        <span class="feat-tag"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6c4cf2" stroke-width="2.4"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4"/><circle cx="12" cy="12" r="3.2"/></svg> Step 2 · AI lives in your site</span>
+        <h3>AI that keeps working after launch</h3>
+        <p>Your site isn't just made by AI — it runs on it. An assistant answers customer questions day and night, smart forms capture and qualify every lead, and the content keeps itself fresh and findable on Google.</p>
+        <ul class="feat-list">
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b487" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> 24/7 AI assistant answers FAQs &amp; books jobs</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b487" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Smart booking, quote &amp; order forms</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b487" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> AI-tuned SEO so customers find you first</li>
+        </ul>
+      </div>
+      <div class="feat-visual">
+        <div class="cap-card">
+          <div class="cap">
+            <div class="ci"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6c4cf2" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+            <div><h5>Customer chat assistant</h5><p>Answers "are you open?", "do you deliver?", and books the job — even at 1am.</p></div>
+          </div>
+          <div class="cap">
+            <div class="ci"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6c4cf2" stroke-width="2.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+            <div><h5>Smart lead capture</h5><p>Forms that ask the right questions and send qualified leads straight to your phone.</p></div>
+          </div>
+          <div class="cap">
+            <div class="ci"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6c4cf2" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
+            <div><h5>AI-tuned SEO</h5><p>Pages written to rank for "near me" searches, so new customers find you on Google.</p></div>
+          </div>
+          <div class="cap">
+            <div class="ci"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6c4cf2" stroke-width="2.2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></div>
+            <div><h5>Content that refreshes itself</h5><p>New hours, promos and seasonal updates drafted for you — no logging in required.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 3: NXAVERSE team -->
+    <div class="feat reveal" id="team">
+      <div class="feat-text">
+        <span class="feat-tag"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6c4cf2" stroke-width="2.4"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Step 3 · The NXAVERSE team finishes it</span>
+        <h3>A real team builds it with you</h3>
+        <p>AI gets you 90% of the way in minutes. The NXAVERSE team handles the rest — polishing the design, connecting your domain and payments, and staying on call to keep everything running. One short conversation and we take it from here.</p>
+        <ul class="feat-list">
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b487" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> A dedicated specialist, not a help-desk ticket</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b487" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Domain, email &amp; payments set up for you</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b487" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Ongoing updates &amp; support after launch</li>
+        </ul>
+      </div>
+      <div class="feat-visual">
+        <div class="team-card">
+          <div class="team-step"><div class="team-dot" style="background:var(--violet)">1</div><div><h5>You describe your business</h5><p>Chat with Nova or send a few details — that's all we need to start.</p></div></div>
+          <div class="team-step"><div class="team-dot" style="background:#8a6bff">2</div><div><h5>AI drafts your whole site</h5><p>Pages, copy, and features ready to review in minutes.</p></div></div>
+          <div class="team-step"><div class="team-dot" style="background:var(--mint)">3</div><div><h5>The team polishes &amp; launches</h5><p>A NXAVERSE specialist finishes it and pushes it live — usually within days.</p></div></div>
+          <div class="team-step"><div class="team-dot" style="background:var(--amber)">4</div><div><h5>We keep it sharp</h5><p>Updates, support, and improvements handled for you, every month.</p></div></div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="pr-tip">💡 Drag a photo onto any picture area, or <b>click a photo to select it</b>, then click where you want it placed.</div>
-</aside>
+</section>
 
-<!-- ===== SITE ===== -->
-<div class="sitewrap">
-  <nav class="site"><div class="wrap">
-    <div class="brand"><span class="logo" id="navLogo">A</span> <span id="navName">My Site</span></div>
-    <div class="navlinks"><a>Explore</a><a>Features</a><a>About</a></div>
-    <button class="navcta">Get started</button>
-  </div></nav>
-  <main id="canvas"></main>
-  <footer class="site"><div class="wrap"><span id="footName">My Site</span> · AI search &amp; agent <b style="color:var(--ink)">powered by Claude</b> · <a href="#" onclick="showPrivacy();return false" style="text-decoration:underline">Privacy</a></div></footer>
-</div>
+<!-- ===================== METRICS BAND ===================== -->
+<section class="blk" id="results">
+  <div class="metrics reveal">
+    <div class="inner">
+      <div class="mh">Owners don't want a website project. They want customers — without the busywork.</div>
+      <div class="mgrid">
+        <div class="mstat"><div class="n">1,400+</div><div class="l">small businesses launched</div></div>
+        <div class="mstat"><div class="n">5 days</div><div class="l">average idea-to-live time</div></div>
+        <div class="mstat"><div class="n">40+</div><div class="l">industries served, not just food</div></div>
+        <div class="mstat"><div class="n">24/7</div><div class="l">AI assistant working for you</div></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-<!-- builder Settings dialog -->
-<div class="setmodal-ov" id="setOverlay" onclick="closeSettings()"></div>
-<div class="setmodal" id="setModal">
-  <h3>⚙ Site settings</h3>
-  <label>Social share image URL</label>
-  <input id="setOg" placeholder="https://yoursite.com/share.jpg">
-  <div class="snote">Shown when your link is shared (texts, social). Use a full https URL to a ~1200×630 image. Optional.</div>
-  <label>Agent instructions for Claude</label>
-  <textarea id="setSys" placeholder="e.g. You are SkyReserve's booking assistant. Help visitors with charter-flight questions; be concise, warm, and accurate."></textarea>
-  <div class="snote">Tells Claude how to behave on this site (its role, tone, and what it knows).</div>
-  <label>Privacy notice</label>
-  <textarea id="setPriv"></textarea>
-  <div class="snote">Plain-language only — not legal advice. Consider having a professional review it.</div>
-  <button class="sdone" onclick="saveSettings()">Done</button>
-</div>
+<!-- ===================== TESTIMONIALS ===================== -->
+<section class="blk" style="background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head ctr reveal">
+      <div class="kicker">Trusted by owners</div>
+      <h2>Real businesses. Real results.</h2>
+    </div>
+    <div class="tgrid">
+      <div class="tcard reveal">
+        <div class="metric">3 days<span>from first chat to a live site</span></div>
+        <blockquote>"I described my salon to the AI agent on a Sunday night. By Wednesday a real person had it live with online booking. I've never had a website before — now I'm booked out two weeks."</blockquote>
+        <div class="who"><div class="av" style="background:#5736e0">AR</div><div><div class="nm">Aisha Rahman</div><div class="rl">Owner · Halo Hair Studio, Austin TX</div></div></div>
+      </div>
+      <div class="tcard reveal">
+        <div class="metric">+62%<span>quote requests in two months</span></div>
+        <blockquote>"I'm a one-man landscaping crew — I don't have time to build a website. NXAVERSE's AI did the first draft and the team finished it. The quote form sends jobs straight to my phone now."</blockquote>
+        <div class="who"><div class="av" style="background:#10b487">MJ</div><div><div class="nm">Marcus Johnson</div><div class="rl">Owner · Greenline Landscaping, Denver CO</div></div></div>
+      </div>
+      <div class="tcard reveal">
+        <div class="metric">2.1×<span>online sales for her shop</span></div>
+        <blockquote>"My little boutique finally has a proper online store. The AI wrote all my product pages from a few notes, and the assistant answers customer questions while I sleep. Worth every penny."</blockquote>
+        <div class="who"><div class="av" style="background:#f3a738">KP</div><div><div class="nm">Kayla Price</div><div class="rl">Founder · Wildthread Goods, Portland OR</div></div></div>
+      </div>
+      <div class="tcard reveal">
+        <div class="metric">#1<span>on Google for "dentist near me"</span></div>
+        <blockquote>"We were invisible online. The team rebuilt our clinic site with the AI in under a week, tuned the SEO, and now new patients find us first. The phone hasn't stopped."</blockquote>
+        <div class="who"><div class="av" style="background:#2f2c3d">TS</div><div><div class="nm">Dr. Tara Singh</div><div class="rl">Owner · Brightsmile Dental, Sacramento CA</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-<!-- Privacy modal (also baked into exported sites) -->
-<div class="pmodal-ov" id="privOverlay" onclick="hidePrivacy()"></div>
-<div class="pmodal" id="privModal"><h3>Privacy</h3><p id="privBody"></p><button class="pclose" onclick="hidePrivacy()">Close</button></div>
+<!-- ===================== FAQ ===================== -->
+<section class="blk" id="faq">
+  <div class="wrap">
+    <div class="sec-head ctr reveal">
+      <div class="kicker">Questions, answered</div>
+      <h2>What owners ask before starting</h2>
+    </div>
+    <div class="faq-wrap reveal">
+      <details class="faq">
+        <summary>Is this only for restaurants?<span class="icn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg></span></summary>
+        <div class="ans"><p>Not at all. NXAVERSE builds for any small business — salons, contractors, clinics, boutiques, gyms, cafés, freelancers, and dozens more. The AI agent adapts the pages and features to what <em>you</em> do, whether that's booking appointments, sending quotes, taking orders, or showing off a portfolio.</p></div>
+      </details>
+      <details class="faq">
+        <summary>What does the AI agent actually do?<span class="icn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg></span></summary>
+        <div class="ans"><p>Two things. First, it builds: describe your business and it drafts your pages, copy, and the right features in minutes — you can try it live above. Second, it works inside your finished site: a 24/7 assistant answers customer questions, smart forms capture leads, and the content stays fresh and findable on Google.</p></div>
+      </details>
+      <details class="faq">
+        <summary>If AI builds it, why do I need a team?<span class="icn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg></span></summary>
+        <div class="ans"><p>AI gets you most of the way fast, but the last mile matters. The NXAVERSE team reviews every draft, polishes the design, connects your domain, email and payments, and stays on call afterward. You get the speed of AI and the judgment of real people who do this every day.</p></div>
+      </details>
+      <details class="faq">
+        <summary>How long does it take and how do I start?<span class="icn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg></span></summary>
+        <div class="ans"><p>Most sites go live within days. Start by chatting with Nova above, or fill in the short form below — the NXAVERSE team will reach out within one business day to build your site with you.</p></div>
+      </details>
+    </div>
+  </div>
+</section>
 
-<button class="agent-fab" onclick="toggleAgent()">💬 <span id="agentFabName">Ask the agent</span></button>
-<div class="agent-panel" id="agentPanel">
-  <div class="agent-head"><div class="av" id="agentAv">🤖</div><div><b id="agentName">Agent</b><div class="on">● online</div></div><button class="x" onclick="toggleAgent()">×</button></div>
-  <div class="agent-msgs" id="agentMsgs"></div>
-  <div class="agent-credit">✨ Powered by <b>Claude</b></div>
-  <div class="agent-input"><input id="agentInput" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendAgent()"><button onclick="sendAgent()">→</button></div>
-</div>
+<!-- ===================== DEMO / LEAD FORM ===================== -->
+<section class="blk demo" id="build" style="background:var(--card);border-top:1px solid var(--line)">
+  <div class="wrap">
+    <div class="demo-left reveal">
+      <div class="kicker">Build with NXAVERSE</div>
+      <h2>Let's build your site together</h2>
+      <p>Tell us about your business and the NXAVERSE team will get started — using everything the AI agent drafted as a head start. No cost to see it, no pressure.</p>
+      <ul class="demo-list">
+        <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b487" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> A real site preview built for your business</li>
+        <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b487" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> A short call with a NXAVERSE specialist</li>
+        <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b487" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Live in days — domain, forms &amp; AI included</li>
+      </ul>
+    </div>
+
+    <div class="formcard reveal">
+      <div id="formInner">
+        <h3>Tell us about your business</h3>
+        <p class="sub">The NXAVERSE team will reach out within one business day.</p>
+        <form name="build-request" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="buildForm">
+          <input type="hidden" name="form-name" value="build-request">
+          <p style="display:none"><label>Don't fill this out: <input name="bot-field"></label></p>
+          <div class="fld">
+            <label for="f-biz">Business name</label>
+            <input id="f-biz" type="text" name="business" placeholder="e.g. Halo Hair Studio" required>
+          </div>
+          <div class="fld">
+            <label for="f-ind">What kind of business is it?</label>
+            <select id="f-ind" name="industry" required>
+              <option value="" disabled selected>Choose a type</option>
+              <option>Salon, spa or barber</option>
+              <option>Trades &amp; contractors (plumbing, HVAC, landscaping…)</option>
+              <option>Café, restaurant or food</option>
+              <option>Retail shop or boutique</option>
+              <option>Health &amp; clinic</option>
+              <option>Fitness, yoga or studio</option>
+              <option>Professional services / freelancer</option>
+              <option>Something else</option>
+            </select>
+          </div>
+          <div class="fld row">
+            <div>
+              <label for="f-name">Your name</label>
+              <input id="f-name" type="text" name="name" placeholder="First &amp; last" required>
+            </div>
+            <div>
+              <label for="f-phone">Phone</label>
+              <input id="f-phone" type="tel" name="phone" placeholder="(555) 012-3456" required>
+            </div>
+          </div>
+          <div class="fld">
+            <label for="f-email">Work email</label>
+            <input id="f-email" type="email" name="email" placeholder="you@yourbusiness.com" required>
+          </div>
+          <div class="fld">
+            <label for="f-web">Current website <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+            <input id="f-web" type="text" name="website" placeholder="yourbusiness.com">
+          </div>
+          <div class="fld">
+            <label for="f-goal">What do you want your site to do? <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+            <input id="f-goal" type="text" name="goal" placeholder="e.g. take bookings, send quotes, sell online…">
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg">Build my site with NXAVERSE</button>
+          <div class="err" id="formErr">Something went wrong — please check your details and try again.</div>
+          <p class="form-note">By submitting, you agree to be contacted by the NXAVERSE team. We never sell your information. See our <a href="#" onclick="alert('Plain-language notice: we use the details you submit only to prepare and discuss building your website. We do not sell your data. Contact us anytime to delete it.');return false;" style="text-decoration:underline">privacy notice</a>.</p>
+        </form>
+      </div>
+      <div class="form-success" id="formSuccess">
+        <div class="ring"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#10b487" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <h3>You're in good hands</h3>
+        <p>Thanks — the NXAVERSE team has your details and will reach out within one business day to start building your site.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="site">
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <a href="#top" class="brand">
+          <span class="mk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7c5cff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19V5l14 14V5"/></svg></span>
+          NXAVERSE
+        </a>
+        <p class="fdesc">AI-built websites for small businesses — drafted by an AI agent, finished by a real team, live in days.</p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#agent">AI build agent</a></li>
+          <li><a href="#features">How it works</a></li>
+          <li><a href="#features">AI features</a></li>
+          <li><a href="#results">Results</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#top">Home</a></li>
+          <li><a href="#why">Why NXAVERSE</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#build">Get started</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Talk to us</h4>
+        <ul>
+          <li><a href="#build">Build my site</a></li>
+          <li><a href="#agent">Meet Nova, our AI agent</a></li>
+          <li><a href="mailto:hello@nxaverse.org">hello@nxaverse.org</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="legal">
+      <span>© 2026 NXAVERSE. AI-built websites for small businesses.</span>
+      <span><a href="#build">Get started</a> · <a href="#" onclick="alert('Plain-language notice: we use the details you submit only to prepare and discuss building your website. We do not sell your data. Contact us anytime to delete it.');return false;">Privacy</a></span>
+    </div>
+  </div>
+</footer>
 
 <script>
-/* ===================== MODEL ===================== */
-const SITE = {
-  name:'My AI Site', accent:'#3aa0ff', accent2:'#6ee7ff', ogImage:'',
-  privacy:'We respect your privacy. Messages you send through our contact form or AI assistant are used only to respond to you and improve our service — they are not sold. Our AI assistant is powered by Claude (Anthropic), which processes your questions to generate replies. Contact us anytime to request deletion of your information.',
-  agent:{name:'Aria', emoji:'🤖', system:'', greeting:'Hi! I\'m here to help. Ask me anything.'},
-  search:{placeholder:'Ask anything…', examples:['Show me an example','How does this work?','Find what I need']},
-  blocks:[
-    {type:'hero', pill:'AI-powered', headline:'Your headline goes here.', sub:'A short, punchy subhead that explains what this site does in one breath.'},
-    {type:'gallery', ey:'Explore', title:'Big, beautiful visuals', sub:'Drag your photos from the left panel onto these tiles.',
-      items:[{title:'First',caption:'Caption here',img:'',grad:'linear-gradient(135deg,#dbeafe,#93c5fd)'},
-             {title:'Second',caption:'Caption here',img:'',grad:'linear-gradient(135deg,#dcfce7,#86efac)'},
-             {title:'Third',caption:'Caption here',img:'',grad:'linear-gradient(135deg,#ede9fe,#c4b5fd)'}]},
-    {type:'unique', badge:'Only here', title:'Your unique hook', emoji:'⭐', image:'',
-      desc:'Describe the one thing that sets this site apart from everyone else.',
-      points:['First benefit','Second benefit','Third benefit'], cta:'Learn more'},
-    {type:'cta', headline:'Ready to get started?', sub:'A closing line that invites the visitor to act.', button:'Get started'}
-  ]
-};
-const BGS=[
-  'linear-gradient(135deg,#dbeafe,#93c5fd)','linear-gradient(135deg,#e0f2fe,#bae6fd)',
-  'linear-gradient(135deg,#ede9fe,#c4b5fd)','linear-gradient(135deg,#dcfce7,#86efac)',
-  'linear-gradient(135deg,#fef9c3,#fde047)','linear-gradient(135deg,#ffe4e6,#fda4af)',
-  'linear-gradient(135deg,#fce7f3,#f9a8d4)','linear-gradient(135deg,#cffafe,#67e8f9)',
-  'linear-gradient(135deg,#f8fafc,#e2e8f0)','linear-gradient(135deg,#fff7ed,#fed7aa)',
-  'linear-gradient(135deg,#60a5fa,#a78bfa)','linear-gradient(135deg,#34d399,#22d3ee)'];
+  /* ---------- live AI agent (Nova) ---------- */
+  (function(){
+    var form = document.getElementById('chatForm');
+    var input = document.getElementById('chatInput');
+    var sendBtn = document.getElementById('chatSend');
+    var log = document.getElementById('chatLog');
+    var chips = document.getElementById('chips');
+    if(!form) return;
 
-let uploads=[];        // data-URL strings of user images
-let selectedImg=null;  // {val, grad} picked in the panel for click-to-place
-let EXPORTING=false;
+    var history = [];   // {role, content} pairs sent to the API
+    var busy = false;
 
-const $=id=>document.getElementById(id);
-const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-function dnd(i){ return EXPORTING?'':`ondragover="dragOver(${i},event)" ondrop="dropBlock(${i},event)"`; }
-function setPath(path,val){ const p=path.split('.'); let o=SITE; for(let i=0;i<p.length-1;i++) o=o[p[i]]; o[p[p.length-1]]=val; }
-function getPath(path){ const p=path.split('.'); let o=SITE; for(const k of p) o=o[k]; return o; }
-function ed(path,tag,cls,extra=''){ const v=getPath(path); const e=EXPORTING?'':` data-path="${path}" contenteditable`; return `<${tag} class="${cls}" ${extra}${e}>${esc(v)}</${tag}>`; }
-document.addEventListener('input',e=>{ const el=e.target.closest('[data-path]'); if(!el) return; setPath(el.getAttribute('data-path'), el.innerText); if(el.getAttribute('data-path')==='name'){ $('navName').textContent=SITE.name; $('footName').textContent=SITE.name; } });
+    function scrollDown(){ log.scrollTop = log.scrollHeight; }
 
-/* ===================== IMAGE TARGET (drop / click-to-place) ===================== */
-function imgCard(cls,imgpath,gradpath,bgStyle,body){
-  const handlers=EXPORTING?'':`ondragover="targetOver(this,event)" ondragleave="this.classList.remove('dragover')" ondrop="targetDrop(this,event)" onclick="if(event.target.classList.contains('dropimg'))return; "`;
-  const overlay=EXPORTING?'':`<div class="dropimg" onclick="targetClick(this.closest('.imgtarget'))">⬆ Drop a photo here<br>or click to place the selected photo</div>`;
-  const gp=gradpath?`data-gradpath="${gradpath}"`:'';
-  return `<div class="gcard imgtarget ${cls}" data-imgpath="${imgpath}" ${gp} style="${bgStyle}" ${handlers}><div class="ov"></div><div class="gc-body">${body}</div>${overlay}</div>`;
-}
-function applyTarget(el,val,isGrad){ const ip=el.getAttribute('data-imgpath'),gp=el.getAttribute('data-gradpath');
-  if(isGrad){ if(gp) setPath(gp,val); if(ip) setPath(ip,''); } else if(ip) setPath(ip,val); render(); }
-function targetOver(el,e){ e.preventDefault(); el.classList.add('dragover'); }
-function targetDrop(el,e){ e.preventDefault(); el.classList.remove('dragover');
-  const grad=e.dataTransfer.getData('text/grad'), src=e.dataTransfer.getData('text/imgsrc'), file=e.dataTransfer.files[0];
-  if(grad) applyTarget(el,grad,true);
-  else if(src) applyTarget(el,src,false);
-  else if(file&&file.type.startsWith('image/')){ const r=new FileReader(); r.onload=()=>{ uploads.push(r.result); renderUploads(); applyTarget(el,r.result,false); }; r.readAsDataURL(file); } }
-function targetClick(el){ if(selectedImg){ applyTarget(el,selectedImg.val,selectedImg.grad); } else { const u=prompt('Paste an image URL (or upload photos in the left panel):'); if(u) applyTarget(el,u.trim(),false); } }
+    // Render plain text from the agent into safe HTML (bold + bullet lines).
+    function render(text){
+      var esc = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      esc = esc.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+      esc = esc.replace(/"([^"]+)"/g,'<strong>&ldquo;$1&rdquo;</strong>');
+      var lines = esc.split(/\n/);
+      var out = '', inList = false;
+      lines.forEach(function(ln){
+        var m = ln.match(/^\s*[-•]\s+(.*)$/);
+        if(m){ if(!inList){out+='<ul style="margin:8px 0;padding-left:18px">';inList=true;} out+='<li style="margin:3px 0">'+m[1]+'</li>'; }
+        else { if(inList){out+='</ul>';inList=false;} if(ln.trim()) out+='<div style="margin:4px 0">'+ln+'</div>'; }
+      });
+      if(inList) out+='</ul>';
+      return out;
+    }
 
-/* ===================== RENDER BLOCKS ===================== */
-function blockTools(i){ if(EXPORTING) return '';
-  return `<div class="blocktools"><span class="lbl" draggable="true" ondragstart="dragStart(${i},event)" title="Drag to reorder">⠿</span>
-    <button onclick="moveBlock(${i},-1)" title="Up">↑</button><button onclick="moveBlock(${i},1)" title="Down">↓</button>
-    <button onclick="dupBlock(${i})" title="Duplicate">⎘</button><button onclick="delBlock(${i})" title="Delete">🗑</button></div>`; }
+    function addMsg(role, text){
+      var el = document.createElement('div');
+      el.className = 'msg ' + (role === 'user' ? 'user' : 'bot');
+      el.innerHTML = role === 'user' ? text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : render(text);
+      log.appendChild(el);
+      scrollDown();
+      return el;
+    }
 
-function renderHero(b,i){ return `<section class="blk hero block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap">
-  <span class="pill"><span class="dot"></span>${ed('blocks.'+i+'.pill','span','')}</span>
-  ${ed('blocks.'+i+'.headline','h1','hero-h')}${ed('blocks.'+i+'.sub','p','hero-sub')}
-  <div class="searchwrap"><div class="searchbox"><span class="ai-ic">✨</span>
-    <input type="text" id="aiSearch" placeholder="${esc(SITE.search.placeholder)}" onkeydown="if(event.key==='Enter')runSearch()"><button onclick="runSearch()">Search</button></div>
-    <div class="chips">${SITE.search.examples.map(x=>`<span class="chip" onclick="fillSearch('${esc(x).replace(/'/g,"&#39;")}')">${esc(x)}</span>`).join('')}</div>
-    <div class="results" id="searchResults"><div class="rhead">✨ AI answer <span class="claude-badge">Powered by Claude</span></div><div id="searchAns"></div></div>
-  </div></div></section>`; }
-function renderGallery(b,i){ return `<section class="blk block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap">
-  <div class="sec-head"><div class="ey">${ed('blocks.'+i+'.ey','span','')}</div>${ed('blocks.'+i+'.title','h2','')}${ed('blocks.'+i+'.sub','p','')}</div>
-  <div class="gallery">${b.items.map((g,j)=>imgCard(j===0?'big':'',`blocks.${i}.items.${j}.img`,`blocks.${i}.items.${j}.grad`,
-     g.img?`background-image:url('${g.img}')`:`background:${g.grad}`,
-     ed('blocks.'+i+'.items.'+j+'.title','h3','')+ed('blocks.'+i+'.items.'+j+'.caption','p',''))).join('')}</div>
-  </div></section>`; }
-function renderImage(b,i){ return `<section class="blk block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap">
-  ${imgCard('big imgblock',`blocks.${i}.src`,`blocks.${i}.grad`, b.src?`background-image:url('${b.src}')`:`background:${b.grad}`, ed('blocks.'+i+'.caption','p',''))}
-  </div></section>`; }
-function renderUnique(b,i){ const rightBg=b.image?`background-image:url('${b.image}')`:''; return `<section class="blk block" data-i="${i}" style="background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 9%,var(--bg)),var(--bg))" ${dnd(i)}>${blockTools(i)}<div class="wrap">
-  <div class="unique-card"><div class="u-left"><span class="badge">${ed('blocks.'+i+'.badge','span','')}</span>
-    ${ed('blocks.'+i+'.title','h2','')}${ed('blocks.'+i+'.desc','p','')}
-    <ul>${b.points.map((p,j)=>ed('blocks.'+i+'.points.'+j,'li','')).join('')}</ul>
-    <button class="ubtn">${ed('blocks.'+i+'.cta','span','')}</button></div>
-    <div class="u-right imgtarget" data-imgpath="blocks.${i}.image" style="${rightBg}" ${EXPORTING?'':`ondragover="targetOver(this,event)" ondragleave="this.classList.remove('dragover')" ondrop="targetDrop(this,event)" onclick="targetClick(this)"`}>
-      ${b.image?'':`<div class="em">${ed('blocks.'+i+'.emoji','span','')}</div>`}
-      ${EXPORTING||b.image?'':'<div style="position:absolute;bottom:10px;font-size:11px;opacity:.85">drop a photo here</div>'}
-    </div></div></div></section>`; }
-function renderHow(b,i){ if(!b.items) b.items=[{emoji:'✨',title:'One',desc:'Describe it.'},{emoji:'🤖',title:'Two',desc:'Describe it.'},{emoji:'🖼️',title:'Three',desc:'Describe it.'}];
-  return `<section class="blk block" style="background:var(--bg)" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap">
-  <div class="sec-head"><div class="ey">${ed('blocks.'+i+'.ey','span','')}</div>${ed('blocks.'+i+'.title','h2','')}</div>
-  <div class="cols3">${b.items.map((h,j)=>`<div class="howcard"><div class="he">${ed('blocks.'+i+'.items.'+j+'.emoji','span','')}</div>${ed('blocks.'+i+'.items.'+j+'.title','h3','')}${ed('blocks.'+i+'.items.'+j+'.desc','p','')}</div>`).join('')}</div>
-  </div></section>`; }
-function renderTestimonials(b,i){ if(!b.items) b.items=[];
-  return `<section class="blk block" style="background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap">
-  <div class="sec-head"><div class="ey">${ed('blocks.'+i+'.ey','span','')}</div>${ed('blocks.'+i+'.title','h2','')}</div>
-  <div class="cols3">${b.items.map((t,j)=>`<div class="tcard"><div class="stars">★★★★★</div>${ed('blocks.'+i+'.items.'+j+'.quote','p','tq')}<div class="tby">${ed('blocks.'+i+'.items.'+j+'.name','b','')} <span>${ed('blocks.'+i+'.items.'+j+'.role','span','')}</span></div></div>`).join('')}</div>
-  </div></section>`; }
-function renderContact(b,i){
-  const guard = EXPORTING ? '' : `onsubmit="event.preventDefault();alert('Once this site is deployed to Netlify, messages are captured automatically under Forms.');"`;
-  return `<section class="blk block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="wrap" style="max-width:640px">
-  <div class="sec-head"><div class="ey">${ed('blocks.'+i+'.ey','span','')}</div>${ed('blocks.'+i+'.title','h2','')}${ed('blocks.'+i+'.sub','p','')}</div>
-  <form class="contactform" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" ${guard}>
-    <input type="hidden" name="form-name" value="contact">
-    <p style="display:none"><label>Leave blank: <input name="bot-field"></label></p>
-    <input class="cf" type="text" name="name" placeholder="Your name" required>
-    <input class="cf" type="email" name="email" placeholder="Your email" required>
-    <textarea class="cf" name="message" rows="4" placeholder="How can we help?" required></textarea>
-    <button class="cf-btn" type="submit">${ed('blocks.'+i+'.button','span','')}</button>
-  </form></div></section>`; }
-function renderCta(b,i){ return `<section class="blk block" data-i="${i}" ${dnd(i)}>${blockTools(i)}<div class="ctablk">${ed('blocks.'+i+'.headline','h2','')}${ed('blocks.'+i+'.sub','p','')}<button class="cbtn">${ed('blocks.'+i+'.button','span','')}</button></div></section>`; }
-const RENDER={hero:renderHero,gallery:renderGallery,image:renderImage,unique:renderUnique,how:renderHow,testimonials:renderTestimonials,contact:renderContact,cta:renderCta};
+    function showTyping(){
+      var el = document.createElement('div');
+      el.className = 'msg bot';
+      el.innerHTML = '<span class="typing"><i></i><i></i><i></i></span>';
+      log.appendChild(el); scrollDown();
+      return el;
+    }
 
-function render(){
-  document.documentElement.style.setProperty('--accent',SITE.accent);
-  document.documentElement.style.setProperty('--accent2',SITE.accent2);
-  $('navName').textContent=SITE.name; $('footName').textContent=SITE.name; $('navLogo').textContent=(SITE.name[0]||'A').toUpperCase();
-  $('agentName').textContent=SITE.agent.name; $('agentAv').textContent=SITE.agent.emoji; $('agentFabName').textContent='Ask '+SITE.agent.name;
-  $('agentMsgs').innerHTML=`<div class="msg bot">${esc(SITE.agent.greeting)}</div>`;
-  $('tName').value=SITE.name; $('tAgent').value=SITE.agent.name; $('tAccent').value=SITE.accent; $('tAccent2').value=SITE.accent2;
-  $('canvas').innerHTML = SITE.blocks.length ? SITE.blocks.map((b,i)=>(RENDER[b.type]||(()=>''))(b,i)).join('') : `<div class="empty-hint">No sections yet. Use <b>+ Add section</b> above to start building.</div>`;
-}
+    // Local fallback so the demo always works (e.g. before deploy / if API is busy).
+    function localPlan(desc){
+      var d = (desc||'').toLowerCase();
+      var feats, kind;
+      if(/salon|barber|hair|spa|nail|beauty/.test(d)){ kind='salon'; feats=['Online booking & calendar','Service menu with prices','Photo gallery','Customer reviews']; }
+      else if(/plumb|hvac|electric|contractor|landscap|roof|handyman|clean|repair|trade/.test(d)){ kind='service business'; feats=['Instant quote requests','Online booking','Service-area map','Before/after gallery & reviews']; }
+      else if(/cafe|coffee|restaurant|bakery|food|kitchen|bar|catering/.test(d)){ kind='food business'; feats=['Online ordering & pickup','Live menu','Reservations','Reviews & directions']; }
+      else if(/shop|boutique|store|jewel|retail|goods|craft|handmade/.test(d)){ kind='shop'; feats=['Online store & checkout','Product catalog','Customer reviews','AI assistant for product questions']; }
+      else if(/yoga|pilates|gym|fitness|studio|train|dance|class/.test(d)){ kind='studio'; feats=['Class schedule & sign-ups','Membership & passes','Instructor bios','Reviews']; }
+      else if(/dent|clinic|doctor|health|therap|vet|medical|wellness/.test(d)){ kind='clinic'; feats=['Appointment booking','Services & insurance info','Patient reviews','AI assistant for FAQs']; }
+      else { kind='small business'; feats=['Clear services & pricing','A contact / booking form','Photo gallery','AI assistant & reviews']; }
+      var headline = ({
+        'salon':'Look your best — book in seconds.',
+        'service business':'Reliable, on-time, and easy to book.',
+        'food business':'Order direct. Skip the fees.',
+        'shop':'Your shop, open around the clock.',
+        'studio':'Find your class. Book your spot.',
+        'clinic':'Friendly care, easy appointments.',
+        'small business':'Everything customers need, in one place.'
+      })[kind];
+      var pills = feats.map(function(f){return '- '+f;}).join('\n');
+      return 'Love it — here\'s a plan for your '+kind+':\n\nHomepage headline: "'+headline+'"\n\nPages & sections I\'d build:\n'+pills+'\n\nWhen you\'re ready, the NXAVERSE team can build this for real and have it live in days. Want to get started?';
+    }
 
-/* ===================== PHOTOS PANEL ===================== */
-function handleUpload(ev){ [...ev.target.files].forEach(f=>{ if(f.type.startsWith('image/')){ const r=new FileReader(); r.onload=()=>{ uploads.push(r.result); renderUploads(); }; r.readAsDataURL(f); } }); ev.target.value=''; }
-function renderUploads(){ const g=$('uploadGrid'); g.innerHTML = uploads.length ? uploads.map((s,k)=>`<img src="${s}" draggable="true" ondragstart="dragImg(event,'imgsrc',${k})" onclick="selectImg('imgsrc',${k},this)">`).join('') : '<div class="pr-empty">No uploads yet — add some above.</div>'; }
-function renderBgs(){ $('bgGrid').innerHTML = BGS.map((b,k)=>`<div class="bgsw" style="background:${b}" draggable="true" ondragstart="dragImg(event,'grad',${k})" onclick="selectImg('grad',${k},this)"></div>`).join(''); }
-function srcOf(kind,k){ return kind==='grad'?BGS[k]:(kind==='stock'?stockResults[k]:uploads[k]); }
-function dragImg(e,kind,k){ const val=srcOf(kind,k); e.dataTransfer.setData(kind==='grad'?'text/grad':'text/imgsrc', val); e.dataTransfer.effectAllowed='copy'; }
-function selectImg(kind,k,el){ selectedImg={val:srcOf(kind,k), grad:kind==='grad'}; document.querySelectorAll('.photos-rail img.sel,.photos-rail .bgsw.sel').forEach(x=>x.classList.remove('sel')); el.classList.add('sel'); }
+    function send(text){
+      if(busy) return;
+      text = (text||'').trim();
+      if(!text) return;
+      busy = true; sendBtn.disabled = true;
+      input.value = '';
+      if(chips){ chips.style.display = 'none'; }
+      addMsg('user', text);
+      history.push({role:'user', content:text});
+      var typing = showTyping();
 
-let stockResults=[];
-async function searchStock(){ const key=$('stockKey').value.trim(), q=$('stockQ').value.trim();
-  if(!key){ alert('To search stock photos, paste a free Unsplash access key (get one at unsplash.com/developers). Or just use Upload — that always works.'); return; }
-  if(!q) return; const g=$('stockGrid'); g.innerHTML='<div class="pr-note">Searching…</div>';
-  try{ const r=await fetch(`https://api.unsplash.com/search/photos?per_page=12&query=${encodeURIComponent(q)}&client_id=${encodeURIComponent(key)}`);
-    const d=await r.json(); stockResults=(d.results||[]).map(p=>p.urls.regular);
-    g.innerHTML = stockResults.length ? stockResults.map((s,k)=>`<img src="${s}" draggable="true" ondragstart="dragImg(event,'stock',${k})" onclick="selectImg('stock',${k},this)">`).join('') : '<div class="pr-empty">No results.</div>';
-  }catch(e){ g.innerHTML='<div class="pr-empty">Search failed — check the key / connection.</div>'; } }
+      fetch('/api/agent', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({messages: history.slice(-10)})
+      }).then(function(r){
+        return r.json().then(function(data){ return {ok:r.ok, data:data}; });
+      }).then(function(res){
+        typing.remove();
+        var reply = (res.ok && res.data && res.data.reply) ? res.data.reply : localPlan(text);
+        addMsg('bot', reply);
+        history.push({role:'assistant', content:reply});
+      }).catch(function(){
+        typing.remove();
+        var reply = localPlan(text);
+        addMsg('bot', reply);
+        history.push({role:'assistant', content:reply});
+      }).finally(function(){
+        busy = false; sendBtn.disabled = false; input.focus();
+      });
+    }
 
-/* panel drop zone */
-(function(){ const d=$('prDrop'); if(!d) return;
-  d.addEventListener('dragover',e=>{e.preventDefault();d.classList.add('over');});
-  d.addEventListener('dragleave',()=>d.classList.remove('over'));
-  d.addEventListener('drop',e=>{e.preventDefault();d.classList.remove('over'); [...e.dataTransfer.files].forEach(f=>{ if(f.type.startsWith('image/')){ const r=new FileReader(); r.onload=()=>{uploads.push(r.result);renderUploads();}; r.readAsDataURL(f);} }); });
-})();
+    form.addEventListener('submit', function(e){ e.preventDefault(); send(input.value); });
+    if(chips){
+      chips.querySelectorAll('.chip').forEach(function(c){
+        c.addEventListener('click', function(){ send(c.textContent); });
+      });
+    }
+  })();
 
-/* ===================== TOOLBAR ACTIONS ===================== */
-function setName(v){ SITE.name=v; $('navName').textContent=v; $('footName').textContent=v; $('navLogo').textContent=(v[0]||'A').toUpperCase(); }
-function setVar(k,v){ SITE[k]=v; document.documentElement.style.setProperty('--'+k,v); }
-function setAgentName(v){ SITE.agent.name=v; $('agentName').textContent=v; $('agentFabName').textContent='Ask '+v; }
-const DEFAULTS={
-  hero:{type:'hero',pill:'New',headline:'A new headline.',sub:'A short subhead about this section.'},
-  gallery:{type:'gallery',ey:'Explore',title:'Section title',sub:'Section subhead.',items:[{title:'First',caption:'Caption',img:'',grad:BGS[0]},{title:'Second',caption:'Caption',img:'',grad:BGS[1]},{title:'Third',caption:'Caption',img:'',grad:BGS[6]}]},
-  image:{type:'image',src:'',grad:BGS[0],caption:'Add a caption (optional)'},
-  unique:{type:'unique',badge:'Only here',title:'Unique feature',emoji:'⭐',image:'',desc:'What makes this different.',points:['Benefit one','Benefit two','Benefit three'],cta:'Learn more'},
-  how:{type:'how',ey:'How it works',title:'Three columns',items:[{emoji:'✨',title:'One',desc:'Describe it.'},{emoji:'🤖',title:'Two',desc:'Describe it.'},{emoji:'🖼️',title:'Three',desc:'Describe it.'}]},
-  testimonials:{type:'testimonials',ey:'Loved by',title:'What people are saying',items:[
-    {quote:'This is exactly what I was looking for — simple and effective.',name:'Alex P.',role:'Customer'},
-    {quote:'Fast, friendly, and it just works. Highly recommend.',name:'Jordan M.',role:'Member'},
-    {quote:'The best experience I\'ve had. I tell everyone about it.',name:'Sam R.',role:'Partner'}]},
-  contact:{type:'contact',ey:'Get in touch',title:'Contact us',sub:'Send us a note and we\'ll get back to you soon.',button:'Send message'},
-  cta:{type:'cta',headline:'Ready to start?',sub:'A closing invitation.',button:'Get started'}
-};
-function addBlock(type){ SITE.blocks.push(JSON.parse(JSON.stringify(DEFAULTS[type]))); document.getElementById('addMenu').classList.remove('open'); render(); window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}); }
-function delBlock(i){ if(confirm('Delete this section?')){ SITE.blocks.splice(i,1); render(); } }
-function dupBlock(i){ SITE.blocks.splice(i+1,0,JSON.parse(JSON.stringify(SITE.blocks[i]))); render(); }
-function moveBlock(i,dir){ const j=i+dir; if(j<0||j>=SITE.blocks.length) return; [SITE.blocks[i],SITE.blocks[j]]=[SITE.blocks[j],SITE.blocks[i]]; render(); }
-let dragIdx=null;
-function dragStart(i,e){ dragIdx=i; e.dataTransfer.effectAllowed='move'; }
-function dragOver(i,e){ if(dragIdx!==null) e.preventDefault(); }
-function dropBlock(i,e){ if(dragIdx===null||dragIdx===i) return; e.preventDefault(); const b=SITE.blocks.splice(dragIdx,1)[0]; SITE.blocks.splice(i,0,b); dragIdx=null; render(); }
+  /* ---------- FAQ: keep one open at a time (native <details>) ---------- */
+  (function(){
+    var items = document.querySelectorAll('.faq');
+    items.forEach(function(d){
+      d.addEventListener('toggle', function(){
+        if (d.open) items.forEach(function(o){ if(o!==d) o.open=false; });
+      });
+    });
+  })();
 
-/* ===================== AI SEARCH + AGENT (demo) ===================== */
-async function callAI(prompt){
-  // Calls Claude via your Netlify Function (/.netlify/functions/claude). Works once deployed with ANTHROPIC_API_KEY set.
-  try{
-    const r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({prompt,system:SITE.agent.system||''})});
-    if(!r.ok) throw 0;
-    const d=await r.json();
-    return esc(d.answer||'').replace(/\n/g,'<br>');
-  }catch(e){
-    await new Promise(r=>setTimeout(r,500));
-    return 'Demo mode — Claude answers here once this site is deployed to Netlify with your API key. You asked: "<b>'+esc(prompt)+'</b>"';
-  }
-}
-function fillSearch(t){ const s=$('aiSearch'); if(s){ s.value=t; runSearch(); } }
-async function runSearch(){ const s=$('aiSearch'); if(!s) return; const q=s.value.trim(); if(!q) return; const box=$('searchResults'); box.classList.add('show'); $('searchAns').innerHTML='<span style="opacity:.6">✨ thinking…</span>'; $('searchAns').innerHTML=await callAI(q); }
-function toggleAgent(){ $('agentPanel').classList.toggle('show'); }
-async function sendAgent(){ const inp=$('agentInput'),t=inp.value.trim(); if(!t)return; const m=$('agentMsgs'); m.insertAdjacentHTML('beforeend',`<div class="msg me">${esc(t)}</div>`); inp.value=''; m.insertAdjacentHTML('beforeend',`<div class="msg bot" id="typing">…</div>`); m.scrollTop=m.scrollHeight; const r=await callAI(t); $('typing').remove(); m.insertAdjacentHTML('beforeend',`<div class="msg bot">${r}</div>`); m.scrollTop=m.scrollHeight; }
+  /* ---------- scroll reveal ---------- */
+  (function(){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, {threshold:0.12});
+    document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+  })();
 
-/* ===================== PREVIEW / SAVE / LOAD ===================== */
-function togglePreview(){ document.body.classList.toggle('previewing'); $('prevBtn').textContent=document.body.classList.contains('previewing')?'✎ Edit':'👁 Preview'; }
-function openSettings(){ $('setOg').value=SITE.ogImage||''; $('setSys').value=SITE.agent.system||''; $('setPriv').value=SITE.privacy||''; $('setModal').classList.add('show'); $('setOverlay').classList.add('show'); }
-function closeSettings(){ $('setModal').classList.remove('show'); $('setOverlay').classList.remove('show'); }
-function saveSettings(){ SITE.ogImage=$('setOg').value.trim(); SITE.agent.system=$('setSys').value; SITE.privacy=$('setPriv').value; closeSettings(); }
-function showPrivacy(){ $('privBody').textContent=SITE.privacy||''; $('privModal').classList.add('show'); $('privOverlay').classList.add('show'); }
-function hidePrivacy(){ $('privModal').classList.remove('show'); $('privOverlay').classList.remove('show'); }
-function faviconURI(){ const L=(SITE.name[0]||'A').toUpperCase(); const svg=`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='${SITE.accent}'/><text x='32' y='45' font-size='38' font-family='Arial,Helvetica,sans-serif' font-weight='bold' fill='white' text-anchor='middle'>${L}</text></svg>`; return 'data:image/svg+xml,'+encodeURIComponent(svg); }
-function download(name,content,type='text/plain'){ const b=new Blob([content],{type}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=name; a.click(); URL.revokeObjectURL(a.href); }
-function saveProject(){ download('ai-website-project.json', JSON.stringify({site:SITE,uploads},null,2)); }
-function loadProject(ev){ const f=ev.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=()=>{ try{ const d=JSON.parse(r.result); const s=d.site||d; Object.keys(SITE).forEach(k=>delete SITE[k]); Object.assign(SITE,s); uploads=d.uploads||[]; renderUploads(); render(); }catch(e){ alert('Could not read that project file.'); } }; r.readAsText(f); ev.target.value=''; }
+  /* ---------- close mobile nav on link click ---------- */
+  document.querySelectorAll('#nav .navlinks a, #nav .btn').forEach(function(a){
+    a.addEventListener('click', function(){ document.getElementById('nav').classList.remove('open'); });
+  });
 
-/* ===================== EXPORT CLEAN index.html ===================== */
-function exportSite(){
-  const css=stripBuilderCss(document.querySelector('style').innerHTML);
-  EXPORTING=true;
-  const sectionsHTML=SITE.blocks.map((b,i)=>(RENDER[b.type]||(()=>''))(b,i)).join('');
-  EXPORTING=false;
-  const doc=`<!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${esc(SITE.name)}</title>
-<meta name="description" content="${esc((SITE.blocks.find(b=>b.type==='hero')||{}).sub||SITE.name)}">
-<link rel="icon" href="${faviconURI()}">
-<meta property="og:title" content="${esc(SITE.name)}">
-<meta property="og:description" content="${esc((SITE.blocks.find(b=>b.type==='hero')||{}).sub||SITE.name)}">
-<meta property="og:type" content="website">
-${SITE.ogImage?`<meta property="og:image" content="${esc(SITE.ogImage)}">`:''}
-<meta name="twitter:card" content="${SITE.ogImage?'summary_large_image':'summary'}">
-<style>:root{--accent:${SITE.accent};--accent2:${SITE.accent2};--ink:#0f1622;--ink2:#1b2737;--muted:#64748b;--line:#e6ebf2;--bg:#f7f9fc;--card:#fff;--good:#16a34a;--warn:#d9a400;--radius:18px;--shadow:0 10px 40px rgba(20,40,80,.08)}
-${css}</style></head>
-<body>
-<nav class="site"><div class="wrap"><div class="brand"><span class="logo">${(SITE.name[0]||'A').toUpperCase()}</span> <span>${esc(SITE.name)}</span></div><div class="navlinks"><a>Explore</a><a>Features</a><a>About</a></div><button class="navcta">Get started</button></div></nav>
-<main>${sectionsHTML}</main>
-<footer class="site"><div class="wrap">${esc(SITE.name)} · AI search &amp; agent <b style="color:var(--ink)">powered by Claude</b> · <a href="#" onclick="showPrivacy();return false">Privacy</a></div></footer>
-<button class="agent-fab" onclick="toggleAgent()">💬 Ask ${esc(SITE.agent.name)}</button>
-<div class="agent-panel" id="agentPanel"><div class="agent-head"><div class="av">${SITE.agent.emoji}</div><div><b>${esc(SITE.agent.name)}</b><div class="on">● online</div></div><button class="x" onclick="toggleAgent()">×</button></div>
-<div class="agent-msgs" id="agentMsgs"><div class="msg bot">${esc(SITE.agent.greeting)}</div></div>
-<div class="agent-credit">✨ Powered by <b>Claude</b></div>
-<div class="agent-input"><input id="agentInput" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendAgent()"><button onclick="sendAgent()">→</button></div></div>
-<div class="pmodal-ov" id="privOverlay" onclick="hidePrivacy()"></div>
-<div class="pmodal" id="privModal"><h3>Privacy</h3><p>${esc(SITE.privacy)}</p><button class="pclose" onclick="hidePrivacy()">Close</button></div>
-<script>
-const $=id=>document.getElementById(id);
-const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-var SYS=${JSON.stringify(SITE.agent.system||'')};
-function showPrivacy(){ document.getElementById('privModal').classList.add('show'); document.getElementById('privOverlay').classList.add('show'); }
-function hidePrivacy(){ document.getElementById('privModal').classList.remove('show'); document.getElementById('privOverlay').classList.remove('show'); }
-async function callAI(p){ try{ var r=await fetch('/.netlify/functions/claude',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({prompt:p,system:SYS})}); if(!r.ok) throw 0; var d=await r.json(); return esc(d.answer||'').replace(/\\n/g,'<br>'); }catch(e){ await new Promise(x=>setTimeout(x,500)); return 'Setup needed: add a Claude API key in Netlify to enable live answers. You asked: "<b>'+esc(p)+'</b>"'; } }
-function fillSearch(t){ var s=$('aiSearch'); if(s){s.value=t;runSearch();} }
-async function runSearch(){ var s=$('aiSearch'); if(!s)return; var q=s.value.trim(); if(!q)return; var b=$('searchResults'); b.classList.add('show'); $('searchAns').innerHTML='thinking…'; $('searchAns').innerHTML=await callAI(q); }
-function toggleAgent(){ $('agentPanel').classList.toggle('show'); }
-async function sendAgent(){ var i=$('agentInput'),t=i.value.trim(); if(!t)return; var m=$('agentMsgs'); m.insertAdjacentHTML('beforeend','<div class="msg me">'+esc(t)+'</div>'); i.value=''; var r=await callAI(t); m.insertAdjacentHTML('beforeend','<div class="msg bot">'+r+'</div>'); m.scrollTop=m.scrollHeight; }
-<\/script></body></html>`;
-  download('index.html', doc, 'text/html');
-}
-function stripBuilderCss(css){
-  return css.replace(/\/\* =+ BUILDER CHROME =+ \*\/[\s\S]*?(?=\/\* =+ SITE STYLES)/,'')
-            .replace(/\/\* =+ CANVA-STYLE PHOTOS RAIL =+ \*\/[\s\S]*?(?=\/\* =+ SITE STYLES)/,'')
-            .replace(/\/\* EDIT AFFORDANCES \*\/[\s\S]*$/,'');
-}
-
-renderUploads(); renderBgs(); render();
+  /* ---------- build form: AJAX submit to Netlify Forms ---------- */
+  (function(){
+    var form = document.getElementById('buildForm');
+    var errBox = document.getElementById('formErr');
+    if(!form) return;
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      errBox.classList.remove('show');
+      if(!form.reportValidity()) return;
+      var submitBtn = form.querySelector('button[type=submit]');
+      submitBtn.disabled = true; submitBtn.textContent = 'Sending…';
+      fetch('/', {
+        method:'POST',
+        headers:{'Content-Type':'application/x-www-form-urlencoded'},
+        body:new URLSearchParams(new FormData(form)).toString()
+      }).then(function(r){
+        if(!r.ok) throw new Error('bad status');
+        document.getElementById('formInner').style.display='none';
+        document.getElementById('formSuccess').classList.add('show');
+      }).catch(function(){
+        submitBtn.disabled = false; submitBtn.textContent = 'Build my site with NXAVERSE';
+        errBox.classList.add('show');
+      });
+    });
+  })();
 </script>
 </body>
 </html>
