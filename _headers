@@ -1,0 +1,10 @@
+# Always serve the latest version of the site.
+# HTML is revalidated on every request so old/cached versions are never shown.
+/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
